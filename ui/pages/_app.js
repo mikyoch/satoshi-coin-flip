@@ -4,7 +4,7 @@ function MyApp({ Component, pageProps }) {
   return (
     <>
       <div>
-        <h1 class="text-3xl font-bold underline bg-black text-white">
+        <h1 class="text-3xl font-bold underline bg-black text-pink">
           This is a heading
         </h1>
         <p>
