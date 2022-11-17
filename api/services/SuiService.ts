@@ -6,10 +6,9 @@ import {
   SuiExecuteTransactionResponse,
   SuiJsonValue,
 } from "@mysten/sui.js";
-import { fromB64 } from "@mysten/bcs";
 
 interface SuiServiceInterface {
-  getSigner(): RawSigner | null;
+  getSigner(): RawSigner;
   getLargestBankCoinId(): Promise<any>;
   executeMoveCall(
     packageObjId: string,
@@ -18,78 +17,79 @@ interface SuiServiceInterface {
     funName: string,
     funArguments: SuiJsonValue[],
     gasBudget?: number
-  ): Promise<SuiExecuteTransactionResponse | undefined>;
+  ): Promise<SuiExecuteTransactionResponse>;
 }
 
 class SuiService implements SuiServiceInterface {
   private provider: JsonRpcProvider;
-  private signer: RawSigner | null = null;
+  private signer: RawSigner;
   private bankCoins: { id: any; balance: any }[] = [];
 
   constructor() {
     // @todo: parameterized initialization here?
     this.provider = new JsonRpcProvider(Network.DEVNET);
+    this.signer = this.getSigner();
   }
 
   private setSigner() {
-    const keypair = Ed25519Keypair.fromSeed(
-      fromB64(String(process.env.KEY_SEED))
-    );
+    let privKeyArray: number[] = JSON.parse(String(process.env.PRIVATE_KEY));
+
+    const keypair = Ed25519Keypair.fromSeed(Uint8Array.from(privKeyArray));
     const signer = new RawSigner(keypair, this.provider);
     this.signer = signer;
   }
 
-  private async setBankCoins() {
-    this.provider
-      .getObjectsOwnedByAddress(String(process.env.BANKER_ADDRESS))
-      .then((res) => {
-        let coinObjects = res.filter((x) => x.type.includes("Coin"));
-        this.provider
-          .getObjectBatch(coinObjects.map((x) => x.objectId))
-          .then((res) => {
-            const coins = res.map((x) => {
-              return {
-                id: Object(x?.details)?.data?.fields?.id?.id,
-                balance: Object(x?.details)?.data?.fields?.balance,
-              };
+  private setBankCoins(): Promise<{ id: any; balance: any }[]> {
+    return new Promise((resolve, reject) => {
+      this.provider
+        .getObjectsOwnedByAddress(String(process.env.BANKER_ADDRESS))
+        .then((res) => {
+          let coinObjects = res.filter((x) => x.type.includes("Coin"));
+          this.provider
+            .getObjectBatch(coinObjects.map((x) => x.objectId))
+            .then((res) => {
+              const coins: { id: any; balance: any }[] = res.map((x) => {
+                return {
+                  id: Object(x?.details)?.data?.fields?.id?.id,
+                  balance: Object(x?.details)?.data?.fields?.balance,
+                };
+              });
+              this.bankCoins = coins;
+              resolve(coins);
             });
-            this.bankCoins = coins;
-            // createGame();
-          });
-      })
-      .catch((e) => {
-        // uiStore.setNotification(e.message);
-        console.error("Bank Coins error: ", e);
-      });
+        })
+        .catch((e) => {
+          console.error("Bank Coins error: ", e);
+          reject(e);
+        });
+    });
   }
 
-  public getSigner(): RawSigner | null {
+  public getSigner(): RawSigner {
     if (!this.signer) {
       this.setSigner();
     }
     return this.signer;
   }
 
-  // @todo: what is the coinId type?
-  public async getLargestBankCoinId(): Promise<any> {
-    return new Promise(async (resolve, reject) => {
-      let coinId = null;
+  public getLargestBankCoinId(): Promise<string> {
+    return new Promise((resolve, reject) => {
+      let coinId: string = "";
       let balance = 0;
       try {
-        if (!this.bankCoins) {
-          await this.setBankCoins();
-        }
-        for (let coin of this.bankCoins) {
-          if (coin.balance >= balance) {
-            coinId = coin.id;
-            balance = coin.balance;
+        this.setBankCoins().then(() => {
+          for (let coin of this.bankCoins) {
+            if (coin.balance >= balance) {
+              coinId = coin.id;
+              balance = coin.balance;
+            }
           }
-        }
+
+          resolve(coinId);
+        });
       } catch (e) {
         reject(e);
       }
-
-      resolve(coinId);
     });
   }
 
@@ -100,7 +100,7 @@ class SuiService implements SuiServiceInterface {
     funName: string,
     funArguments: SuiJsonValue[],
     gasBudget: number = 1000
-  ): Promise<SuiExecuteTransactionResponse | undefined> {
+  ): Promise<SuiExecuteTransactionResponse> {
     this.signer = this.getSigner();
     return this.signer?.executeMoveCall({
       packageObjectId: packageObjId,

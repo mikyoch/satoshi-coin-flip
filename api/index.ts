@@ -2,8 +2,10 @@ import express, { Express, Request, Response } from "express";
 import { notFound, errorHandler, checkStart, checkEnd } from "./middleware";
 import * as dotenv from "dotenv";
 dotenv.config();
+import SatoshiGameService from "./services/SatoshiGameService";
 
 const app: Express = express();
+const GameService = new SatoshiGameService();
 const port = process.env.PORT;
 
 app.use(
@@ -15,24 +17,41 @@ app.use(
 // we can use json requests if we prefer
 // app.use(express.json({}));
 
-app.post("/start", checkStart, (req: Request, res: Response) => {
+app.post("/start", checkStart, async (req: Request, res: Response) => {
+  console.log("body:", req.body);
+
   try {
-    console.log("body:", req.body);
+    let {gameId, secret} = await GameService.createGame(req.body.minBet, req.body.maxBet);
     res.status(200);
     res.json({
-      gameId: "thisIsAnID",
+      gameId,
+      secret
     });
   } catch (e) {
     console.error("Bad things have happened", e);
+    res.status(500);
+    res.json({
+      error: e,
+    });
   }
 });
 
-app.post("/end", checkEnd, (req: Request, res: Response) => {
+app.post("/end", checkEnd, async (req: Request, res: Response) => {
   console.log("body:", req.body);
-  res.status(200);
-  res.json({
-    playerWon: true,
-  });
+
+  try {
+    let response = await GameService.endGame(req.body.gameId, req.body.secret);
+    res.status(200);
+    res.json({
+      playerWon: response,
+    });
+  } catch (e) {
+    console.error("Bad things have happened", e);
+    res.status(500);
+    res.json({
+      error: e,
+    });
+  }
 });
 
 app.get("/", (req: Request, res: Response) => {

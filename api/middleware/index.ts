@@ -22,7 +22,6 @@ function errorHandler(
 
 function checkStart(req: Request, res: Response, next: NextFunction) {
   try {
-    if (!req?.body?.hash) throw new Error('Parameter "hash" is required');
     if (!req?.body?.minBet) throw new Error('Parameter "minBet" is required');
     if (!req?.body?.maxBet) throw new Error('Parameter "maxBet" is required');
   } catch (error) {
