@@ -21,14 +21,13 @@ app.post("/start", checkStart, async (req: Request, res: Response) => {
   console.log("body:", req.body);
 
   try {
-    let {gameId, secret} = await GameService.createGame(req.body.minBet, req.body.maxBet);
+    let gameId = await GameService.createGame(req.body.minBet, req.body.maxBet);
     res.status(200);
     res.json({
       gameId,
-      secret
     });
   } catch (e) {
-    console.error("Bad things have happened", e);
+    console.error("Bad things have happened:", e);
     res.status(500);
     res.json({
       error: e,
@@ -40,18 +39,27 @@ app.post("/end", checkEnd, async (req: Request, res: Response) => {
   console.log("body:", req.body);
 
   try {
-    let response = await GameService.endGame(req.body.gameId, req.body.secret);
+    let response = await GameService.endGame(req.body.gameId);
     res.status(200);
     res.json({
       playerWon: response,
     });
   } catch (e) {
-    console.error("Bad things have happened", e);
+    console.error("Bad things have happened:", e);
     res.status(500);
     res.json({
       error: e,
     });
   }
+});
+
+app.get("/games", (req: Request, res: Response) => {
+  res.status(200);
+
+  const gameIds = GameService.getGameIds();
+  res.json({
+    gameIds
+  })
 });
 
 app.get("/", (req: Request, res: Response) => {

@@ -35,7 +35,6 @@ function checkStart(req: Request, res: Response, next: NextFunction) {
 function checkEnd(req: Request, res: Response, next: NextFunction) {
   try {
     if (!req?.body?.gameId) throw new Error('Parameter "gameId" is required');
-    if (!req?.body?.secret) throw new Error('Parameter "secret" is required');
   } catch (error) {
     res.status(errorCode);
     next(error);

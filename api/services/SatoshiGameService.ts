@@ -1,13 +1,21 @@
 import { SuiService, SuiServiceInterface } from "./SuiService";
 import SHA3 from "sha3";
-import { GetObjectDataResponse } from "@mysten/sui.js";
 
 class SatoshiGameService {
   private suiService: SuiServiceInterface;
-  private secret: string = "";
+  private gameIdSecretMap: Map<String, String> = new Map<String, String>();
 
   constructor() {
     this.suiService = new SuiService();
+  }
+
+  public getGameIds() {
+    let gameIds: String[] = [];
+    for (let key of this.gameIdSecretMap.keys()) {
+      gameIds.push(key);
+    }
+
+    return gameIds;
   }
 
   private getNewSecretAndHash() {
@@ -21,13 +29,12 @@ class SatoshiGameService {
   public createGame(
     minBet: number = 100,
     maxBet: number = 5000
-  ): Promise<{ gameId: string; secret: string }> {
+  ): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         // @todo: check bet values here?
         const coinId = await this.suiService.getLargestBankCoinId();
         const { secret, hash } = this.getNewSecretAndHash();
-        this.secret = secret;
 
         this.suiService
           .executeMoveCall(
@@ -47,7 +54,11 @@ class SatoshiGameService {
             if (status === "success") {
               let newGameResult =
                 effects?.events?.find((x: any) => x.newObject) || {};
-              resolve({ gameId: newGameResult.newObject.objectId, secret });
+
+              const gameId = newGameResult.newObject.objectId;
+
+              this.gameIdSecretMap.set(gameId, secret);
+              resolve(gameId);
             } else {
               reject({
                 status: "failure",
@@ -63,8 +74,14 @@ class SatoshiGameService {
   }
 
   // end-game
-  public endGame(gameId: string, secret: string) {
+  public endGame(gameId: string) {
     return new Promise((resolve, reject) => {
+      if (!this.gameIdSecretMap.has(gameId)) {
+        reject("Given gameId does not exist");
+        return;
+      }
+      const secret: string = String(this.gameIdSecretMap.get(gameId));
+
       this.suiService
         .executeMoveCall(
           String(process.env.PACKAGE_ADDRESS),
@@ -81,7 +98,6 @@ class SatoshiGameService {
           const status = effects?.status?.status;
 
           const outcomeObjId = effects?.sharedObjects?.[0]?.objectId;
-          console.log("shared object id", outcomeObjId);
 
           const outcomeObj: any = await this.suiService
             .getSigner()
