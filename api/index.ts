@@ -3,8 +3,6 @@ import { notFound, errorHandler } from "./middleware";
 import * as dotenv from "dotenv";
 dotenv.config();
 
-import startRoutes from "./routes/Start";
-import endRoutes from "./routes/End";
 import gameRoutes from "./routes/Game";
 
 // Initializing port and express instance
@@ -21,12 +19,8 @@ app.use(
 // we can use json requests if we prefer
 // app.use(express.json({}));
 
-// --------- Routes "/start", "/end" and "/games" --------- 
-app.use(startRoutes);
-
-app.use(endRoutes);
-
-app.use(gameRoutes);
+// --------- Routes "/game" --------- 
+app.use("/game", gameRoutes);
 
 // --------- Error handling middleware ---------
 app.use(notFound);

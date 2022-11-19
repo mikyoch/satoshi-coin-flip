@@ -1,5 +1,6 @@
 import {
   Ed25519Keypair,
+  GetObjectDataResponse,
   JsonRpcProvider,
   Network,
   RawSigner,
@@ -8,7 +9,6 @@ import {
 } from "@mysten/sui.js";
 
 interface SuiServiceInterface {
-  getSigner(): RawSigner;
   getLargestBankCoinId(): Promise<any>;
   executeMoveCall(
     packageObjId: string,
@@ -18,12 +18,12 @@ interface SuiServiceInterface {
     funArguments: SuiJsonValue[],
     gasBudget?: number
   ): Promise<SuiExecuteTransactionResponse>;
+  getObject(objectId: string): Promise<GetObjectDataResponse>;
 }
 
 class SuiService implements SuiServiceInterface {
   private provider: JsonRpcProvider;
   private signer: RawSigner;
-  private bankCoins: { id: any; balance: any }[] = [];
 
   constructor() {
     // @todo: parameterized initialization here?
@@ -31,15 +31,15 @@ class SuiService implements SuiServiceInterface {
     this.signer = this.getSigner();
   }
 
-  private setSigner() {
+  private getSigner(): RawSigner {
     let privKeyArray: number[] = JSON.parse(String(process.env.PRIVATE_KEY));
 
     const keypair = Ed25519Keypair.fromSeed(Uint8Array.from(privKeyArray));
     const signer = new RawSigner(keypair, this.provider);
-    this.signer = signer;
+    return signer;
   }
 
-  private setBankCoins(): Promise<{ id: any; balance: any }[]> {
+  private getBankCoins(): Promise<{ id: any; balance: any }[]> {
     return new Promise((resolve, reject) => {
       this.provider
         .getObjectsOwnedByAddress(String(process.env.BANKER_ADDRESS))
@@ -54,7 +54,6 @@ class SuiService implements SuiServiceInterface {
                   balance: Object(x?.details)?.data?.fields?.balance,
                 };
               });
-              this.bankCoins = coins;
               resolve(coins);
             });
         })
@@ -65,20 +64,36 @@ class SuiService implements SuiServiceInterface {
     });
   }
 
-  public getSigner(): RawSigner {
-    if (!this.signer) {
-      this.setSigner();
-    }
-    return this.signer;
+  private async fundBankAddressIfGasLow(): Promise<boolean> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const bankCoins = await this.getBankCoins();
+        if (bankCoins.length > 3) return resolve(false);
+
+        console.log(
+          "Banker account found with less than 3 gas objects, requesting SUI from faucet..."
+        );
+        await this.signer.provider.requestSuiFromFaucet(
+          String(process.env.BANKER_ADDRESS)
+        );
+        resolve(true);
+      } catch (e) {
+        console.error("Could not check or fund bank address", e);
+        reject(e);
+      }
+    });
   }
 
-  public getLargestBankCoinId(): Promise<string> {
+  public async getLargestBankCoinId(): Promise<string> {
+    const didFund = await this.fundBankAddressIfGasLow();
+    if (didFund) console.log("Banker account funded successfully");
+
     return new Promise((resolve, reject) => {
       let coinId: string = "";
       let balance = 0;
       try {
-        this.setBankCoins().then(() => {
-          for (let coin of this.bankCoins) {
+        this.getBankCoins().then((bankCoins) => {
+          for (let coin of bankCoins) {
             if (coin.balance >= balance) {
               coinId = coin.id;
               balance = coin.balance;
@@ -93,6 +108,10 @@ class SuiService implements SuiServiceInterface {
     });
   }
 
+  public async getObject(objectId: string): Promise<GetObjectDataResponse> {
+    return this.signer.provider.getObject(objectId);
+  }
+
   public async executeMoveCall(
     packageObjId: string,
     module: string,
@@ -101,8 +120,7 @@ class SuiService implements SuiServiceInterface {
     funArguments: SuiJsonValue[],
     gasBudget: number = 1000
   ): Promise<SuiExecuteTransactionResponse> {
-    this.signer = this.getSigner();
-    return this.signer?.executeMoveCall({
+    return this.signer.executeMoveCall({
       packageObjectId: packageObjId,
       module: module,
       typeArguments: typeArguments,

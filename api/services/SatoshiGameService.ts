@@ -99,9 +99,7 @@ class SatoshiGameService {
 
           const outcomeObjId = effects?.sharedObjects?.[0]?.objectId;
 
-          const outcomeObj: any = await this.suiService
-            .getSigner()
-            .provider.getObject(outcomeObjId);
+          const outcomeObj: any = await this.suiService.getObject(outcomeObjId);
 
           if (status === "success") {
             resolve(
