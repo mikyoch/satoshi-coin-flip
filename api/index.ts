@@ -1,4 +1,5 @@
 import express, { Express } from "express";
+import cors from "cors";
 import { notFound, errorHandler } from "./middleware";
 import * as dotenv from "dotenv";
 dotenv.config();
@@ -9,7 +10,19 @@ import gameRoutes from "./routes/Game";
 const app: Express = express();
 const port = process.env.PORT;
 
-// Accepted body of requests in x-www-form-urlencoded 
+// Initializing CORS
+const trustedOrigins =
+  process.env.environment === "dev"
+    ? JSON.parse(String(process.env.trustedOriginsDev))
+    : JSON.parse(String(process.env.trustedOriginsDev));
+
+app.use(
+  cors({
+    origin: trustedOrigins,
+  })
+);
+
+// Accepted body of requests in x-www-form-urlencoded
 app.use(
   express.urlencoded({
     extended: true,
@@ -19,7 +32,7 @@ app.use(
 // we can use json requests if we prefer
 // app.use(express.json({}));
 
-// --------- Routes "/game" --------- 
+// --------- Routes "/game" ---------
 app.use("/game", gameRoutes);
 
 // --------- Error handling middleware ---------
