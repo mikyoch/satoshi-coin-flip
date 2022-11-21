@@ -1,6 +1,6 @@
 import React from 'react';
 import WalletModal from './WalletModal';
-// import { ReactComponent as Logo } from './public/sui-logo-light.svg';
+import Logo from '../public/svg/sui-logo-light.svg';
 
 const Header = () => {
     return (
@@ -9,7 +9,7 @@ const Header = () => {
             <div className='py-4'>
                 <div className='flex justify-between items-center'>
                     <div>
-                        {/* <Logo /> */}
+                        <Logo />
                     </div>
                     <div>
                         <WalletModal />
