@@ -22,7 +22,7 @@ const endGame = (gameId) => {
     gameId,
   });
 
-  return satoshiAPI.post("/game/end", {
+  return satoshiAPI.post("/game/end", data, {
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
   });
 };
