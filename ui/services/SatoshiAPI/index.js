@@ -2,8 +2,8 @@ import axios from "axios";
 var qs = require("qs");
 
 const satoshiAPI = axios.create({
-  // @todo: this should be coming from a .env/config file
-  baseURL: "http://localhost:8080",
+  // defaults to dev API
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080",
 });
 
 const createGame = (minBet, maxBet) => {
