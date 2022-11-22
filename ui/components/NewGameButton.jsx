@@ -5,20 +5,26 @@ const NewGameButton = () => {
   const [minBet, setMinBet] = useState(100);
   const [maxBet, setMaxBet] = useState(5000);
   const [gameId, setGameId] = useState(null);
+  const [inputError, setInputError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    let errorMessage = "";
+
     //check if values are ok
     if (minBet < 100 || minBet > maxBet) {
-      console.error(
-        "MinBet value should be greater than 100 and less than maxBet"
-      );
-      return;
+      errorMessage =
+        "MinBet value should be greater than 100 and less than maxBet";
+      console.error(errorMessage);
     }
     if (maxBet > 5000) {
-      console.error("MaxBet value should not exceed 5000");
-      return;
+      errorMessage = "MaxBet value should not exceed 5000";
+      console.error(errorMessage);
     }
+
+    setInputError(errorMessage);
+    if (errorMessage) return;
+
     try {
       let response = await createGame(minBet, maxBet);
       setGameId(response.data.gameId);
@@ -72,6 +78,9 @@ const NewGameButton = () => {
               New game
             </button>
           </div>
+          {inputError !== "" && (
+            <div className="pt-3 text-amber">{inputError}</div>
+          )}
         </form>
       </div>
       {gameId && <div>Created game {gameId}</div>}
