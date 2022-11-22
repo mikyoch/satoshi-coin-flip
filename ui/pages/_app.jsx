@@ -3,7 +3,6 @@ import "../styles/globals.css";
 
 // Components
 import { Header } from "../components/Header";
-import { NewGameButton } from "../components/NewGameButton";
 
 function MyApp({ Component, pageProps }) {
   return (
@@ -11,7 +10,6 @@ function MyApp({ Component, pageProps }) {
       <Header />
       <div className="App h-screen flex flex-col items-center justify-center bg-faint-blue">
         Main content here
-        <NewGameButton></NewGameButton>
       </div>
     </>
   );

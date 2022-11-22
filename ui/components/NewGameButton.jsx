@@ -1,33 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
 import { createGame } from "../services/SatoshiAPI";
 
-const NewGameButton = () => {
-  const [minBet, setMinBet] = useState(100);
-  const [maxBet, setMaxBet] = useState(5000);
-  const [gameId, setGameId] = useState(null);
-  const [inputError, setInputError] = useState("");
-
+const NewGameButton = (props) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
-    let errorMessage = "";
 
-    //check if values are ok
-    if (minBet < 100 || minBet > maxBet) {
-      errorMessage =
-        "MinBet value should be greater than 100 and less than maxBet";
-      console.error(errorMessage);
-    }
-    if (maxBet > 5000) {
-      errorMessage = "MaxBet value should not exceed 5000";
-      console.error(errorMessage);
-    }
-
-    setInputError(errorMessage);
-    if (errorMessage) return;
-
+    // @todo: change harcoded values to user defined values
     try {
-      let response = await createGame(minBet, maxBet);
-      setGameId(response.data.gameId);
+      let response = await createGame(100, 5000);
+      props.setGameId(response.data.gameId);
     } catch (e) {
       console.error(e);
     }
@@ -36,40 +17,7 @@ const NewGameButton = () => {
   return (
     <>
       <div className="w-full max-w-xs">
-        <form
-          className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
-          onSubmit={handleSubmit}
-        >
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">
-              Minimum Bet
-              <input
-                placeholder="Minimum bet value"
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                type="text"
-                value={minBet}
-                onChange={(e) => {
-                  setMinBet(e.target.value);
-                }}
-              ></input>
-            </label>
-          </div>
-
-          <div>
-            <label className="block text-gray-700 text-sm font-bold mb-2">
-              Maximum Bet
-              <input
-                placeholder="Maximum bet value"
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                type="text"
-                value={maxBet}
-                onChange={(e) => {
-                  setMaxBet(e.target.value);
-                }}
-              ></input>
-            </label>
-          </div>
-
+        <form onSubmit={handleSubmit}>
           <div>
             <button
               type="submit"
@@ -78,12 +26,8 @@ const NewGameButton = () => {
               New game
             </button>
           </div>
-          {inputError !== "" && (
-            <div className="pt-3 text-amber">{inputError}</div>
-          )}
         </form>
       </div>
-      {gameId && <div>Created game {gameId}</div>}
     </>
   );
 };
