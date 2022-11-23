@@ -9,7 +9,7 @@ export default function ExplorerLink({ id, type }) {
   else if (type === "address") url += "addresses/";
   url += `${id}`;
   // what will use see
-  const shownId = `${id.slice(0, 5)}...${id.slice(-7, -1)}`;
+  const shownId = `${id.slice(0, 5)}...${id.slice(-7)}`;
 
   return (
     <>
