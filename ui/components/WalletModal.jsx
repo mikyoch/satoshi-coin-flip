@@ -1,53 +1,113 @@
-// import React from 'react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from "react";
+import { useWallet } from "@mysten/wallet-adapter-react";
 
-// import {useWallet} from '../helpers/wallet';
+export function WalletModal() {
+  let { connected } = useWallet();
+  const [open, setOpen] = useState(false);
 
-const WalletModal = () => {
-  const [showModal, setShowModal] = useState(false);
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const { wallets, wallet, select, connecting, disconnect, getAccounts } =
+    useWallet();
+
+  const [account, setAccount] = useState("");
+
+  const handleConnect = (walletName) => {
+    select(walletName);
+    handleClose();
+  };
+
+  const handleDisconnect = () => {
+    disconnect();
+  };
+
+  useEffect(() => {
+    if (!connected) return;
+
+    getAccounts().then((accounts) => {
+      if (accounts && accounts.length) {
+        setAccount(accounts[0]);
+      }
+    });
+  }, [wallet, connected, getAccounts]);
+
   return (
     <>
-      <button 
-      className='bg-sui-sky text-white px-6 py-3 rounded-full shadow hover:shadow-lg outline-none focus:outline-none'
-      type='button'
-      onClick={() => setShowModal(true)}
-      >
-        Connect your wallet
-      </button>
+      <div className="flex-inline">
+        {!connected ? (
+          <button className="text-white" onClick={handleClickOpen}>
+            Connect To Wallet
+          </button>
+        ) : (
+          <>
+            <div className="text-sui-sky">{account}</div>
+            <button className="text-white" onClick={handleDisconnect}>
+              Logout
+            </button>
+          </>
+        )}
+        ;
+      </div>
 
-      {showModal ? (
+      {open ? (
         <>
           <div className="flex justify-center items-center overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none bg-sui-ocean-dark bg-opacity-50">
             <div className="relative w-auto my-4 mx-auto max-w-3xl">
               <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-sui-ocean outline-none focus:outline-none">
-                <div className="flex items-start justify-between p-5">
-                  <h3 className="text-xl text-white">
-                    Connect your Wallet
-                  </h3>
+                <div className="flex items-start justify-end p-5">
                   <button
                     className="bg-transparent border-0 float-right"
-                    onClick={() => setShowModal(false)}
+                    onClick={handleClose}
                   >
                     <span className="text-sui-sky h-4 w-4 text-lg block py-0 rounded">
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth="1.5"
+                        stroke="currentColor"
+                        className="w-4 h-4"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M6 18L18 6M6 6l12 12"
+                        />
                       </svg>
                     </span>
                   </button>
                 </div>
                 <div className="relative p-5 flex-auto">
-                  <h2 className='text-sui-text-light'>Wallet connector will appear here</h2>
+                  <>
+                    {!connected && (
+                      <div>
+                        <div>
+                          {wallets.map((wallet, i) => (
+                            <div
+                              key={i}
+                              onClick={() => handleConnect(wallet.name)}
+                            >
+                              {wallet.name}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </>
                 </div>
               </div>
             </div>
           </div>
-          </>
-        ) : null
-      }
+        </>
+      ) : null}
     </>
   );
-};
-
+}
 
 export default WalletModal;
-

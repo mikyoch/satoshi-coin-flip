@@ -1,5 +1,5 @@
 import React from 'react';
-import WalletModal from './WalletModal';
+import {WalletModal} from './WalletModal';
 import Logo from '../public/svg/sui-logo-light.svg';
 
 const Header = () => {
