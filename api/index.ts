@@ -14,7 +14,7 @@ const port = process.env.PORT;
 const trustedOrigins =
   process.env.environment === "dev"
     ? JSON.parse(String(process.env.trustedOriginsDev))
-    : JSON.parse(String(process.env.trustedOriginsDev));
+    : JSON.parse(String(process.env.trustedOriginsProd));
 
 app.use(
   cors({
