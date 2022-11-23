@@ -39,28 +39,45 @@ export function WalletModal() {
 
   return (
     <>
-      <div className="flex-inline">
-        {!connected ? (
-          <button className="text-white" onClick={handleClickOpen}>
-            Connect To Wallet
-          </button>
-        ) : (
-          <>
-            <div className="text-sui-sky">{account}</div>
-            <button className="text-white" onClick={handleDisconnect}>
-              Logout
+      <div className="w-full flex flex-wrap space-x-2 justify-end">
+        <div class="flex-1 text-right">
+          {!connected ? (
+            <button
+              className="flex-1 text-sui-sky bg-sui-ocean-dark border border-sui-sky text-md px-6 py-3 
+          rounded-full hover:bg-sui-ocean hover:text-white"
+              onClick={handleClickOpen}
+            >
+              Connect To Wallet
             </button>
-          </>
-        )}
-        ;
+          ) : (
+            <>
+              <div className="flex items-center">
+                <div className="flex-1 text-sm pr-5">
+                  <span className="pr-1 text-sui-text-light">
+                    Connected address:
+                  </span>
+                  <span className="pr-1 text-sui-sky">{account}</span>
+                  <span className="pr-1 text-sui-text-light hidden lg:inline-flex">
+                    ({wallet.name})
+                  </span>
+                </div>
+                <button
+                  className="text-md px-6 py-3 rounded-full border text-sui-text-light border-sui-ocean hover:bg-sui-ocean"
+                  onClick={handleDisconnect}
+                >
+                  Logout
+                </button>
+              </div>
+            </>
+          )}
+        </div>
       </div>
-
       {open ? (
         <>
           <div className="flex justify-center items-center overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none bg-sui-ocean-dark bg-opacity-50">
             <div className="relative w-auto my-4 mx-auto max-w-3xl">
               <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-sui-ocean outline-none focus:outline-none">
-                <div className="flex items-start justify-end p-5">
+                <div className="flex items-start justify-end p-2.5">
                   <button
                     className="bg-transparent border-0 float-right"
                     onClick={handleClose}
@@ -83,18 +100,27 @@ export function WalletModal() {
                     </span>
                   </button>
                 </div>
-                <div className="relative p-5 flex-auto">
+                <div className="relative px-5 pt-1 pb-5 flex-auto">
+                  <div className="text-center test-sm text-white">
+                    Select your wallet provider
+                  </div>
                   <>
                     {!connected && (
-                      <div>
-                        <div>
+                      <div className="flex pt-6 pb-5">
+                        <div className="flex-1">
                           {wallets.map((wallet, i) => (
-                            <div
+                            <button
+                              className="w-full flex px-6 py-3 bg-sui-ocean-dark rounded-full my-3 items-center hover:bg-sui-text-dark"
                               key={i}
                               onClick={() => handleConnect(wallet.name)}
                             >
-                              {wallet.name}
-                            </div>
+                              <span className="mr-3">
+                                <img src={wallet.icon} className="w-4 h-4" />
+                              </span>
+                              <span className="text-sui-text-light">
+                                Connect {wallet.name}
+                              </span>
+                            </button>
                           ))}
                         </div>
                       </div>
