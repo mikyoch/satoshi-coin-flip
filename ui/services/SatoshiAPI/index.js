@@ -1,5 +1,5 @@
 import axios from "axios";
-var qs = require("qs");
+import qs from "qs";
 
 const satoshiAPI = axios.create({
   // defaults to dev API
