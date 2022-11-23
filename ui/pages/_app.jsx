@@ -1,4 +1,4 @@
-import React, { useRef, Component, useEffect, useMemo } from "react";
+import React, { Component, useMemo } from "react";
 import "../styles/globals.css";
 import { WalletProvider } from "@mysten/wallet-adapter-react";
 import { WalletStandardAdapterProvider } from "@mysten/wallet-adapter-all-wallets";
@@ -16,14 +16,12 @@ function MyApp({ Component, pageProps }) {
   );
 
   return (
-    <>
       <WalletProvider adapters={adapters}>
         <Header />
         <div className="App h-screen flex flex-col items-center justify-center bg-faint-blue">
           Main content here
         </div>
       </WalletProvider>
-    </>
   );
 }
 
