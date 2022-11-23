@@ -40,7 +40,7 @@ export function WalletModal() {
   return (
     <>
       <div className="w-full flex flex-wrap space-x-2 justify-end">
-        <div class="flex-1 text-right">
+        <div className="flex-1 text-right">
           {!connected ? (
             <button
               className="flex-1 text-sui-sky bg-sui-ocean-dark border border-sui-sky text-md px-6 py-3 
