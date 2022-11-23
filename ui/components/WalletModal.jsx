@@ -56,7 +56,7 @@ export function WalletModal() {
                   <span className="pr-1 text-sui-text-light">
                     Connected address:
                   </span>
-                  <span className="pr-1 text-sui-sky">{account}</span>
+                  <span className="pr-1 text-sui-sky">{account.slice(0, 7)}...{account.slice(-3)}</span>
                   <span className="pr-1 text-sui-text-light hidden lg:inline-flex">
                     ({wallet.name})
                   </span>
