@@ -21,7 +21,6 @@ function MyApp({ Component, pageProps }) {
         <Header />
         <div className="App h-screen flex flex-col items-center justify-center bg-faint-blue">
           <h1>Test NFT Transaction</h1>
-          <TestTransaction />
         </div>
       </WalletProvider>
   );
