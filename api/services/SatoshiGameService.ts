@@ -33,7 +33,8 @@ class SatoshiGameService {
     return new Promise(async (resolve, reject) => {
       try {
         // @todo: check bet values here?
-        const coinId = await this.suiService.getLargestBankCoinId();
+        // const coinId = await this.suiService.getLargestBankCoin().id;
+        const coinId = await this.suiService.getPlayCoin();
         const { secret, hash } = this.getNewSecretAndHash();
 
         this.suiService
