@@ -16,7 +16,7 @@ const NewGameButton = (props) => {
 
   return (
     <>
-      <div className="w-full max-w-xs">
+      <div className="flex">
         <form onSubmit={handleSubmit}>
           <div>
             <button
