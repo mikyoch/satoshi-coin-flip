@@ -2,9 +2,11 @@
 
 A sample UI for presenting the time locked satoshi coin flip.
 
+Note: This example is developed on Sui DevNet and intermediate releases might affect its availability.
+
 ## Introduction
 
-We present a fair way to conduct a 50 / 50 chance game.
+We present a fair method to use Sui blockchain in order to conduct a 50 / 50 chance game.
 
 We model it after a coin flip since the chances are 50%.<br/>
 The theory backing this project was presented by Kostas Chalkias (Mysten Labs Head of Cryptography) at the GAME3R Forum in Novemeber of 2022.>><br/>
