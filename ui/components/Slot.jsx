@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import {heads, tails} from "../helpers/constants";
 
 export default function Slot() {
   const [slotSlides, setSlotSlides] = useState(["heads"]);
