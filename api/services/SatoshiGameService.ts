@@ -29,7 +29,7 @@ class SatoshiGameService {
   public createGame(
     minBet: number = 100,
     maxBet: number = 5000
-  ): Promise<string> {
+  ): Promise<{ gameId: string; transactionDigest: string }> {
     return new Promise(async (resolve, reject) => {
       try {
         // @todo: check bet values here?
@@ -51,6 +51,7 @@ class SatoshiGameService {
               : res?.effects;
 
             const status = effects?.status?.status;
+            const transactionDigest = effects?.transactionDigest;
             if (status === "success") {
               let newGameResult =
                 effects?.events?.find((x: any) => x.newObject) || {};
@@ -58,7 +59,7 @@ class SatoshiGameService {
               const gameId = newGameResult.newObject.objectId;
 
               this.gameIdSecretMap.set(gameId, secret);
-              resolve(gameId);
+              resolve({ gameId, transactionDigest });
             } else {
               reject({
                 status: "failure",
@@ -74,7 +75,9 @@ class SatoshiGameService {
   }
 
   // end-game
-  public endGame(gameId: string) {
+  public endGame(
+    gameId: string
+  ): Promise<{ playerWon: boolean; transactionDigest: string }> {
     return new Promise((resolve, reject) => {
       if (!this.gameIdSecretMap.has(gameId)) {
         reject("Given gameId does not exist");
@@ -96,15 +99,18 @@ class SatoshiGameService {
             : res?.effects;
 
           const status = effects?.status?.status;
+          const transactionDigest = effects?.transactionDigest;
 
           const outcomeObjId = effects?.sharedObjects?.[0]?.objectId;
 
           const outcomeObj: any = await this.suiService.getObject(outcomeObjId);
 
           if (status === "success") {
-            resolve(
-              outcomeObj.details?.data?.fields?.outcome?.fields?.player_won
-            );
+            resolve({
+              playerWon:
+                outcomeObj.details?.data?.fields?.outcome?.fields?.player_won,
+              transactionDigest,
+            });
           } else {
             reject({
               status: "failure",
