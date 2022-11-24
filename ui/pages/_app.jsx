@@ -2,7 +2,8 @@ import React, { Component, useMemo } from "react";
 import "../styles/globals.css";
 import { WalletProvider } from "@mysten/wallet-adapter-react";
 import { WalletStandardAdapterProvider } from "@mysten/wallet-adapter-all-wallets";
-import { TestTransaction } from "../components/TestTransaction";
+import PlayButton from "../components/PlayButton";
+import { COIN } from "../helpers/constants";
 
 // Components
 import { Header } from "../components/Header";
@@ -17,12 +18,13 @@ function MyApp({ Component, pageProps }) {
   );
 
   return (
-      <WalletProvider adapters={adapters}>
-        <Header />
-        <div className="App h-screen flex flex-col items-center justify-center bg-faint-blue">
-          <h1>Test NFT Transaction</h1>
-        </div>
-      </WalletProvider>
+    <WalletProvider adapters={adapters}>
+      <Header />
+      <div className="App h-screen flex flex-col items-center justify-center bg-faint-blue">
+        <PlayButton coinSide={COIN.HEADS} />
+        <PlayButton coinSide={COIN.TAILS} />
+      </div>
+    </WalletProvider>
   );
 }
 

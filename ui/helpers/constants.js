@@ -1,0 +1,1 @@
+export const COIN = {HEADS: 0, TAILS: 1};
