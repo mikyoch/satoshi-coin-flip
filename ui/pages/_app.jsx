@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React, { useEffect, useMemo, useState } from "react";
 import "../styles/globals.css";
 import { WalletProvider } from "@mysten/wallet-adapter-react";
@@ -11,18 +10,6 @@ import { endGame } from "../services/SatoshiAPI";
 // Components
 import { Header } from "../components/Header";
 import ExplorerLink from "../components/ExplorerLink";
-=======
-import React, { Component, useMemo, useState } from "react";
-import "../styles/globals.css";
-import { WalletProvider } from "@mysten/wallet-adapter-react";
-import { WalletStandardAdapterProvider } from "@mysten/wallet-adapter-all-wallets";
-import PlayGameButton from "../components/PlayGameButton";
-import { COIN } from "../helpers/constants";
-
-// Components
-import { Header } from "../components/Header";
-import { NewGameButton } from "../components/NewGameButton";
->>>>>>> master
 
 
 function MyApp() {
@@ -84,7 +71,6 @@ function MyApp() {
   }
 
   return (
-<<<<<<< HEAD
       <WalletProvider adapters={adapters}>
         <Header />
         <div className="App h-screen flex flex-row items-center justify-center bg-faint-blue">
@@ -112,23 +98,6 @@ function MyApp() {
           </div>
         </div>
       </WalletProvider>
-=======
-    <WalletProvider adapters={adapters}>
-      <Header />
-      <div className="App h-screen flex flex-col items-center justify-center bg-faint-blue">
-        {!newGame ? (
-          // Display the New Game button initially
-          <NewGameButton setGameId={setNewGame} />
-        ) : (
-          // Once the gameID is set, show the user the Heads/Tails buttons
-          <>
-            <PlayGameButton coinSide={COIN.HEADS} gameID={newGame} />
-            <PlayGameButton coinSide={COIN.TAILS} gameID={newGame} />
-          </>
-        )}
-      </div>
-    </WalletProvider>
->>>>>>> master
   );
 }
 
