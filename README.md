@@ -7,7 +7,7 @@ A sample UI for presenting the time locked satoshi coin flip.
 We present a fair way to conduct a 50 / 50 chance game.
 
 We model it after a coin flip since the chances are 50%.<br/>
-The theory backing this project was presented by Kostas Chalkias at the << Confernce??? >><br/>
+The theory backing this project was presented by Kostas Chalkias (Mysten Labs Head of Cryptography) at the GAME3R Forum in Novemeber of 2022.>><br/>
 The smart contract source code, that is running on Sui devnet, can be found at << TO BE ADDED when merged >>
 
 ## Smart Contract Flow
@@ -16,7 +16,11 @@ The smart contract is intended for any two players.<br/>
 The first player will be the house, it picks a random secret (the randomness is up to this player) and it commits on chain the hash of this secret.
 The second player may come and wage a guess on a predetermined bit of this secret, either 0 or 1.
 The house reveals the secret and the smart contract determines the winner.
-The fairness can be checked by hashing the secret and verify that it matches the initial hash the house submitted. (The contract also does this).
+
+The fairness can is ensured and verifiable by:
+
+1) Hashing the secret and verifying that it matches the initial hash the house submitted (the contract also does this).
+2) Time-locking the game so that the house is obliged to reveal the secret after an X amount of epochs (X=7 in our example). 
 
 ## UI Flow
 
