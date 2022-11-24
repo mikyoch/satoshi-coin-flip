@@ -1,11 +1,13 @@
-import React, { Component, useMemo } from "react";
+import React, { Component, useMemo, useState } from "react";
 import "../styles/globals.css";
 import { WalletProvider } from "@mysten/wallet-adapter-react";
 import { WalletStandardAdapterProvider } from "@mysten/wallet-adapter-all-wallets";
-import { TestTransaction } from "../components/TestTransaction";
+import PlayGameButton from "../components/PlayGameButton";
+import { COIN } from "../helpers/constants";
 
 // Components
 import { Header } from "../components/Header";
+import { NewGameButton } from "../components/NewGameButton";
 
 function MyApp({ Component, pageProps }) {
   const adapters = useMemo(
@@ -15,14 +17,24 @@ function MyApp({ Component, pageProps }) {
     ],
     []
   );
+  const [newGame, setNewGame] = useState(null);
 
   return (
-      <WalletProvider adapters={adapters}>
-        <Header />
-        <div className="App h-screen flex flex-col items-center justify-center bg-faint-blue">
-          <h1>Test NFT Transaction</h1>
-        </div>
-      </WalletProvider>
+    <WalletProvider adapters={adapters}>
+      <Header />
+      <div className="App h-screen flex flex-col items-center justify-center bg-faint-blue">
+        {!newGame ? (
+          // Display the New Game button initially
+          <NewGameButton setGameId={setNewGame} />
+        ) : (
+          // Once the gameID is set, show the user the Heads/Tails buttons
+          <>
+            <PlayGameButton coinSide={COIN.HEADS} gameID={newGame} />
+            <PlayGameButton coinSide={COIN.TAILS} gameID={newGame} />
+          </>
+        )}
+      </div>
+    </WalletProvider>
   );
 }
 
