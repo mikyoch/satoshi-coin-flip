@@ -1,13 +1,19 @@
-import React, { Component, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import "../styles/globals.css";
 import { WalletProvider } from "@mysten/wallet-adapter-react";
 import { WalletStandardAdapterProvider } from "@mysten/wallet-adapter-all-wallets";
-import { TestTransaction } from "../components/TestTransaction";
+import Visual from "../components/Visual";
+import { NewGameButton } from "../components/NewGameButton";
+import LinksContainer from "../components/LinksContainer";
+import { endGame } from "../services/SatoshiAPI";
 
 // Components
 import { Header } from "../components/Header";
+import ExplorerLink from "../components/ExplorerLink";
 
-function MyApp({ Component, pageProps }) {
+
+function MyApp() {
+  // wallet provider
   const adapters = useMemo(
     () => [
       // Add support for all wallets that adhere to the Wallet Standard:
@@ -16,11 +22,79 @@ function MyApp({ Component, pageProps }) {
     []
   );
 
+  // game logic
+  const [visualStatus, setVisualStatus] = useState(2);
+  const [gameId, setGameId] = useState("");
+  const [history, setHistory] = useState([]);
+  const [currentTxs, setCurrentTxs] = useState([]);
+
+  
+  useEffect(() => {
+    // ToDo: Add prompt to remind the user that a new game is ongoing!
+    window.addEventListener("beforeunload", () => {
+      if (gameId !== "") { 
+        endGame(gameId);
+        setGameId("");
+      }
+    });
+
+    window.addEventListener("unload", () => {
+      if (gameId !== "") { 
+        endGame(gameId);
+        setGameId("");
+      }
+    });
+  });
+  
+  let playerChoice;
+  const newGameClicked = (gameId_, transactionId) => {
+    setGameId(gameId_);
+    setVisualStatus(2);
+    setCurrentTxs([{id: gameId_, type: "object"}]);//([{id: transactionId, type: "transaction"}]);
+  }
+
+  const play = async (e) => {
+    // assert current gameId !== ""
+
+    //test
+    const result = Math.floor(Math.random() * 2);
+    const choice = e.currentTarget.id === "heads" ? 1 : 0;
+    let isWon = result === choice;
+    // call end bet and get winner
+    const endGameResponse = await endGame(gameId);
+    // isWon = endGameResponse.data.playerWon
+
+    setGameId("");
+    if (isWon) setHistory(old => [...old, {type: "win", id: gameId}]);
+    else setHistory(old => [...old, {type: "loss", id: gameId}]);
+  }
+
   return (
       <WalletProvider adapters={adapters}>
         <Header />
-        <div className="App h-screen flex flex-col items-center justify-center bg-faint-blue">
-          <h1>Test NFT Transaction</h1>
+        <div className="App h-screen flex flex-row items-center justify-center bg-faint-blue">
+          <div id="game" className="w-3/5 flex flex-col items-center justify-center">
+            <span>Current Game: {gameId ?<ExplorerLink id={gameId} type="object"/> : ` -- (Press New Game)`}</span>
+            <Visual isRunning={visualStatus} />
+            {gameId === "" ?
+              (
+                <NewGameButton callback={newGameClicked}/>
+              )
+              :(
+                <div id="ht-buttons">
+                  <button id="tails" onClick={play}>Heads</button>
+                  <button id="heads" onClick={play}>Tails</button>
+                </div>
+              )
+            }
+            
+          </div>
+          <div id="history" className="w-1/5">
+            <LinksContainer linksArray={history} />
+          </div>
+          <div id="transactions" className="w-1/5">
+            <LinksContainer linksArray={currentTxs} />
+          </div>
         </div>
       </WalletProvider>
   );

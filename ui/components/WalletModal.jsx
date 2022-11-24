@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useWallet } from "@mysten/wallet-adapter-react";
+import ExplorerLink from "./ExplorerLink";
 
 export function WalletModal() {
   let { connected } = useWallet();
@@ -56,7 +57,7 @@ export function WalletModal() {
                   <span className="pr-1 text-sui-text-light">
                     Connected address:
                   </span>
-                  <span className="pr-1 text-sui-sky">{account.slice(0, 7)}...{account.slice(-3)}</span>
+                  <ExplorerLink id={account} type="address" />
                   <span className="pr-1 text-sui-text-light hidden lg:inline-flex">
                     ({wallet.name})
                   </span>

@@ -1,32 +1,21 @@
-import { useState } from "react";
+// import { useState } from "react";
 
 export default function ExplorerLink({ id, type }) {
-  const [showTooltip, setShowTooltip] = useState(false);
+  // const [showTooltip, setShowTooltip] = useState(false);
 
   let url = "https://explorer.sui.io/";
   if (type === "object") url += "objects/";
   else if (type === "transaction") url += "transactions/";
   else if (type === "address") url += "addresses/";
+  // adding an else just to be able to show `won#gameId`
+  else url +="objects/";
   url += `${id}`;
   // what will use see
   const shownId = `${id.slice(0, 5)}...${id.slice(-7)}`;
 
   return (
     <>
-      <span className="bg-black/75 text-white rounded-lg overflow-visible"
-        style={
-          showTooltip ? { display: "inline" } : { display: "none" }
-        }
-      >{`${type}#${id}`}</span>
-      <div
-        onMouseEnter={() => {
-          setShowTooltip(true);
-        }}
-        onMouseLeave={() => {
-          setShowTooltip(false);
-        }}
-        className="p-2"
-      >
+      <div>
         <a href={url} target="_blank">{`${type}#${shownId}`}</a>
       </div>
     </>
