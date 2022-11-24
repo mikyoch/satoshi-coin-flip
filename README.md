@@ -1,6 +1,6 @@
 # Time Locked Satoshi Coin Flip
 
-A sample UI for presenting the time locked satoshi coin flip.
+A sample UI for presenting the time locked satoshi coin flip. 
 
 Note: This example is developed on Sui DevNet and intermediate releases might affect its availability.
 
@@ -19,7 +19,7 @@ The first player will be the house, it picks a random secret (the randomness is 
 The second player may come and wage a guess on a predetermined bit of this secret, either 0 or 1.
 The house reveals the secret and the smart contract determines the winner.
 
-The fairness can is ensured and verifiable by:
+Fairness is ensured and verifiable by:
 
 1) Hashing the secret and verifying that it matches the initial hash the house submitted (the contract also does this).
 2) Time-locking the game so that the house is obliged to reveal the secret after an X amount of epochs (X=7 in our example). 
