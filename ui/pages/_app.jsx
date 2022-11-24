@@ -29,8 +29,8 @@ function MyApp({ Component, pageProps }) {
         ) : (
           // Once the gameID is set, show the user the Heads/Tails buttons
           <>
-            <PlayGameButton coinSide={COIN.HEADS} />
-            <PlayGameButton coinSide={COIN.TAILS} />
+            <PlayGameButton coinSide={COIN.HEADS} gameID={newGame} />
+            <PlayGameButton coinSide={COIN.TAILS} gameID={newGame} />
           </>
         )}
       </div>
