@@ -18,10 +18,14 @@ router.post("/start", checkStart, async (req: Request, res: Response) => {
   console.log("body:", req.body);
 
   try {
-    let gameId = await GameService.createGame(req.body.minBet, req.body.maxBet);
+    let { gameId, transactionDigest } = await GameService.createGame(
+      req.body.minBet,
+      req.body.maxBet
+    );
     res.status(200);
     res.json({
       gameId,
+      transactionDigest,
     });
   } catch (e) {
     console.error(
@@ -39,10 +43,13 @@ router.post("/end", checkEnd, async (req: Request, res: Response) => {
   console.log("body:", req.body);
 
   try {
-    let response = await GameService.endGame(req.body.gameId);
+    let { playerWon, transactionDigest } = await GameService.endGame(
+      req.body.gameId
+    );
     res.status(200);
     res.json({
-      playerWon: response,
+      playerWon,
+      transactionDigest,
     });
   } catch (e) {
     console.error(

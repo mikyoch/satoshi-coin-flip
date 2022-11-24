@@ -9,7 +9,8 @@ import {
 } from "@mysten/sui.js";
 
 interface SuiServiceInterface {
-  getLargestBankCoinId(): Promise<any>;
+  getLargestBankCoin(): Promise<any>;
+  getPlayCoin(): Promise<string>;
   executeMoveCall(
     packageObjId: string,
     module: string,
@@ -84,23 +85,82 @@ class SuiService implements SuiServiceInterface {
     });
   }
 
-  public async getLargestBankCoinId(): Promise<string> {
+  public async getLargestBankCoin(): Promise<{ id: string; balance: number }> {
     const didFund = await this.fundBankAddressIfGasLow();
     if (didFund) console.log("Banker account funded successfully");
 
     return new Promise((resolve, reject) => {
-      let coinId: string = "";
-      let balance = 0;
+      let largestCoin = { id: "", balance: 0 };
       try {
         this.getBankCoins().then((bankCoins) => {
           for (let coin of bankCoins) {
-            if (coin.balance >= balance) {
-              coinId = coin.id;
-              balance = coin.balance;
+            if (coin.balance >= largestCoin.balance) {
+              largestCoin = coin;
             }
           }
 
-          resolve(coinId);
+          resolve(largestCoin);
+        });
+      } catch (e) {
+        reject(e);
+      }
+    });
+  }
+
+  private async splitCoins(
+    coinObjectId: string,
+    recipient: string,
+    splitObjects: number,
+    splitValue: number
+  ) {
+    const recipients: string[] = Array(splitObjects).fill(recipient);
+    const splitAmounts: number[] = Array(splitObjects).fill(splitValue);
+
+    return this.signer.paySui({
+      inputCoins: [coinObjectId],
+      recipients,
+      amounts: splitAmounts,
+      gasBudget: 100000,
+    });
+  }
+
+  public async getPlayCoin(playValue: number = 5000): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      let foundPlayCoinId: string = "";
+      try {
+        const didFund = await this.fundBankAddressIfGasLow();
+        if (didFund) console.log("Banker account funded successfully");
+
+        const coins = await this.getBankCoins();
+        let foundPlayCoin = coins.find((coin) => coin.balance === playValue);
+        if (foundPlayCoin) return resolve(foundPlayCoin.id);
+
+        // Finding the largest coin to use as gas
+        const gasCoin = await this.getLargestBankCoin();
+
+        // Checking how many coins of playValue balance can be created
+        let maxSplit = Math.floor(gasCoin.balance / playValue);
+        // If we can create equal or more than 20 then we attempt to create 20
+        // @todo: this is a bit abstract
+        // @todo: maybe fund call should be used here instead of using it at the begining of the function
+        let finalSplit = 0;
+        if (maxSplit >= 20) finalSplit = 20;
+        // @todo: maybe we should pass here coins that have balance lower than a threshold. That threshold could be playValue
+        // this resolves the issue of only having unsuable coins that have a balance that is lower than the threshold
+        this.splitCoins(
+          gasCoin.id,
+          String(process.env.BANKER_ADDRESS),
+          finalSplit,
+          playValue
+        );
+
+        // Get the updated coin objects and look for the first coin you find that has a value of playValue
+        this.getBankCoins().then((bankCoins) => {
+          foundPlayCoinId = bankCoins.find(
+            (coin) => coin.balance === playValue
+          )?.id;
+
+          resolve(foundPlayCoinId);
         });
       } catch (e) {
         reject(e);
