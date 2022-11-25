@@ -9,7 +9,7 @@ export default function ExplorerLink({ id, type }) {
   else if (type === "address") url += "addresses/";
   // adding an else just to be able to show `won#gameId`
   else url +="objects/";
-  url += `${id}`;
+  url += `${encodeURIComponent(id)}`;
   // what will use see
   const shownId = `${id.slice(0, 5)}...${id.slice(-7)}`;
 

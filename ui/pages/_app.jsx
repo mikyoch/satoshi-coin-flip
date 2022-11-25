@@ -2,14 +2,15 @@ import React, { useEffect, useMemo, useState } from "react";
 import "../styles/globals.css";
 import { WalletProvider } from "@mysten/wallet-adapter-react";
 import { WalletStandardAdapterProvider } from "@mysten/wallet-adapter-all-wallets";
-import Visual from "../components/Visual";
-import { NewGameButton } from "../components/NewGameButton";
-import LinksContainer from "../components/LinksContainer";
 import { endGame } from "../services/SatoshiAPI";
-
 // Components
+import ClipLoader from "react-spinners/ClipLoader";
 import { Header } from "../components/Header";
 import ExplorerLink from "../components/ExplorerLink";
+import Visual from "../components/Visual";
+import LinksContainer from "../components/LinksContainer";
+import { NewGameButton } from "../components/NewGameButton";
+import PlayButton from "../components/PlayGameButton";
 
 
 function MyApp() {
@@ -21,15 +22,15 @@ function MyApp() {
     ],
     []
   );
-  const [newGame, setNewGame] = useState(null);
 
   // game logic
   const [visualStatus, setVisualStatus] = useState(2);
   const [gameId, setGameId] = useState("");
   const [history, setHistory] = useState([]);
   const [currentTxs, setCurrentTxs] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  
+  // always make sure to end running games
   useEffect(() => {
     // ToDo: Add prompt to remind the user that a new game is ongoing!
     window.addEventListener("beforeunload", () => {
@@ -47,27 +48,29 @@ function MyApp() {
     });
   });
   
-  let playerChoice;
+
   const newGameClicked = (gameId_, transactionId) => {
+    setIsLoading(false);
     setGameId(gameId_);
     setVisualStatus(2);
-    setCurrentTxs([{id: gameId_, type: "object"}]);//([{id: transactionId, type: "transaction"}]);
+    setCurrentTxs([{id: transactionId, type: "transaction"}]);
   }
 
-  const play = async (e) => {
-    // assert current gameId !== ""
-
-    //test
-    const result = Math.floor(Math.random() * 2);
-    const choice = e.currentTarget.id === "heads" ? 1 : 0;
-    let isWon = result === choice;
-    // call end bet and get winner
-    const endGameResponse = await endGame(gameId);
-    // isWon = endGameResponse.data.playerWon
-
+  const finish = async (choice) => {
+    const endResponse = await endGame(gameId);
+    const {playerWon, transactionDigest} = endResponse.data;
+    const show = playerWon ? choice : (choice + 1) % 2;
+    setVisualStatus(show);
+    setIsLoading(false);
+    if (playerWon) setHistory(old => [{type: "win", id: gameId}, ...old]);
+    else setHistory(old => [{type: "loss", id: gameId}, ...old]);
+    setCurrentTxs(old => [{id: transactionDigest, type: "transaction"}, ...old]);
     setGameId("");
-    if (isWon) setHistory(old => [...old, {type: "win", id: gameId}]);
-    else setHistory(old => [...old, {type: "loss", id: gameId}]);
+  }
+
+  const playButtonClicked = (choice, transactionId) => {
+    setCurrentTxs(old => [{id: transactionId, type: "transaction"}, ...old]);
+    finish(choice);
   }
 
   return (
@@ -77,16 +80,31 @@ function MyApp() {
           <div id="game" className="w-3/5 flex flex-col items-center justify-center">
             <span>Current Game: {gameId ?<ExplorerLink id={gameId} type="object"/> : ` -- (Press New Game)`}</span>
             <Visual isRunning={visualStatus} />
-            {gameId === "" ?
+            {isLoading ?
+            (
+              <div id="spinner">
+                <ClipLoader
+                  color="#6fbcf0"
+                  // cssOverride={override}
+                  size={30}
+                  aria-label="Loading Spinner"
+                  data-testid="loader"
+                />
+              </div>
+            )
+            :
+            (
+              gameId === "" ?
               (
-                <NewGameButton callback={newGameClicked}/>
+                <NewGameButton callback={newGameClicked} loading={setIsLoading}/>
               )
               :(
                 <div id="ht-buttons">
-                  <button id="tails" onClick={play}>Heads</button>
-                  <button id="heads" onClick={play}>Tails</button>
+                  <PlayButton coinSide="TAILS" gameID={gameId} callback={playButtonClicked} loading={setIsLoading}/>
+                  <PlayButton coinSide="HEADS" gameID={gameId} callback={playButtonClicked} loading={setIsLoading}/>
                 </div>
               )
+            )
             }
             
           </div>

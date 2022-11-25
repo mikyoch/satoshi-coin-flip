@@ -3,10 +3,7 @@ import { COIN, PACKAGE } from "../helpers/constants";
 import { useWallet } from "@mysten/wallet-adapter-react";
 import { JsonRpcProvider, Network } from "@mysten/sui.js";
 
-const PlayButton = ({ coinSide, gameID }) => {
-  // Get the type of coin-side selected
-  const side = coinSide === COIN.HEADS ? "HEADS" : "TAILS";
-
+const PlayButton = ({ coinSide, gameID, callback, loading}) => {
   // Initialize provider
   const provider = new JsonRpcProvider(Network.DEVNET);
   const { connected, getAccounts, signAndExecuteTransaction } = useWallet();
@@ -49,7 +46,6 @@ const PlayButton = ({ coinSide, gameID }) => {
 
       try {
         getPlayerCoinObjects().then((playerCoins) => {
-          console.log(playerCoins);
           for (let coin of playerCoins) {
             // Return in case the coin has the exact balance we need
             if (coin.balance === 5000) {
@@ -95,17 +91,17 @@ const PlayButton = ({ coinSide, gameID }) => {
   };
 
   const handleClick = async () => {
+    loading(true);
     try {
       // Get an appropriate coin from the player
       const playerLargestCoin = await getPlayerLargestCoinID();
-      console.log(playerLargestCoin.coinID, playerLargestCoin.balance);
       let splitCoin = playerLargestCoin.coinID;
 
       // Generate a new coin with value 5000
       if (playerLargestCoin.balance > 5000) {
         splitCoin = await splitPlayerCoin(playerLargestCoin);
       }
-
+      const choice = coinSide === "TAILS" ? 0 : 1;
       const transactionResponse = await signAndExecuteTransaction({
         kind: "moveCall",
         data: {
@@ -113,7 +109,7 @@ const PlayButton = ({ coinSide, gameID }) => {
           module: "satoshi_flip",
           function: "bet",
           typeArguments: [],
-          arguments: [`${gameID}`, `${coinSide}`, `${splitCoin}`, "5000"],
+          arguments: [`${gameID}`, `${choice}`, `${splitCoin}`, "5000"],
           gasBudget: 10000,
         },
       });
@@ -124,7 +120,8 @@ const PlayButton = ({ coinSide, gameID }) => {
         const statusMessage = transactionResponse.effects.status.error;
         console.log(statusMessage.status);
       } else {
-        console.log(transactionStatus.status);
+        const digest = transactionResponse?.effects?.transactionDigest;
+        callback(choice, digest);
       }
     } catch (e) {
       console.error(e);
@@ -133,7 +130,12 @@ const PlayButton = ({ coinSide, gameID }) => {
 
   return (
     <>
-      <button onClick={handleClick}>Play {side}</button>
+      <button 
+        onClick={handleClick}
+        className="bg-sui-ocean text-white px-6 py-3 rounded-full shadow hover:shadow-lg outline-none focus:outline-none"
+      >
+        {coinSide}
+      </button>
     </>
   );
 };
