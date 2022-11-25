@@ -138,7 +138,7 @@ function MyApp() {
                 </div>
                 <LinksContainer linksArray={history} />
               </div>
-              <span className="absolute left-2/4 top-2/4 h-6 w-6 text-sui-ocean/30">
+              <span className="absolute left-2/4 top-2/4 -ml-[12px] h-6 w-6 text-sui-ocean/30">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
