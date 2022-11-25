@@ -9,7 +9,7 @@ import ExplorerLink from "./ExplorerLink";
 */
 export default function LinksContainer({ linksArray }) {
     return (
-        <div className="h-[100px] w-[300px] p-3 overflow-y-auto self-center drop-shadow-lg">
+        <div className="w-[300px] p-3 self-center drop-shadow-xl">
             {linksArray.map((item)=> 
                 <ExplorerLink key={item.id} type={item.type} id={item.id} />
             )}
