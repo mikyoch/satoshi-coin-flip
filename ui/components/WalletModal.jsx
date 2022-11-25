@@ -48,7 +48,13 @@ export function WalletModal() {
           rounded-full hover:bg-sui-ocean hover:text-white"
               onClick={handleClickOpen}
             >
-              Connect To Wallet
+              <div className="flex align-start">
+                Connect To Wallet
+                <span className="flex h-2 w-2 relative ml-2 -mr-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber/80"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-failure/80"></span>
+                </span>
+              </div>
             </button>
           ) : (
             <>
