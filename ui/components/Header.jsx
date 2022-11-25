@@ -14,7 +14,7 @@ const Header = () => {
               <Logo />
               <div className="flex w-auto h-4 border-l-2 border-white/5 ml-10 pl-5">
                 <span className="flex flex-auto text-sui-text-light px-5 items-center">
-                  <span className="flex w-3.5 mr-2">
+                  <span className="flex w-6 h-4 mr-2">
                     <TailsSvg />
                   </span>
                   = tails

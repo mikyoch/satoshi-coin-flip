@@ -14,6 +14,7 @@ import PlayButton from "../components/PlayGameButton";
 import { Toaster } from "react-hot-toast";
 import { notifyPlayResult, notifySucess } from "../services/Toasts";
 import { COIN } from "../helpers/constants";
+import Footer from "../components/Footer";
 
 function MyApp() {
   // wallet provider
@@ -26,7 +27,7 @@ function MyApp() {
   );
 
   // game logic
-  const [visualStatus, setVisualStatus] = useState(2);
+  const [visualStatus, setVisualStatus] = useState(0);
   const [gameId, setGameId] = useState("");
   const [history, setHistory] = useState([]);
   const [currentTxs, setCurrentTxs] = useState([]);
@@ -89,9 +90,9 @@ function MyApp() {
     <>
       <Toaster />
       <WalletProvider adapters={adapters}>
-        <div className="App h-screen bg-faint-blue">
+        <div className="App h-screen bg-faint-blue flex flex-col justify-between items-stretch">
           <Header />
-          <div className="mx-auto max-w-7xl pt-6 sm:px-6 lg:px-8">
+          <div className="w-full mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
             <div className="px-4 py-6 sm:px-0">
               <div className="flex flex-col items-center justify-center text-center pb-5">
                 <span>
@@ -111,14 +112,18 @@ function MyApp() {
                 >
                   <Visual isRunning={visualStatus} />
                   {isLoading ? (
-                    <Spinner />
+                    <div className="h-[50px]">
+                      <Spinner />
+                    </div>
                   ) : gameId === "" ? (
-                    <NewGameButton
-                      callback={newGameClicked}
-                      loading={setIsLoading}
-                    />
+                    <div className="h-[50px]">
+                      <NewGameButton
+                        callback={newGameClicked}
+                        loading={setIsLoading}
+                      />
+                    </div>
                   ) : (
-                    <div id="ht-buttons">
+                    <div id="ht-buttons" className="h-[50px]">
                       <PlayButton
                         coinSide="TAILS"
                         gameID={gameId}
@@ -135,7 +140,7 @@ function MyApp() {
                   )}
                 </div>
               </div>
-              <div className="relative flex justify-between items-center px-4 py-6">
+              <div className="relative flex justify-between items-stretch px-4 py-6">
                 <div id="history" className="flex-1 flex flex-col">
                   <div className="relative flex justify-center items-end mb-3">
                     <h2 className="pb-2 text-center">History</h2>
@@ -143,7 +148,7 @@ function MyApp() {
                   </div>
                   <LinksContainer linksArray={history} />
                 </div>
-                <span className="absolute left-2/4 h-6 w-6 text-sui-ocean/30">
+                <span className="absolute left-2/4 top-2/4 -ml-[12px] h-6 w-6 text-sui-ocean/30">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -170,6 +175,7 @@ function MyApp() {
               </div>
             </div>
           </div>
+          <Footer />
         </div>
       </WalletProvider>
     </>

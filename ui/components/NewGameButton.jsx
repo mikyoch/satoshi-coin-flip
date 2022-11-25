@@ -20,13 +20,9 @@ const NewGameButton = (props) => {
     <>
       <button
         onClick={handleSubmit}
-        className="flex align-start bg-sui-ocean text-white px-6 py-3 rounded-full shadow hover:shadow-lg outline-none focus:outline-none"
+        className="bg-sui-ocean text-white px-6 py-3 rounded-full shadow hover:shadow-lg outline-none focus:outline-none"
       >
         New game
-        <span className="flex h-2 w-2 relative ml-2 -mr-2">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber opacity-75"></span>
-          <span className="relative inline-flex rounded-full h-2 w-2 bg-amber"></span>
-        </span>
       </button>
     </>
   );
