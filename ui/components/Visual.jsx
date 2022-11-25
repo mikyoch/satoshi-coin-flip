@@ -23,7 +23,7 @@ export default function Visual(props) {
         <div className="coin-slot">
           <div
             id="slot"
-            className="slot bg-transparent overflow-hidden rounded-lg flex items-center justify-center drop-shadow-xl"
+            className="slot bg-transparent overflow-hidden rounded-lg flex items-center justify-center drop-shadow-xl my-[55%]"
           >
             <div>
               <div className="block bg-sui-ocean border-4 border-sui-ocean-dark rounded-full text-center p-6">
