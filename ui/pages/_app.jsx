@@ -4,14 +4,13 @@ import { WalletProvider } from "@mysten/wallet-adapter-react";
 import { WalletStandardAdapterProvider } from "@mysten/wallet-adapter-all-wallets";
 import { endGame } from "../services/SatoshiAPI";
 // Components
-import ClipLoader from "react-spinners/ClipLoader";
 import { Header } from "../components/Header";
 import ExplorerLink from "../components/ExplorerLink";
 import Visual from "../components/Visual";
 import LinksContainer from "../components/LinksContainer";
 import { NewGameButton } from "../components/NewGameButton";
+import Spinner from "../components/Spinner";
 import PlayButton from "../components/PlayGameButton";
-
 
 function MyApp() {
   // wallet provider
@@ -34,88 +33,135 @@ function MyApp() {
   useEffect(() => {
     // ToDo: Add prompt to remind the user that a new game is ongoing!
     window.addEventListener("beforeunload", () => {
-      if (gameId !== "") { 
+      if (gameId !== "") {
         endGame(gameId);
         setGameId("");
       }
     });
 
     window.addEventListener("unload", () => {
-      if (gameId !== "") { 
+      if (gameId !== "") {
         endGame(gameId);
         setGameId("");
       }
     });
   });
-  
 
   const newGameClicked = (gameId_, transactionId) => {
     setIsLoading(false);
     setGameId(gameId_);
     setVisualStatus(2);
-    setCurrentTxs([{id: transactionId, type: "transaction"}]);
-  }
+    setCurrentTxs([{ id: transactionId, type: "transaction" }]);
+  };
 
   const finish = async (choice) => {
     const endResponse = await endGame(gameId);
-    const {playerWon, transactionDigest} = endResponse.data;
+    const { playerWon, transactionDigest } = endResponse.data;
     const show = playerWon ? choice : (choice + 1) % 2;
     setVisualStatus(show);
     setIsLoading(false);
-    if (playerWon) setHistory(old => [{type: "win", id: gameId}, ...old]);
-    else setHistory(old => [{type: "loss", id: gameId}, ...old]);
-    setCurrentTxs(old => [{id: transactionDigest, type: "transaction"}, ...old]);
+    if (playerWon) setHistory((old) => [{ type: "win", id: gameId }, ...old]);
+    else setHistory((old) => [{ type: "loss", id: gameId }, ...old]);
+    setCurrentTxs((old) => [
+      { id: transactionDigest, type: "transaction" },
+      ...old,
+    ]);
     setGameId("");
-  }
+  };
 
   const playButtonClicked = (choice, transactionId) => {
-    setCurrentTxs(old => [{id: transactionId, type: "transaction"}, ...old]);
+    setCurrentTxs((old) => [
+      { id: transactionId, type: "transaction" },
+      ...old,
+    ]);
     finish(choice);
-  }
+  };
 
   return (
-      <WalletProvider adapters={adapters}>
+    <WalletProvider adapters={adapters}>
+      <div className="App h-screen bg-faint-blue">
         <Header />
-        <div className="App h-screen flex flex-row items-center justify-center bg-faint-blue">
-          <div id="game" className="w-3/5 flex flex-col items-center justify-center">
-            <span>Current Game: {gameId ?<ExplorerLink id={gameId} type="object"/> : ` -- (Press New Game)`}</span>
-            <Visual isRunning={visualStatus} />
-            {isLoading ?
-            (
-              <div id="spinner">
-                <ClipLoader
-                  color="#6fbcf0"
-                  // cssOverride={override}
-                  size={30}
-                  aria-label="Loading Spinner"
-                  data-testid="loader"
-                />
+        <div className="mx-auto max-w-7xl pt-6 sm:px-6 lg:px-8">
+          <div className="px-4 py-6 sm:px-0">
+            <div className="flex flex-col items-center justify-center text-center pb-5">
+              <span>
+                Current Game:{" "}
+                {gameId ? (
+                  <ExplorerLink id={gameId} type="object" />
+                ) : (
+                  <div>N/A</div>
+                )}
+              </span>
+            </div>
+
+            <div className="h-86 rounded-lg border-2 border-dashed border-sui-ocean/10 flex items-center justify-center">
+              <div
+                id="game"
+                className="flex flex-col items-center justify-center mb-10"
+              >
+                <Visual isRunning={visualStatus} />
+                {isLoading ? (
+                  <Spinner />
+                ) : gameId === "" ? (
+                  <NewGameButton
+                    callback={newGameClicked}
+                    loading={setIsLoading}
+                  />
+                ) : (
+                  <div id="ht-buttons">
+                    <PlayButton
+                      coinSide="TAILS"
+                      gameID={gameId}
+                      callback={playButtonClicked}
+                      loading={setIsLoading}
+                    />
+                    <PlayButton
+                      coinSide="HEADS"
+                      gameID={gameId}
+                      callback={playButtonClicked}
+                      loading={setIsLoading}
+                    />
+                  </div>
+                )}
               </div>
-            )
-            :
-            (
-              gameId === "" ?
-              (
-                <NewGameButton callback={newGameClicked} loading={setIsLoading}/>
-              )
-              :(
-                <div id="ht-buttons">
-                  <PlayButton coinSide="TAILS" gameID={gameId} callback={playButtonClicked} loading={setIsLoading}/>
-                  <PlayButton coinSide="HEADS" gameID={gameId} callback={playButtonClicked} loading={setIsLoading}/>
+            </div>
+            <div className="relative flex justify-between items-center px-4 py-6">
+              <div id="history" className="flex-1 flex flex-col">
+                <div className="relative flex justify-center items-end mb-3">
+                  <h2 className="pb-2 text-center">History</h2>
+                  <span className="absolute w-[200px] h-[4px] rounded-full bg-gradient-to-r from-sui-ocean/0 via-sui-ocean/10 to-sui-ocean/0"></span>
                 </div>
-              )
-            )
-            }
-            
-          </div>
-          <div id="history" className="w-1/5">
-            <LinksContainer linksArray={history} />
-          </div>
-          <div id="transactions" className="w-1/5">
-            <LinksContainer linksArray={currentTxs} />
+                <LinksContainer linksArray={history} />
+              </div>
+              <span className="absolute left-2/4 h-6 w-6 text-sui-ocean/30">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="1.5"
+                  stroke="currentColor"
+                  className="w-6 h-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"
+                  />
+                </svg>
+              </span>
+
+              <div id="transactions" className="flex-1 flex flex-col">
+                <div className="relative flex justify-center items-end mb-3">
+                  <h2 className="pb-2 text-center">Transactions</h2>
+                  <span className="absolute w-[200px] h-[4px] rounded-full bg-gradient-to-r from-sui-ocean/0 via-sui-ocean/10 to-sui-ocean/0"></span>
+                </div>
+                <LinksContainer linksArray={currentTxs} />
+              </div>
+            </div>
           </div>
         </div>
-      </WalletProvider>
+      </div>
+    </WalletProvider>
   );
 }
 

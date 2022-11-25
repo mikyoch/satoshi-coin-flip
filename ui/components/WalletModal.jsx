@@ -53,7 +53,7 @@ export function WalletModal() {
           ) : (
             <>
               <div className="flex items-center">
-                <div className="flex-1 text-sm pr-5">
+                <div className="flex flex-1 justify-end text-sm pr-5">
                   <span className="pr-1 text-sui-text-light">
                     Connected address:
                   </span>
