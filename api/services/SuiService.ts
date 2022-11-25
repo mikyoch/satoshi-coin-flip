@@ -87,8 +87,10 @@ class SuiService implements SuiServiceInterface {
   }
 
   public async getLargestBankCoin(): Promise<{ id: string; balance: number }> {
-    const didFund = await this.fundBankAddressIfGasLow();
-    if (didFund) console.log("Banker account funded successfully");
+    // this function is no longer called from the GameService so there is no need
+    // to perform a check here. Check has been transfered to getPlayCoin function
+    // const didFund = await this.fundBankAddressIfGasLow();
+    // if (didFund) console.log("Banker account funded successfully");
 
     return new Promise((resolve, reject) => {
       let largestCoin = { id: "", balance: 0 };
