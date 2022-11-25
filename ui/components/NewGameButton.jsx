@@ -1,5 +1,6 @@
 import { React, useState } from "react";
 import { createGame } from "../services/SatoshiAPI";
+import { notifyError } from "../services/Toasts";
 
 const NewGameButton = (props) => {
   const handleSubmit = async (e) => {
@@ -10,6 +11,7 @@ const NewGameButton = (props) => {
       let response = await createGame(100, 5000);
       props.callback(response.data.gameId, response.data.transactionDigest);
     } catch (e) {
+      notifyError("Uh oh, something went wrong. Please try again later!");
       console.error(e);
     }
   };

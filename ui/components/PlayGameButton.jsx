@@ -2,6 +2,7 @@ import React from "react";
 import { COIN, PACKAGE } from "../helpers/constants";
 import { useWallet } from "@mysten/wallet-adapter-react";
 import { JsonRpcProvider, Network } from "@mysten/sui.js";
+import { notifyError } from "../services/Toasts";
 
 const PlayButton = ({ coinSide, gameID, callback, loading }) => {
   // Initialize provider
@@ -118,12 +119,14 @@ const PlayButton = ({ coinSide, gameID, callback, loading }) => {
 
       if (transactionStatus === "failure") {
         const statusMessage = transactionResponse.effects.status.error;
+        notifyError("Transaction failed. Please make sure you have enough gas");
         console.log(statusMessage.status);
       } else {
         const digest = transactionResponse?.effects?.transactionDigest;
         callback(choice, digest);
       }
     } catch (e) {
+      notifyError("Something went wrong, please try again later");
       console.error(e);
     }
   };
