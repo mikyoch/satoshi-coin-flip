@@ -69,10 +69,11 @@ class SuiService implements SuiServiceInterface {
     return new Promise(async (resolve, reject) => {
       try {
         const bankCoins = await this.getBankCoins();
+        // @todo: eventually make the check more "clever" by checking how much balance the coins have
         if (bankCoins.length > 3) return resolve(false);
 
         console.log(
-          "Banker account found with less than 3 gas objects, requesting SUI from faucet..."
+          "Banker account found with less than 4 gas objects, requesting SUI from faucet..."
         );
         await this.signer.provider.requestSuiFromFaucet(
           String(process.env.BANKER_ADDRESS)
@@ -180,6 +181,8 @@ class SuiService implements SuiServiceInterface {
     funArguments: SuiJsonValue[],
     gasBudget: number = 1000
   ): Promise<SuiExecuteTransactionResponse> {
+    await this.fundBankAddressIfGasLow();
+
     return this.signer.executeMoveCall({
       packageObjectId: packageObjId,
       module: module,
