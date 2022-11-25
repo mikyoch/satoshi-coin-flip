@@ -152,7 +152,7 @@ class SuiService implements SuiServiceInterface {
         let finalSplit = 0;
         if (maxSplit >= 20) finalSplit = 20;
 
-        this.splitCoins(
+        await this.splitCoins(
           [gasCoin.id, ...smallCoinIds],
           String(process.env.BANKER_ADDRESS),
           finalSplit,
