@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
 // @todo: define in a const files specific error codes
-const errorCode = 500;
+const errorCode = 400;
 
 // handles errors related to non existing endpoints
 function notFound(req: Request, res: Response, next: NextFunction) {
@@ -17,8 +17,8 @@ function errorHandler(
   res: Response,
   next: NextFunction
 ) {
-  res.status(res.statusCode || 500).send({ error: err.message });
-  console.error("Error Handler:", err.message);
+  res.status(res.statusCode || 500).send({ error: err });
+  console.error("Error Handler:", err);
   // next(err);
 }
 

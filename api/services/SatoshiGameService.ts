@@ -67,6 +67,12 @@ class SatoshiGameService {
                 effects,
               });
             }
+          })
+          .catch((e) => {
+            reject({
+              status: "failure",
+              message: e.message || "Transaction failed",
+            });
           });
       } catch (e) {
         console.error("Could not create game: ", e);
@@ -118,6 +124,12 @@ class SatoshiGameService {
               effects,
             });
           }
+        })
+        .catch((e) => {
+          reject({
+            status: "failure",
+            message: e.message || "Transaction failed",
+          });
         });
     });
   }
