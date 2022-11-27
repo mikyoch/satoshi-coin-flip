@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useWallet } from "@mysten/wallet-adapter-react";
 import ExplorerLink from "./ExplorerLink";
+import Image from "next/image";
 
 export function WalletModal() {
   let { connected } = useWallet();
@@ -122,7 +123,7 @@ export function WalletModal() {
                               onClick={() => handleConnect(wallet.name)}
                             >
                               <span className="mr-3">
-                                <img src={wallet.icon} className="w-4 h-4" />
+                                <Image src={wallet.icon} alt={wallet.name} width="16" height="16"/>
                               </span>
                               <span className="text-sui-text-light">
                                 Connect {wallet.name}
