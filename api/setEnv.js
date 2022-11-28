@@ -2,6 +2,7 @@ const { execSync } = require("child_process");
 const { fromB64 } = require("@mysten/bcs");
 const { Ed25519PublicKey } = require("@mysten/sui.js");
 const fs = require("fs");
+const { deploy } = require("./deploy_contract");
 
 
 function getEnvJson() {
@@ -60,6 +61,10 @@ function main(){
     const envJson = getEnvJson();
     envJson.BANKER_ADDRESS = pubkey;
     envJson.PRIVATE_KEY = privKeyArr;
+    if (envJson.PACKAGE_ADDRESS == null || envJson.PACKAGE_ADDRESS === "") {
+        const newPackageAddress = deploy();
+        envJson.PACKAGE_ADDRESS = newPackageAddress;
+    }
     writeEnv(envJson);
 }
 
