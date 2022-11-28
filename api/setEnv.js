@@ -26,14 +26,12 @@ function getEnvJson() {
 }
 
 function writeEnv(envJson) {
-    let env = "";
-    for (let [key, value] of Object.entries(envJson)) {
-        if (Array.isArray(value))
-            env += `${key}=[${value}]\n`;
-        else
-            env += `${key}=${value}\n`;
-    }
-    fs.writeFileSync("./.env", env);
+  let env = "";
+  for (let [key, value] of Object.entries(envJson)) {
+    if (Array.isArray(value)) env += `${key}=[${value}]\n`;
+    else env += `${key}=${value}\n`;
+  }
+  fs.writeFileSync("./.env", env);
 }
 
 function main() {
