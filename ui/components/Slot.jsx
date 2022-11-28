@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import HeadsSvg from "../public/svg/heads.svg";
 import TailsSvg from "../public/svg/tails.svg";
 
