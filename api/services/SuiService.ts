@@ -86,11 +86,7 @@ class SuiService implements SuiServiceInterface {
   }
 
   private async getLargestBankCoin(): Promise<{ id: string; balance: number }> {
-    // this function is no longer called from the GameService so there is no need
-    // to perform a check here. Check has been transfered to getPlayCoin function
-    // const didFund = await this.fundBankAddressIfGasLow();
-    // if (didFund) console.log("Banker account funded successfully");
-
+    // @todo: check here that the largest coin is not used as the gasPayment coin and if it is pick another one
     return new Promise((resolve, reject) => {
       let largestCoin = { id: "", balance: 0 };
       try {
@@ -109,23 +105,6 @@ class SuiService implements SuiServiceInterface {
     });
   }
 
-  private async splitCoins(
-    coinObjectIds: string[],
-    recipient: string,
-    splitObjects: number,
-    splitValue: number
-  ) {
-    const recipients: string[] = Array(splitObjects).fill(recipient);
-    const splitAmounts: number[] = Array(splitObjects).fill(splitValue);
-
-    return this.signer.paySui({
-      inputCoins: coinObjectIds,
-      recipients,
-      amounts: splitAmounts,
-      gasBudget: 100000,
-    });
-  }
-
   public async getPlayCoin(playValue: number = 5000): Promise<string> {
     return new Promise(async (resolve, reject) => {
       let foundPlayCoinId: string = "";
@@ -133,40 +112,10 @@ class SuiService implements SuiServiceInterface {
         const didFund = await this.fundBankAddressIfGasLow();
         if (didFund) console.log("Banker account funded successfully");
 
-        const coins = await this.getBankCoins();
-        let foundPlayCoin = coins.find((coin) => coin.balance === playValue);
-        if (foundPlayCoin) return resolve(foundPlayCoin.id);
-
-        // Finding the largest coin to use as gas
+        // @todo: Find the largest coin that is not the current gasPayment coin to use as stake
         const gasCoin = await this.getLargestBankCoin();
 
-        // Find all coins lower than playValue. Used for recycling
-        const smallCoins = coins.filter((coin) => coin.balance < 5000);
-        const smallCoinIds = smallCoins.map((coin) => coin.id);
-
-        // Checking how many coins of playValue balance can be created from the gas coin
-        let maxSplit = Math.floor(gasCoin.balance / playValue);
-        // If we can create equal or more than 20 then we attempt to create 20
-        // @todo: this is a bit abstract
-        // @todo: maybe fund call should be used here instead of using it at the begining of the function
-        let finalSplit = 0;
-        if (maxSplit >= 20) finalSplit = 20;
-
-        await this.splitCoins(
-          [gasCoin.id, ...smallCoinIds],
-          String(process.env.BANKER_ADDRESS),
-          finalSplit,
-          playValue
-        );
-
-        // Get the updated coin objects and look for the first coin you find that has a value of playValue
-        this.getBankCoins().then((bankCoins) => {
-          foundPlayCoinId = bankCoins.find(
-            (coin) => coin.balance === playValue
-          )?.id;
-
-          resolve(foundPlayCoinId);
-        });
+        resolve(gasCoin.id);
       } catch (e) {
         reject(e);
       }
