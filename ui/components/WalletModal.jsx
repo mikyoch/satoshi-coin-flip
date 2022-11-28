@@ -126,7 +126,7 @@ export function WalletModal() {
                               onClick={() => handleConnect(wallet.name)}
                             >
                               <span className="mr-3">
-                                <Image src={wallet.icon} alt={wallet.name} width="16" height="16"/>
+                                <img src={wallet.icon} alt={wallet.name} width="16" height="16"/>
                               </span>
                               <span className="text-sui-text-light">
                                 Connect {wallet.name}
