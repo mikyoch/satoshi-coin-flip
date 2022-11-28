@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #[test_only]
-module games_with_chance::test_satoshi_flip {
+module satoshi_flip::test_satoshi_flip {
     // imports
     use std::hash::sha3_256;
 
@@ -12,7 +12,7 @@ module games_with_chance::test_satoshi_flip {
     use sui::test_scenario;
     use sui::tx_context::TxContext;
 
-    use games_with_chance::satoshi_flip::{Self, Game};
+    use satoshi_flip::satoshi_flip::{Self, Game};
 
     const EWronghouse: u64 = 0;
     const EWrongMinBet: u64 = 1;

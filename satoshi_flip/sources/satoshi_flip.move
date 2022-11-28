@@ -19,7 +19,7 @@
 /// 
 /// This edition accepts SUI Coins of any value (as long as it is greater than the minimum required) and makes sure to return the change to the proper caller.
 /// It is recommended for any caller to use SUI Coins with exact amount
-module games_with_chance::satoshi_flip {
+module satoshi_flip::satoshi_flip {
     // imports
     use std::option::{Self, Option};
     use std::hash::sha3_256;
