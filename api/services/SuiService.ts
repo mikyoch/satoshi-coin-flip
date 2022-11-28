@@ -9,7 +9,6 @@ import {
 } from "@mysten/sui.js";
 
 interface SuiServiceInterface {
-  getLargestBankCoin(): Promise<any>;
   getPlayCoin(): Promise<string>;
   executeMoveCall(
     packageObjId: string,
@@ -69,10 +68,11 @@ class SuiService implements SuiServiceInterface {
     return new Promise(async (resolve, reject) => {
       try {
         const bankCoins = await this.getBankCoins();
+        // @todo: eventually make the check more "clever" by checking how much balance the coins have
         if (bankCoins.length > 3) return resolve(false);
 
         console.log(
-          "Banker account found with less than 3 gas objects, requesting SUI from faucet..."
+          "Banker account found with less than 4 gas objects, requesting SUI from faucet..."
         );
         await this.signer.provider.requestSuiFromFaucet(
           String(process.env.BANKER_ADDRESS)
@@ -85,9 +85,11 @@ class SuiService implements SuiServiceInterface {
     });
   }
 
-  public async getLargestBankCoin(): Promise<{ id: string; balance: number }> {
-    const didFund = await this.fundBankAddressIfGasLow();
-    if (didFund) console.log("Banker account funded successfully");
+  private async getLargestBankCoin(): Promise<{ id: string; balance: number }> {
+    // this function is no longer called from the GameService so there is no need
+    // to perform a check here. Check has been transfered to getPlayCoin function
+    // const didFund = await this.fundBankAddressIfGasLow();
+    // if (didFund) console.log("Banker account funded successfully");
 
     return new Promise((resolve, reject) => {
       let largestCoin = { id: "", balance: 0 };
@@ -108,7 +110,7 @@ class SuiService implements SuiServiceInterface {
   }
 
   private async splitCoins(
-    coinObjectId: string,
+    coinObjectIds: string[],
     recipient: string,
     splitObjects: number,
     splitValue: number
@@ -117,7 +119,7 @@ class SuiService implements SuiServiceInterface {
     const splitAmounts: number[] = Array(splitObjects).fill(splitValue);
 
     return this.signer.paySui({
-      inputCoins: [coinObjectId],
+      inputCoins: coinObjectIds,
       recipients,
       amounts: splitAmounts,
       gasBudget: 100000,
@@ -138,17 +140,20 @@ class SuiService implements SuiServiceInterface {
         // Finding the largest coin to use as gas
         const gasCoin = await this.getLargestBankCoin();
 
-        // Checking how many coins of playValue balance can be created
+        // Find all coins lower than playValue. Used for recycling
+        const smallCoins = coins.filter((coin) => coin.balance < 5000);
+        const smallCoinIds = smallCoins.map((coin) => coin.id);
+
+        // Checking how many coins of playValue balance can be created from the gas coin
         let maxSplit = Math.floor(gasCoin.balance / playValue);
         // If we can create equal or more than 20 then we attempt to create 20
         // @todo: this is a bit abstract
         // @todo: maybe fund call should be used here instead of using it at the begining of the function
         let finalSplit = 0;
         if (maxSplit >= 20) finalSplit = 20;
-        // @todo: maybe we should pass here coins that have balance lower than a threshold. That threshold could be playValue
-        // this resolves the issue of only having unsuable coins that have a balance that is lower than the threshold
-        this.splitCoins(
-          gasCoin.id,
+
+        await this.splitCoins(
+          [gasCoin.id, ...smallCoinIds],
           String(process.env.BANKER_ADDRESS),
           finalSplit,
           playValue
@@ -180,6 +185,8 @@ class SuiService implements SuiServiceInterface {
     funArguments: SuiJsonValue[],
     gasBudget: number = 1000
   ): Promise<SuiExecuteTransactionResponse> {
+    await this.fundBankAddressIfGasLow();
+
     return this.signer.executeMoveCall({
       packageObjectId: packageObjId,
       module: module,

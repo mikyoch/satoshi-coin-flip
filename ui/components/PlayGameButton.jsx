@@ -2,8 +2,9 @@ import React from "react";
 import { COIN, PACKAGE } from "../helpers/constants";
 import { useWallet } from "@mysten/wallet-adapter-react";
 import { JsonRpcProvider, Network } from "@mysten/sui.js";
+import { notifyError } from "../services/Toasts";
 
-const PlayButton = ({ coinSide, gameID, callback, loading}) => {
+const PlayButton = ({ coinSide, gameID, callback, loading }) => {
   // Initialize provider
   const provider = new JsonRpcProvider(Network.DEVNET);
   const { connected, getAccounts, signAndExecuteTransaction } = useWallet();
@@ -118,22 +119,26 @@ const PlayButton = ({ coinSide, gameID, callback, loading}) => {
 
       if (transactionStatus === "failure") {
         const statusMessage = transactionResponse.effects.status.error;
+        notifyError("Transaction failed. Please make sure you have enough gas");
         console.log(statusMessage.status);
       } else {
         const digest = transactionResponse?.effects?.transactionDigest;
         callback(choice, digest);
       }
     } catch (e) {
+      notifyError("Something went wrong, please try again later");
       console.error(e);
     }
   };
 
   return (
     <>
-      <button 
+      <button
         onClick={handleClick}
-        className="bg-sui-ocean text-white px-6 py-3 rounded-full shadow hover:shadow-lg outline-none focus:outline-none"
+        className="bg-sui-ocean text-white px-6 py-3 mx-2 lowercase rounded-full shadow hover:shadow-lg outline-none focus:outline-none"
       >
+        <span className="capitalize pr-1">Play</span>
+
         {coinSide}
       </button>
     </>

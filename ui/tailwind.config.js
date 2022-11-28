@@ -25,7 +25,9 @@ module.exports = {
       'gray-dark': '#273444',
       'gray': '#8492a6',
       'gray-light': '#d3dce6',
-      'amber': "#e32c22"
+      'amber': "#e32c22",
+      'success': '#74b72e',
+      'failure': "#b90e0a",
     },
     extend: {},
   },
