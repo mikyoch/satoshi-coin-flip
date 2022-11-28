@@ -6,8 +6,11 @@ const { deploy } = require("./deploy_contract");
 <<<<<<< HEAD
 =======
 
+<<<<<<< HEAD
 >>>>>>> f19dd4f (Run deploy through setEnv if PACKAGE_ADDRESS is empty)
 
+=======
+>>>>>>> c362815 (Format files with prettier)
 function getEnvJson() {
   const envJson = {
     PORT: "",
@@ -59,7 +62,6 @@ function main() {
   const pubKeyClass = new Ed25519PublicKey(pubKeyArr);
   const pubkey = `0x${pubKeyClass.toSuiAddress()}`;
 
-<<<<<<< HEAD
   const envJson = getEnvJson();
   envJson.BANKER_ADDRESS = pubkey;
   envJson.PRIVATE_KEY = privKeyArr;
@@ -67,17 +69,6 @@ function main() {
     const newPackageAddress = deploy();
     envJson.PACKAGE_ADDRESS = newPackageAddress;
   }
-  writeEnv(envJson);
-=======
-    const envJson = getEnvJson();
-    envJson.BANKER_ADDRESS = pubkey;
-    envJson.PRIVATE_KEY = privKeyArr;
-    if (envJson.PACKAGE_ADDRESS == null || envJson.PACKAGE_ADDRESS === "") {
-        const newPackageAddress = deploy();
-        envJson.PACKAGE_ADDRESS = newPackageAddress;
-    }
-    writeEnv(envJson);
->>>>>>> f19dd4f (Run deploy through setEnv if PACKAGE_ADDRESS is empty)
 }
 
 main();
