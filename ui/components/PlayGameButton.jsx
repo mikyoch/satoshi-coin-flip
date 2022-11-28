@@ -3,6 +3,8 @@ import { COIN, PACKAGE } from "../helpers/constants";
 import { useWallet } from "@mysten/wallet-adapter-react";
 import { JsonRpcProvider, Network } from "@mysten/sui.js";
 import { notifyError } from "../services/Toasts";
+import HeadsSvg from "../public/svg/heads.svg";
+import TailsSvg from "../public/svg/tails.svg";
 
 const PlayButton = ({ coinSide, gameID, callback, loading }) => {
   // Initialize provider
@@ -102,7 +104,7 @@ const PlayButton = ({ coinSide, gameID, callback, loading }) => {
       if (playerLargestCoin.balance > 5000) {
         splitCoin = await splitPlayerCoin(playerLargestCoin);
       }
-      const choice = coinSide === "TAILS" ? 0 : 1;
+      const choice = coinSide === "TAILS" ? COIN.TAILS : COIN.HEADS;
       const transactionResponse = await signAndExecuteTransaction({
         kind: "moveCall",
         data: {
@@ -131,15 +133,23 @@ const PlayButton = ({ coinSide, gameID, callback, loading }) => {
     }
   };
 
+  const renderButtonIcon = (side) => {
+    return side === "TAILS" ? <TailsSvg /> : <HeadsSvg />;
+  };
+
   return (
     <>
       <button
         onClick={handleClick}
-        className="bg-sui-ocean text-white px-6 py-3 mx-2 lowercase rounded-full shadow hover:shadow-lg outline-none focus:outline-none"
+        className="group bg-gray-dark text-white/70 px-6 py-3 mx-2 lowercase rounded-full shadow hover:shadow-lg outline-none focus:outline-none"
       >
-        <span className="capitalize pr-1">Play</span>
-
-        {coinSide}
+        <span className="group-hover:text-white/80 flex items-center justify-center capitalize pr-1">
+          <span className="flex justify-center w-6 h-6 text-sui-sky/60 group-hover:text-sui-sky/100">
+            {renderButtonIcon(coinSide)}
+          </span>
+          <span className="px-1 ml-1">Play</span>
+          <span className="lowercase">{coinSide}</span>
+        </span>
       </button>
     </>
   );

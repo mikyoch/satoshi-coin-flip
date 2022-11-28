@@ -5,6 +5,7 @@ import ExplorerLink from "./ExplorerLink";
 export function WalletModal() {
   let { connected } = useWallet();
   const [open, setOpen] = useState(false);
+  const [walletName, setWalletName] = useState('');
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -31,6 +32,8 @@ export function WalletModal() {
   useEffect(() => {
     if (!connected) return;
 
+    setWalletName(wallet.name.replace(/\(|\)/g, ''));
+    
     getAccounts().then((accounts) => {
       if (accounts && accounts.length) {
         setAccount(accounts[0]);
@@ -64,8 +67,8 @@ export function WalletModal() {
                     Connected address:
                   </span>
                   <ExplorerLink id={account} type="address" />
-                  <span className="pr-1 text-sui-text-light hidden lg:inline-flex">
-                    ({wallet.name})
+                  <span className="pl-1 text-sui-text-light hidden lg2:inline-flex font-light">
+                    ({walletName})
                   </span>
                 </div>
                 <button

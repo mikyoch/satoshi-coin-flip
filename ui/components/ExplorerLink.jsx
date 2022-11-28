@@ -11,33 +11,48 @@ export default function ExplorerLink({ id, type }) {
   else url += "objects/";
   url += `${encodeURIComponent(id)}`;
   // what will user see
-  const shownId = `${id.slice(0, 5)}...${id.slice(-7)}`;
   const isAddress = type === "address";
   const playerWin = type === "win";
   const playerLoss = type === "loss";
   const isObject = type === "object";
+  const shownId = id;
+
+  const renderColor = () => {
+    if (!isAddress && !isObject) {
+      if (playerLoss) {
+        return "text-failure";
+      } else if (playerWin) {
+        return "text-success";
+      }
+    }
+    return "text-sui-ocean";
+  };
 
   return (
     <>
       <div className="first-of-type:text-sui-sky text-sui-text-light">
         <a href={url} target="_blank">
-          {!isAddress && !playerWin && !playerLoss && isObject && (
-            <span className="text-sui-ocean pr-1">
-              {`${type.charAt(0).toUpperCase() + type.slice(1)}:`}
-            </span>
+          {!isAddress ? (
+            <>
+              {!playerWin && !playerLoss && isObject ? (
+                <>
+                  <span className={`${renderColor()} + pr-1 text-sm`}>
+                    {`${type.charAt(0).toUpperCase() + type.slice(1)}:`}
+                  </span>
+                  <span className="text-inherit/50 text-sm">{`${shownId}`}</span>
+                </>
+              ) : (
+                <>
+                  <span className={`${renderColor()} + pr-1`}>
+                    {`${type.charAt(0).toUpperCase() + type.slice(1)}:`}
+                  </span>
+                  <span className="text-inherit/50">{`${shownId}`}</span>
+                </>
+              )}
+            </>
+          ) : (
+            <span className="text-inherit/50">{`${shownId}`}</span>
           )}
-          {playerWin && !isAddress && !playerLoss && (
-            <span className="text-success pr-1">
-              {`${type.charAt(0).toUpperCase() + type.slice(1)}:`}
-            </span>
-          )}
-          {playerLoss && !isAddress && !playerWin && (
-            <span className="text-failure pr-1">
-              {`${type.charAt(0).toUpperCase() + type.slice(1)}:`}
-            </span>
-          )}
-
-          <span className="text-inherit/50">{`${shownId}`}</span>
         </a>
       </div>
     </>
