@@ -1,7 +1,5 @@
 FROM node:16-alpine
 
-ENV NODE_ENV=dev
-
 # Sets the default working directory to /app which is where we copy the service files to.
 WORKDIR /app
 
