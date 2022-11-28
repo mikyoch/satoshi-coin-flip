@@ -1,5 +1,5 @@
 import React from "react";
-import { COIN, PACKAGE } from "../helpers/constants";
+import { PACKAGE } from "../helpers/constants";
 import { useWallet } from "@mysten/wallet-adapter-react";
 import { JsonRpcProvider, Network } from "@mysten/sui.js";
 import { notifyError } from "../services/Toasts";
