@@ -1,23 +1,9 @@
-# See the README.md for usage and configuration info
-
-# This line defines which node.js Docker image to leverage
-# Available versions are described at https://hub.docker.com/_/node/
 FROM node:16-alpine
 
 ENV NODE_ENV=dev
 
 # Sets the default working directory to /app which is where we copy the service files to.
 WORKDIR /app
-
-# TODO: for security purposes, you should update this Dockerfile to specify your own target user/group
-# -S stands for '--system'
-# -G stands for group
-# -R changes the ownership rights of a file recursively
-# RUN addgroup -S axway-group && adduser -S axway-user -G axway-group && \
-#   chown -R axway-user:axway-group /app
-
-# Set non-root user
-# USER axway-user
 
 # Denotes to copy all files in the service to 'app' folder in the container
 COPY . /app
@@ -26,11 +12,7 @@ COPY . /app
 # RUN npm install --production --no-optional
 RUN npm install
 
-
-# check every 5s to ensure this service is healthy
-HEALTHCHECK --interval=5s --start-period=45s --timeout=5s --retries=5 CMD node healthcheck.js
-
 EXPOSE 8080/tcp
 
 # Starts the service
-CMD ["ts-node", "."]
+CMD ["npm", "run", "prod"]
