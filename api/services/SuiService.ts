@@ -24,11 +24,16 @@ interface SuiServiceInterface {
 class SuiService implements SuiServiceInterface {
   private provider: JsonRpcProvider;
   private signer: RawSigner;
+  private gasCoins: string[];
+  private gasCoinSelection: string;
 
   constructor() {
     // @todo: parameterized initialization here?
     this.provider = new JsonRpcProvider(Network.DEVNET);
     this.signer = this.getSigner();
+    this.gasCoins = [];
+    this.gasCoinSelection = "";
+    this.populateGasCoins();
   }
 
   private getSigner(): RawSigner {
@@ -39,7 +44,76 @@ class SuiService implements SuiServiceInterface {
     return signer;
   }
 
-  private getBankCoins(): Promise<{ id: any; balance: any }[]> {
+  private async populateGasCoins() {
+    try {
+      const gasCoins = await this.getAllCoins();
+      if (
+        gasCoins.length > 5 &&
+        gasCoins.every((coin) => coin.balance > 5000)
+      ) {
+        // pick the first 5 coins
+        this.gasCoins = gasCoins
+          .filter((coin, index) => index < 5)
+          .map((coin) => coin.id);
+      } else {
+        // if no suitable coins were found request from the faucet
+        const faucetRes: any = await this.provider.requestSuiFromFaucet(
+          String(process.env.BANKER_ADDRESS)
+        );
+        console.log(
+          "Banker low on funds... Requested from faucet successfully!"
+        );
+        this.gasCoins = faucetRes.transferred_gas_objects.map(
+          (el: any) => el.id
+        );
+      }
+      this.gasCoinSelection = this.gasCoins[0];
+    } catch (e) {
+      console.error("Populating gas coins failed: ", e);
+    }
+  }
+
+  private async mergeCoins(coinsToMerge: { id: string; balance: number }[]) {
+    return this.signer.paySui({
+      inputCoins: [...coinsToMerge.map((coin) => coin.id)],
+      recipients: [String(process.env.BANKER_ADDRESS)],
+      amounts: [
+        coinsToMerge
+          .map((coin) => coin.balance)
+          .reduce((prevCoin, currCoin) => prevCoin + currCoin),
+      ],
+      gasBudget: 10000,
+    });
+  }
+
+  private async checkGasCoinBalances() {
+    const allCoins = await this.getAllCoins();
+
+    const gasCoins = allCoins.filter((coin) =>
+      this.gasCoins.some((coinId) => coinId === coin.id)
+    );
+
+    const smallGasCoins = gasCoins.filter((coin) => coin.balance < 5000);
+
+    if (smallGasCoins.length > 1) {
+      await this.mergeCoins(smallGasCoins);
+      await this.populateGasCoins();
+    }
+  }
+
+  private async getNextGasCoin() {
+    await this.checkGasCoinBalances();
+
+    const coinIdIndex = this.gasCoins.findIndex(
+      (coinId) => coinId === this.gasCoinSelection
+    );
+    // select nextIndex + 1 and wrap around if we are at the end
+    const nextIndex = (coinIdIndex + 1) % this.gasCoins.length;
+    this.gasCoinSelection = this.gasCoins.at(nextIndex) || "";
+    return this.gasCoinSelection;
+  }
+
+  private getAllCoins(): Promise<{ id: any; balance: any }[]> {
     return new Promise((resolve, reject) => {
       this.provider
         .getObjectsOwnedByAddress(String(process.env.BANKER_ADDRESS))
@@ -58,45 +132,22 @@ class SuiService implements SuiServiceInterface {
             });
         })
         .catch((e) => {
-          console.error("Bank Coins error: ", e);
+          console.error("Get all coins error: ", e);
           reject(e);
         });
     });
   }
 
-  private async fundBankAddressIfGasLow(): Promise<boolean> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const bankCoins = await this.getBankCoins();
-        // @todo: eventually make the check more "clever" by checking how much balance the coins have
-        if (bankCoins.length > 3) return resolve(false);
-
-        console.log(
-          "Banker account found with less than 4 gas objects, requesting SUI from faucet..."
-        );
-        await this.signer.provider.requestSuiFromFaucet(
-          String(process.env.BANKER_ADDRESS)
-        );
-        resolve(true);
-      } catch (e) {
-        console.error("Could not check or fund bank address", e);
-        reject(e);
-      }
-    });
-  }
-
   private async getLargestBankCoin(): Promise<{ id: string; balance: number }> {
-    // this function is no longer called from the GameService so there is no need
-    // to perform a check here. Check has been transfered to getPlayCoin function
-    // const didFund = await this.fundBankAddressIfGasLow();
-    // if (didFund) console.log("Banker account funded successfully");
-
     return new Promise((resolve, reject) => {
       let largestCoin = { id: "", balance: 0 };
       try {
-        this.getBankCoins().then((bankCoins) => {
+        this.getAllCoins().then((bankCoins) => {
           for (let coin of bankCoins) {
-            if (coin.balance >= largestCoin.balance) {
+            if (
+              coin.balance >= largestCoin.balance &&
+              !this.gasCoins.some((coinId) => coinId === coin.id)
+            ) {
               largestCoin = coin;
             }
           }
@@ -109,64 +160,22 @@ class SuiService implements SuiServiceInterface {
     });
   }
 
-  private async splitCoins(
-    coinObjectIds: string[],
-    recipient: string,
-    splitObjects: number,
-    splitValue: number
-  ) {
-    const recipients: string[] = Array(splitObjects).fill(recipient);
-    const splitAmounts: number[] = Array(splitObjects).fill(splitValue);
-
-    return this.signer.paySui({
-      inputCoins: coinObjectIds,
-      recipients,
-      amounts: splitAmounts,
-      gasBudget: 100000,
-    });
-  }
-
-  public async getPlayCoin(playValue: number = 5000): Promise<string> {
+  public async getPlayCoin(): Promise<string> {
     return new Promise(async (resolve, reject) => {
-      let foundPlayCoinId: string = "";
       try {
-        const didFund = await this.fundBankAddressIfGasLow();
-        if (didFund) console.log("Banker account funded successfully");
+        // Find the largest coin that is not in gasPayment coins to use as stake
+        let gasCoin = await this.getLargestBankCoin();
+        if (!gasCoin.id) {
+          console.log("Banker low on funds... ");
+          await this.provider.requestSuiFromFaucet(
+            String(process.env.BANKER_ADDRESS)
+          );
+          console.log("Requested from faucet successfully!");
+        }
 
-        const coins = await this.getBankCoins();
-        let foundPlayCoin = coins.find((coin) => coin.balance === playValue);
-        if (foundPlayCoin) return resolve(foundPlayCoin.id);
+        gasCoin = await this.getLargestBankCoin();
 
-        // Finding the largest coin to use as gas
-        const gasCoin = await this.getLargestBankCoin();
-
-        // Find all coins lower than playValue. Used for recycling
-        const smallCoins = coins.filter((coin) => coin.balance < 5000);
-        const smallCoinIds = smallCoins.map((coin) => coin.id);
-
-        // Checking how many coins of playValue balance can be created from the gas coin
-        let maxSplit = Math.floor(gasCoin.balance / playValue);
-        // If we can create equal or more than 20 then we attempt to create 20
-        // @todo: this is a bit abstract
-        // @todo: maybe fund call should be used here instead of using it at the begining of the function
-        let finalSplit = 0;
-        if (maxSplit >= 20) finalSplit = 20;
-
-        await this.splitCoins(
-          [gasCoin.id, ...smallCoinIds],
-          String(process.env.BANKER_ADDRESS),
-          finalSplit,
-          playValue
-        );
-
-        // Get the updated coin objects and look for the first coin you find that has a value of playValue
-        this.getBankCoins().then((bankCoins) => {
-          foundPlayCoinId = bankCoins.find(
-            (coin) => coin.balance === playValue
-          )?.id;
-
-          resolve(foundPlayCoinId);
-        });
+        resolve(gasCoin.id);
       } catch (e) {
         reject(e);
       }
@@ -185,16 +194,17 @@ class SuiService implements SuiServiceInterface {
     funArguments: SuiJsonValue[],
     gasBudget: number = 1000
   ): Promise<SuiExecuteTransactionResponse> {
-    await this.fundBankAddressIfGasLow();
-
-    return this.signer.executeMoveCall({
+    const response = await this.signer.executeMoveCall({
       packageObjectId: packageObjId,
       module: module,
       typeArguments: typeArguments,
       function: funName,
       arguments: funArguments,
       gasBudget,
+      gasPayment: await this.getNextGasCoin(),
     });
+
+    return response;
   }
 }
 

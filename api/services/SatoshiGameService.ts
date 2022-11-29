@@ -43,7 +43,7 @@ class SatoshiGameService {
             "satoshi_flip",
             [],
             "start_game",
-            [Array.from(hash), coinId, maxBet, minBet]
+            [Array.from(hash), coinId, minBet, maxBet]
           )
           .then((res: any) => {
             // added any here because I don't understand what problem it has with the type
