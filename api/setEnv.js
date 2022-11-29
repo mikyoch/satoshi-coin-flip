@@ -3,14 +3,7 @@ const { fromB64 } = require("@mysten/bcs");
 const { Ed25519PublicKey } = require("@mysten/sui.js");
 const fs = require("fs");
 const { deploy } = require("./deploy_contract");
-<<<<<<< HEAD
-=======
 
-<<<<<<< HEAD
->>>>>>> f19dd4f (Run deploy through setEnv if PACKAGE_ADDRESS is empty)
-
-=======
->>>>>>> c362815 (Format files with prettier)
 function getEnvJson() {
   const envJson = {
     PORT: "",
@@ -65,10 +58,12 @@ function main() {
   const envJson = getEnvJson();
   envJson.BANKER_ADDRESS = pubkey;
   envJson.PRIVATE_KEY = privKeyArr;
+  writeEnv(envJson);
   if (envJson.PACKAGE_ADDRESS == null || envJson.PACKAGE_ADDRESS === "") {
     const newPackageAddress = deploy();
     envJson.PACKAGE_ADDRESS = newPackageAddress;
   }
+  writeEnv(envJson);
 }
 
 main();
