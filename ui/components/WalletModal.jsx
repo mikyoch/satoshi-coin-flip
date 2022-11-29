@@ -6,6 +6,7 @@ import Image from "next/image";
 export function WalletModal() {
   let { connected } = useWallet();
   const [open, setOpen] = useState(false);
+  const [walletName, setWalletName] = useState('');
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -32,6 +33,8 @@ export function WalletModal() {
   useEffect(() => {
     if (!connected) return;
 
+    setWalletName(wallet.name.replace(/\(|\)/g, ''));
+    
     getAccounts().then((accounts) => {
       if (accounts && accounts.length) {
         setAccount(accounts[0]);
@@ -65,8 +68,8 @@ export function WalletModal() {
                     Connected address:
                   </span>
                   <ExplorerLink id={account} type="address" />
-                  <span className="pr-1 text-sui-text-light hidden lg:inline-flex">
-                    ({wallet.name})
+                  <span className="pl-1 text-sui-text-light hidden lg2:inline-flex font-light">
+                    ({walletName})
                   </span>
                 </div>
                 <button
@@ -123,7 +126,7 @@ export function WalletModal() {
                               onClick={() => handleConnect(wallet.name)}
                             >
                               <span className="mr-3">
-                                <Image src={wallet.icon} alt={wallet.name} width="16" height="16"/>
+                                <img src={wallet.icon} alt={wallet.name} width="16" height="16"/>
                               </span>
                               <span className="text-sui-text-light">
                                 Connect {wallet.name}
