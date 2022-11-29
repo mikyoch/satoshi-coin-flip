@@ -21,6 +21,7 @@ const NewGameButton = (props) => {
     } catch (e) {
       notifyError("Uh oh, something went wrong. Please try again later!");
       console.error(e);
+      props.loading(false);
     }
   };
 
