@@ -132,7 +132,7 @@ class SuiService implements SuiServiceInterface {
             });
         })
         .catch((e) => {
-          console.error("Bank Coins error: ", e);
+          console.error("Get all coins error: ", e);
           reject(e);
         });
     });
