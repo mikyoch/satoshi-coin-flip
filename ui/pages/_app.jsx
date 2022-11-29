@@ -96,11 +96,11 @@ function MyApp() {
             <div className="px-4 py-6 sm:px-0">
               <div className="flex flex-col items-center justify-center text-center pb-5">
                 <span>
-                  Current Game:{" "}
+                  Current Game:
                   {gameId ? (
                     <ExplorerLink id={gameId} type="object" />
                   ) : (
-                    <div>N/A</div>
+                    <div className="font-light text-sui-text-light text-sm italic animate-pulse">Waiting to start new game...</div>
                   )}
                 </span>
               </div>
@@ -140,15 +140,15 @@ function MyApp() {
                   )}
                 </div>
               </div>
-              <div className="relative flex justify-between items-stretch px-4 py-6">
-                <div id="history" className="flex-1 flex flex-col">
+              <div className="relative flex justify-between items-stretch flex-wrap py-6">
+                <div id="history" className="flex-1 flex flex-col mr-[12px]">
                   <div className="relative flex justify-center items-end mb-3">
                     <h2 className="pb-2 text-center">History</h2>
                     <span className="absolute w-[200px] h-[4px] rounded-full bg-gradient-to-r from-sui-ocean/0 via-sui-ocean/10 to-sui-ocean/0"></span>
                   </div>
                   <LinksContainer linksArray={history} />
                 </div>
-                <span className="absolute left-2/4 top-2/4 -ml-[12px] h-6 w-6 text-sui-ocean/30">
+                <span className="xl:block hidden absolute left-2/4 top-2/4 -ml-[12px] h-6 w-6 text-sui-ocean/30">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -165,7 +165,7 @@ function MyApp() {
                   </svg>
                 </span>
 
-                <div id="transactions" className="flex-1 flex flex-col">
+                <div id="transactions" className="flex-1 flex flex-col xl:ml-[12px]">
                   <div className="relative flex justify-center items-end mb-3">
                     <h2 className="pb-2 text-center">Transactions</h2>
                     <span className="absolute w-[200px] h-[4px] rounded-full bg-gradient-to-r from-sui-ocean/0 via-sui-ocean/10 to-sui-ocean/0"></span>

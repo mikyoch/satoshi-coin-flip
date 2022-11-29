@@ -14,7 +14,7 @@ function getEnvJson() {
         trustedOriginsDev: "",
         trustedOriginsProd: ""
     }
-    const data = fs.readFileSync("../.env", {encoding: "utf-8"});
+    const data = fs.readFileSync("./.env", {encoding: "utf-8"});
     const lines = data.split("\n");
     for (let line of lines) {
         if(line.indexOf("=") >= 0){
@@ -33,7 +33,7 @@ function writeEnv(envJson) {
         else
             env += `${key}=${value}\n`;
     }
-    fs.writeFileSync("../.env", env);
+    fs.writeFileSync("./.env", env);
 }
 
 function main(){
