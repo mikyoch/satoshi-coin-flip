@@ -3,6 +3,7 @@ import { PACKAGE } from "../helpers/constants";
 import { useWallet } from "@mysten/wallet-adapter-react";
 import { JsonRpcProvider, Network } from "@mysten/sui.js";
 import { notifyError } from "../services/Toasts";
+import {COIN} from "../helpers/constants";
 import HeadsSvg from "../public/svg/heads.svg";
 import TailsSvg from "../public/svg/tails.svg";
 
@@ -110,7 +111,7 @@ const PlayButton = ({ coinSide, gameID, callback, loading }) => {
         data: {
           packageObjectId: `${PACKAGE}`,
           module: "satoshi_flip",
-          function: "bet",
+          function: "play",
           typeArguments: [],
           arguments: [`${gameID}`, `${choice}`, `${splitCoin}`, "5000"],
           gasBudget: 10000,
