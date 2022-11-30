@@ -61,10 +61,7 @@ class SuiService implements SuiServiceInterface {
   private async populateGasCoins() {
     try {
       const gasCoins = await this.getAllCoins();
-      if (
-        gasCoins.length > 5 &&
-        this.ensureAvailableCoins(gasCoins, 5, 5000)
-      ) {
+      if (gasCoins.length > 5 && this.ensureAvailableCoins(gasCoins, 5, 5000)) {
         // pick the first 5 coins
         this.gasCoins = gasCoins
           .filter((coin, index) => index < 5)
@@ -107,10 +104,11 @@ class SuiService implements SuiServiceInterface {
       this.gasCoins.some((coinId) => coinId === coin.id)
     );
 
+    const largestCoin = await this.getLargestBankCoin();
     const smallGasCoins = gasCoins.filter((coin) => coin.balance < 5000);
 
-    if (smallGasCoins.length > 1) {
-      await this.mergeCoins(smallGasCoins);
+    if (smallGasCoins.length > 0) {
+      await this.mergeCoins([largestCoin, ...smallGasCoins]);
       await this.populateGasCoins();
     }
   }
