@@ -2,7 +2,7 @@ const fs = require("fs");
 const { execSync } = require("child_process");
 
 function getAddress() {
-  const data = fs.readFileSync("../api/.env", { encoding: "utf-8" });
+  const data = fs.readFileSync("./../api/.env", { encoding: "utf-8" });
   const lines = data.split("\n");
   for (let line of lines) {
     if (line.indexOf("BANKER_ADDRESS") >= 0) {

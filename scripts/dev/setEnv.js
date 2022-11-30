@@ -4,6 +4,16 @@ const { Ed25519PublicKey } = require("@mysten/sui.js");
 const fs = require("fs");
 const { deploy } = require("./deploy_contract");
 
+const defaultEnvValues = {
+  PORT: 8080,
+  PRIVATE_KEY: "",
+  BANKER_ADDRESS: "",
+  PACKAGE_ADDRESS: "",
+  environment: "dev",
+  trustedOriginsDev: '["http://localhost:3000"]',
+  trustedOriginsProd: '["https://satoshidomain.sui:3000"]',
+};
+
 function getEnvJson() {
   const envJson = {
     PORT: "",
@@ -14,12 +24,16 @@ function getEnvJson() {
     trustedOriginsDev: "",
     trustedOriginsProd: "",
   };
-  const data = fs.readFileSync("../api/.env", { encoding: "utf-8" });
+  if (!fs.existsSync("./../api/.env")) {
+    execSync("touch ./../api/.env");
+    writeEnv(envJson);
+  }
+  const data = fs.readFileSync("./../api/.env", { encoding: "utf-8" });
   const lines = data.split("\n");
   for (let line of lines) {
     if (line.indexOf("=") >= 0) {
       const [key, value] = line.split("=");
-      envJson[key] = value;
+      envJson[key] = value || defaultEnvValues[key];
     }
   }
   return envJson;
@@ -32,7 +46,7 @@ function writeEnv(envJson) {
     else env += `${key}=${value}\n`;
   }
 
-  fs.writeFileSync("../api/.env", env);
+  fs.writeFileSync("./../api/.env", env);
 }
 
 function main() {
