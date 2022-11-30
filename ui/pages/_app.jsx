@@ -78,7 +78,7 @@ function MyApp() {
       ]);
     else
       setHistory((old) => [
-        { type: "loss", id: gameId, text: `${coinSide}Loss` },
+        { type: "loss", id: gameId, text: `${coinSide}/Loss` },
         ...old,
       ]);
     setCurrentTxs((old) => [
