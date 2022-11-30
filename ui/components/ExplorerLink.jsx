@@ -18,7 +18,6 @@ export default function ExplorerLink({ id, text, type }) {
   const playerLoss = type === "loss";
   const isObject = type === "object";
 
-
   const renderColor = () => {
     if (!isAddress && !isObject) {
       if (playerLoss) {
@@ -38,14 +37,16 @@ export default function ExplorerLink({ id, text, type }) {
             <>
               {!playerWin && !playerLoss && isObject ? (
                 <>
-                  <span className={`${renderColor()} + pr-1 text-sm`}>
-                    {`${text}:`}
+                  <span
+                    className={`${renderColor()} + pr-1 text-sm capitalize`}
+                  >
+                    {text ? `${text}:` : `${type}:`}
                   </span>
                   <span className="text-inherit/50 text-sm">{`${id}`}</span>
                 </>
               ) : (
                 <>
-                  <span className={`${renderColor()} + pr-1`}>
+                  <span className={`${renderColor()} + pr-1 capitalize`}>
                     {`${text}:`}
                   </span>
                   <span className="text-inherit/50">{`${id}`}</span>

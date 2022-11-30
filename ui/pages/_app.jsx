@@ -16,6 +16,8 @@ import { notifyPlayResult, notifySucess } from "../services/Toasts";
 import { COIN } from "../helpers/constants";
 import Footer from "../components/Footer";
 import GameStatus from "../components/GameStatus";
+import HeadsSvg from "../public/svg/heads.svg";
+import TailsSvg from "../public/svg/tails.svg";
 
 function MyApp() {
   // wallet provider
@@ -52,7 +54,9 @@ function MyApp() {
     setIsLoading(false);
     setGameId(gameId_);
     setVisualStatus(2);
-    setCurrentTxs([{ id: transactionId, type: "transaction", text: "New Game Tx" }]);
+    setCurrentTxs([
+      { id: transactionId, type: "transaction", text: "New Game Tx" },
+    ]);
     notifySucess("Created new game!");
   };
 
@@ -62,15 +66,21 @@ function MyApp() {
     const show = playerWon ? choice : (choice + 1) % 2;
     setVisualStatus(show);
     const coinSide = choice === COIN.HEADS ? "heads" : "tails";
-    notifyPlayResult(
-      `You played ${coinSide}`,
-      playerWon
-    );
+    notifyPlayResult(`You played ${coinSide}`, playerWon);
     setPlayerGameRes(playerWon);
     setCoinSide(choice);
+    // setShowChoice(null);
     setIsLoading(false);
-    if (playerWon) setHistory((old) => [{ type: "win", id: gameId, text: `${coinSide}-Win` }, ...old]);
-    else setHistory((old) => [{ type: "loss", id: gameId, text: `${coinSide}-Loss` }, ...old]);
+    if (playerWon)
+      setHistory((old) => [
+        { type: "win", id: gameId, text: `${coinSide}/Win` },
+        ...old,
+      ]);
+    else
+      setHistory((old) => [
+        { type: "loss", id: gameId, text: `${coinSide}Loss` },
+        ...old,
+      ]);
     setCurrentTxs((old) => [
       { id: transactionDigest, type: "transaction", text: "End Game Tx" },
       ...old,
@@ -80,7 +90,7 @@ function MyApp() {
 
   const playButtonClicked = (choice, transactionId) => {
     setCurrentTxs((old) => [
-      { id: transactionId, type: "transaction", text: "Play Tx"},
+      { id: transactionId, type: "transaction", text: "Play Tx" },
       ...old,
     ]);
     finish(choice);
@@ -100,12 +110,14 @@ function MyApp() {
                   {gameId ? (
                     <ExplorerLink id={gameId} type="object" />
                   ) : (
-                    <div className="font-light text-sui-text-light text-sm italic animate-pulse">Waiting to start new game...</div>
+                    <div className="font-light text-sui-text-light text-sm italic animate-pulse">
+                      Waiting to start new game...
+                    </div>
                   )}
                 </span>
               </div>
 
-              <div className="relative h-86 rounded-lg border-2 border-dashed border-sui-ocean/10 flex items-center justify-center">
+              <div className="relative h-86 rounded-lg border-2 border-dashed border-sui-ocean/10 flex flex-col items-center justify-center">
                 <GameStatus
                   res={playerGameRes}
                   callback={setPlayerGameRes}
@@ -134,6 +146,7 @@ function MyApp() {
                         gameID={gameId}
                         callback={playButtonClicked}
                         loading={setIsLoading}
+                        showChoice={setShowChoice}
                       />
                       <PlayButton
                         coinSide="HEADS"
@@ -144,10 +157,27 @@ function MyApp() {
                       />
                     </div>
                   )}
-                </div>                
-              </div>
-              <div>
-                  <span> You picked: {showChoice == null ? "--" : showChoice}</span>
+                  <div className="pt-4">
+                    {showChoice !== null && showChoice === COIN.HEADS && (
+                      <span className="flex items-center">
+                        <h3 className="pr-1">Last pick</h3>
+                        <span className="flex w-8 h-8 p-2 bg-sui-ocean text-sui-sky rounded-full">
+                          <HeadsSvg />
+                        </span>
+                        <h3 className="pl-1">Heads</h3>
+                      </span>
+                    )}
+                    {showChoice !== null && showChoice === COIN.TAILS && (
+                      <span className="flex items-center">
+                        <h3 className="pr-1">Last pick</h3>
+                        <span className="flex w-8 h-8 p-2 bg-sui-ocean text-sui-sky rounded-full">
+                          <TailsSvg />
+                        </span>
+                        <h3 className="pl-1">Tails</h3>
+                      </span>
+                    )}
+                  </div>
+                </div>
               </div>
               <div className="relative flex justify-between items-stretch flex-wrap py-6">
                 <div id="history" className="flex-1 flex flex-col mr-[12px]">
@@ -174,7 +204,10 @@ function MyApp() {
                   </svg>
                 </span>
 
-                <div id="transactions" className="flex-1 flex flex-col xl:ml-[12px]">
+                <div
+                  id="transactions"
+                  className="flex-1 flex flex-col xl:ml-[12px]"
+                >
                   <div className="relative flex justify-center items-end mb-3">
                     <h2 className="pb-2 text-center">Transactions</h2>
                     <span className="absolute w-[200px] h-[4px] rounded-full bg-gradient-to-r from-sui-ocean/0 via-sui-ocean/10 to-sui-ocean/0"></span>
