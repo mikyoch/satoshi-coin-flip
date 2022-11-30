@@ -11,7 +11,7 @@ export default function LinksContainer({ linksArray }) {
     return (
         <div className="w-[95%] p-3 self-center drop-shadow-xl">
             {linksArray.map((item)=> 
-                <ExplorerLink key={item.id} type={item.type} id={item.id} />
+                <ExplorerLink key={item.id} type={item.type} id={item.id} text={item.text} />
             )}
         </div>
     )

@@ -35,17 +35,11 @@ function MyApp() {
   const [isLoading, setIsLoading] = useState(false);
   const [playerGameRes, setPlayerGameRes] = useState(null);
   const [coinSide, setCoinSide] = useState(null);
+  const [showChoice, setShowChoice] = useState(null);
 
   // always make sure to end running games
   useEffect(() => {
     // ToDo: Add prompt to remind the user that a new game is ongoing!
-    window.addEventListener("beforeunload", () => {
-      if (gameId !== "") {
-        endGame(gameId);
-        setGameId("");
-      }
-    });
-
     window.addEventListener("unload", () => {
       if (gameId !== "") {
         endGame(gameId);
@@ -58,7 +52,7 @@ function MyApp() {
     setIsLoading(false);
     setGameId(gameId_);
     setVisualStatus(2);
-    setCurrentTxs([{ id: transactionId, type: "transaction" }]);
+    setCurrentTxs([{ id: transactionId, type: "transaction", text: "New Game Tx" }]);
     notifySucess("Created new game!");
   };
 
@@ -67,17 +61,18 @@ function MyApp() {
     const { playerWon, transactionDigest } = endResponse.data;
     const show = playerWon ? choice : (choice + 1) % 2;
     setVisualStatus(show);
+    const coinSide = choice === COIN.HEADS ? "heads" : "tails";
     notifyPlayResult(
-      `You played ${choice === COIN.HEADS ? "heads" : "tails"}`,
+      `You played ${coinSide}`,
       playerWon
     );
     setPlayerGameRes(playerWon);
     setCoinSide(choice);
     setIsLoading(false);
-    if (playerWon) setHistory((old) => [{ type: "win", id: gameId }, ...old]);
-    else setHistory((old) => [{ type: "loss", id: gameId }, ...old]);
+    if (playerWon) setHistory((old) => [{ type: "win", id: gameId, text: `${coinSide}-Win` }, ...old]);
+    else setHistory((old) => [{ type: "loss", id: gameId, text: `${coinSide}-Loss` }, ...old]);
     setCurrentTxs((old) => [
-      { id: transactionDigest, type: "transaction" },
+      { id: transactionDigest, type: "transaction", text: "End Game Tx" },
       ...old,
     ]);
     setGameId("");
@@ -85,7 +80,7 @@ function MyApp() {
 
   const playButtonClicked = (choice, transactionId) => {
     setCurrentTxs((old) => [
-      { id: transactionId, type: "transaction" },
+      { id: transactionId, type: "transaction", text: "Play Tx"},
       ...old,
     ]);
     finish(choice);
@@ -145,10 +140,14 @@ function MyApp() {
                         gameID={gameId}
                         callback={playButtonClicked}
                         loading={setIsLoading}
+                        showChoice={setShowChoice}
                       />
                     </div>
                   )}
-                </div>
+                </div>                
+              </div>
+              <div>
+                  <span> You picked: {showChoice == null ? "--" : showChoice}</span>
               </div>
               <div className="relative flex justify-between items-stretch flex-wrap py-6">
                 <div id="history" className="flex-1 flex flex-col mr-[12px]">

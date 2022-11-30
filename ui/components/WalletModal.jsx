@@ -67,7 +67,7 @@ export function WalletModal() {
                   <span className="pr-1 text-sui-text-light">
                     Connected address:
                   </span>
-                  <ExplorerLink id={account} type="address" />
+                  <ExplorerLink id={account} type="address" text={account} />
                   <span className="pl-1 text-sui-text-light hidden lg2:inline-flex font-light">
                     ({walletName})
                   </span>

@@ -7,7 +7,7 @@ import {COIN} from "../helpers/constants";
 import HeadsSvg from "../public/svg/heads.svg";
 import TailsSvg from "../public/svg/tails.svg";
 
-const PlayButton = ({ coinSide, gameID, callback, loading }) => {
+const PlayButton = ({ coinSide, gameID, callback, loading, showChoice }) => {
   // Initialize provider
   const provider = new JsonRpcProvider(Network.DEVNET);
   const { connected, getAccounts, signAndExecuteTransaction } = useWallet();
@@ -97,6 +97,8 @@ const PlayButton = ({ coinSide, gameID, callback, loading }) => {
   const handleClick = async () => {
     loading(true);
     try {
+      const choice = coinSide === "TAILS" ? COIN.TAILS : COIN.HEADS;
+      showChoice(choice);
       // Get an appropriate coin from the player
       const playerLargestCoin = await getPlayerLargestCoinID();
       let splitCoin = playerLargestCoin.coinID;
@@ -105,7 +107,6 @@ const PlayButton = ({ coinSide, gameID, callback, loading }) => {
       if (playerLargestCoin.balance > 5000) {
         splitCoin = await splitPlayerCoin(playerLargestCoin);
       }
-      const choice = coinSide === "TAILS" ? COIN.TAILS : COIN.HEADS;
       const transactionResponse = await signAndExecuteTransaction({
         kind: "moveCall",
         data: {
