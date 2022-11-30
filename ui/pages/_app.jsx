@@ -15,6 +15,7 @@ import { Toaster } from "react-hot-toast";
 import { notifyPlayResult, notifySucess } from "../services/Toasts";
 import { COIN } from "../helpers/constants";
 import Footer from "../components/Footer";
+import GameStatus from "../components/GameStatus";
 
 function MyApp() {
   // wallet provider
@@ -32,6 +33,8 @@ function MyApp() {
   const [history, setHistory] = useState([]);
   const [currentTxs, setCurrentTxs] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [playerGameRes, setPlayerGameRes] = useState(null);
+  const [coinSide, setCoinSide] = useState(null);
 
   // always make sure to end running games
   useEffect(() => {
@@ -68,6 +71,8 @@ function MyApp() {
       `You played ${choice === COIN.HEADS ? "heads" : "tails"}`,
       playerWon
     );
+    setPlayerGameRes(playerWon);
+    setCoinSide(choice);
     setIsLoading(false);
     if (playerWon) setHistory((old) => [{ type: "win", id: gameId }, ...old]);
     else setHistory((old) => [{ type: "loss", id: gameId }, ...old]);
@@ -105,7 +110,12 @@ function MyApp() {
                 </span>
               </div>
 
-              <div className="h-86 rounded-lg border-2 border-dashed border-sui-ocean/10 flex items-center justify-center">
+              <div className="relative h-86 rounded-lg border-2 border-dashed border-sui-ocean/10 flex items-center justify-center">
+                <GameStatus
+                  res={playerGameRes}
+                  callback={setPlayerGameRes}
+                  coinside={coinSide}
+                />
                 <div
                   id="game"
                   className="flex flex-col items-center justify-center mb-10"
