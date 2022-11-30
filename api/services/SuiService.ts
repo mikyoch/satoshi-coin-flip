@@ -44,12 +44,26 @@ class SuiService implements SuiServiceInterface {
     return signer;
   }
 
+  private ensureAvailableCoins(
+    coins: { id: string; balance: number }[],
+    minAmount: number,
+    minBalance: number
+  ) {
+    let suitableCoins = 0;
+    for (let coin of coins) {
+      if (coin.balance >= minBalance) {
+        suitableCoins += 1;
+      }
+    }
+    return suitableCoins >= minAmount;
+  }
+
   private async populateGasCoins() {
     try {
       const gasCoins = await this.getAllCoins();
       if (
         gasCoins.length > 5 &&
-        gasCoins.every((coin) => coin.balance > 5000)
+        this.ensureAvailableCoins(gasCoins, 5, 5000)
       ) {
         // pick the first 5 coins
         this.gasCoins = gasCoins
