@@ -30,7 +30,7 @@ const GameStatus = ({ res, callback, coinside }) => {
   };
 
   const triggerClose = () => {
-    setTimeout(handleClose, 7000);
+    setTimeout(handleClose, 5000);
   };
 
   return (
