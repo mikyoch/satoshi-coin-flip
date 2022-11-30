@@ -3,7 +3,7 @@ import { PACKAGE } from "../helpers/constants";
 import { useWallet } from "@mysten/wallet-adapter-react";
 import { JsonRpcProvider, Network } from "@mysten/sui.js";
 import { notifyError } from "../services/Toasts";
-import {COIN} from "../helpers/constants";
+import { COIN } from "../helpers/constants";
 import HeadsSvg from "../public/svg/heads.svg";
 import TailsSvg from "../public/svg/tails.svg";
 
@@ -43,7 +43,7 @@ const PlayButton = ({ coinSide, gameID, callback, loading, showChoice }) => {
   };
 
   // Find the largest (or exact) coin from the player's coin collection
-  const getPlayerLargestCoinID = async () => {
+  const getPlayerSuitableCoinID = async () => {
     return new Promise((resolve, reject) => {
       let coinID = "",
         balance = 5000;
@@ -52,16 +52,10 @@ const PlayButton = ({ coinSide, gameID, callback, loading, showChoice }) => {
         getPlayerCoinObjects().then((playerCoins) => {
           for (let coin of playerCoins) {
             // Return in case the coin has the exact balance we need
-            if (coin.balance === 5000) {
+            if (coin.balance >= 5000) {
               coinID = coin.id;
               balance = coin.balance;
               break;
-            }
-
-            // Return the biggest coin value
-            if (coin.balance >= balance) {
-              coinID = coin.id;
-              balance = coin.balance;
             }
           }
 
@@ -100,13 +94,8 @@ const PlayButton = ({ coinSide, gameID, callback, loading, showChoice }) => {
       const choice = coinSide === "TAILS" ? COIN.TAILS : COIN.HEADS;
       showChoice(choice);
       // Get an appropriate coin from the player
-      const playerLargestCoin = await getPlayerLargestCoinID();
-      let splitCoin = playerLargestCoin.coinID;
+      const playerCoin = await getPlayerSuitableCoinID();
 
-      // Generate a new coin with value 5000
-      if (playerLargestCoin.balance > 5000) {
-        splitCoin = await splitPlayerCoin(playerLargestCoin);
-      }
       const transactionResponse = await signAndExecuteTransaction({
         kind: "moveCall",
         data: {
@@ -114,7 +103,7 @@ const PlayButton = ({ coinSide, gameID, callback, loading, showChoice }) => {
           module: "satoshi_flip",
           function: "play",
           typeArguments: [],
-          arguments: [`${gameID}`, `${choice}`, `${splitCoin}`, "5000"],
+          arguments: [`${gameID}`, `${choice}`, `${playerCoin.coinID}`, "5000"],
           gasBudget: 10000,
         },
       });
