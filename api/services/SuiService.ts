@@ -84,16 +84,14 @@ class SuiService implements SuiServiceInterface {
     }
   }
 
-  private async mergeCoins(coinsToMerge: { id: string; balance: number }[]) {
-    return this.signer.paySui({
+  private async mergeCoins(
+    coinsToMerge: { id: string; balance: number }[],
+    gasBudget = 10000
+  ) {
+    return this.signer.payAllSui({
       inputCoins: [...coinsToMerge.map((coin) => coin.id)],
-      recipients: [String(process.env.BANKER_ADDRESS)],
-      amounts: [
-        coinsToMerge
-          .map((coin) => coin.balance)
-          .reduce((prevCoin, currCoin) => prevCoin + currCoin),
-      ],
-      gasBudget: 10000,
+      recipient: String(process.env.BANKER_ADDRESS),
+      gasBudget,
     });
   }
 
@@ -108,6 +106,7 @@ class SuiService implements SuiServiceInterface {
 
     if (smallGasCoins.length > 0) {
       const largestCoin = await this.getLargestBankCoin();
+      console.log("Small coins found, merging...");
       await this.mergeCoins([largestCoin, ...smallGasCoins]);
       await this.populateGasCoins();
     }
