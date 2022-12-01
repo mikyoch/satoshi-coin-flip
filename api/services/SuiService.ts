@@ -104,16 +104,17 @@ class SuiService implements SuiServiceInterface {
       this.gasCoins.some((coinId) => coinId === coin.id)
     );
 
-    const largestCoin = await this.getLargestBankCoin();
     const smallGasCoins = gasCoins.filter((coin) => coin.balance < 5000);
 
     if (smallGasCoins.length > 0) {
+      const largestCoin = await this.getLargestBankCoin();
       await this.mergeCoins([largestCoin, ...smallGasCoins]);
       await this.populateGasCoins();
     }
   }
 
   private async getNextGasCoin() {
+    // @todo: how do we recover if this call fails?
     await this.checkGasCoinBalances();
 
     const coinIdIndex = this.gasCoins.findIndex(
