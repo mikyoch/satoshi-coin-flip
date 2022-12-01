@@ -16,8 +16,8 @@ import { notifyPlayResult, notifySucess } from "../services/Toasts";
 import { COIN } from "../helpers/constants";
 import Footer from "../components/Footer";
 import GameStatus from "../components/GameStatus";
-import HeadsSvg from "../public/svg/heads.svg";
-import TailsSvg from "../public/svg/tails.svg";
+import TailsSvg from "../public/svg/capy.svg";
+import HeadsSvg from "../public/svg/capy-text.svg";
 
 function MyApp() {
   // wallet provider

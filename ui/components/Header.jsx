@@ -1,8 +1,8 @@
 import React from "react";
 import { WalletModal } from "./WalletModal";
 import Logo from "../public/svg/sui-logo-light.svg";
-import HeadsSvg from "../public/svg/heads.svg";
-import TailsSvg from "../public/svg/tails.svg";
+import CapySvg from "../public/svg/capy.svg";
+import CapyTxtSvg from "../public/svg/capy-text.svg";
 
 const Header = () => {
   return (
@@ -14,14 +14,14 @@ const Header = () => {
               <Logo />
               <div className="flex w-auto h-4 border-l-2 border-white/5 ml-10 pl-5">
                 <span className="flex flex-auto text-sui-text-light px-5 items-center">
-                  <span className="flex w-6 h-4 mr-2">
-                    <TailsSvg />
+                  <span className="flex w-6 h-6 mr-2 text-sui-text-light">
+                    <CapySvg />
                   </span>
                   = tails
                 </span>
                 <span className="flex flex-auto text-sui-text-light px-5 items-center">
-                  <span className="flex w-3 mr-2">
-                    <HeadsSvg />
+                  <span className="flex w-12 h-6 mr-2">
+                    <CapyTxtSvg />
                   </span>
                   = heads
                 </span>
