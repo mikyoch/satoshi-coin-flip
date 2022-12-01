@@ -17,13 +17,13 @@ const Header = () => {
                   <span className="flex w-6 h-6 mr-2 text-sui-text-light">
                     <CapySvg />
                   </span>
-                  = tails
+                  = heads
                 </span>
                 <span className="flex flex-auto text-sui-text-light px-5 items-center">
                   <span className="flex w-12 h-6 mr-2">
                     <CapyTxtSvg />
                   </span>
-                  = heads
+                  = tails
                 </span>
               </div>
             </div>

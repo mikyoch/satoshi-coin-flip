@@ -112,7 +112,7 @@ function MyApp() {
     <>
       <Toaster />
       <WalletProvider adapters={adapters}>
-        <div className="App h-screen bg-gradient-to-b from-faint-blue to-faint-blue/50 flex flex-col justify-between items-stretch">
+        <div className="App min-h-screen h-full bg-gradient-to-b from-faint-blue to-faint-blue/50 flex flex-col justify-between items-stretch">
           <Header />
           <div className="w-full mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
             <div className="px-4 py-6 sm:px-0">
@@ -211,14 +211,14 @@ function MyApp() {
                   ) : (
                     <div id="ht-buttons" className="h-[50px]">
                       <PlayButton
-                        coinSide="TAILS"
+                        coinSide="HEADS"
                         gameID={gameId}
                         callback={playButtonClicked}
                         loading={setIsLoading}
                         showChoice={setShowChoice}
                       />
                       <PlayButton
-                        coinSide="HEADS"
+                        coinSide="TAILS"
                         gameID={gameId}
                         callback={playButtonClicked}
                         loading={setIsLoading}

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import TailsSvg from "../public/svg/capy.svg";
-import HeadsSvg from "../public/svg/capy-text.svg";
+import HeadsSvg from "../public/svg/capy.svg";
+import TailsSvg from "../public/svg/capy-text.svg";
 
 export default function Slot() {
   const [slotSlides, setSlotSlides] = useState(["heads"]);
