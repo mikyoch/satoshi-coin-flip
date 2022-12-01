@@ -1,15 +1,9 @@
 # Time Locked Satoshi Coin Flip
 
-<<<<<<< HEAD
 A sample UI for presenting the time locked satoshi coin flip.
 You can try it @ : `<public URL>`
 
 Note: This example is developed on Sui DevNet and new releases might affect its availability.
-=======
-A sample UI for presenting the time locked satoshi coin flip. 
-
-Note: This example is developed on Sui DevNet and intermediate releases might affect its availability.
->>>>>>> 13a240a2cd182556b427d06dba1883dffce780d2
 
 ## Introduction
 
@@ -17,7 +11,7 @@ We present a fair method to use Sui blockchain in order to conduct a 50 / 50 cha
 
 We model it after a coin flip since the chances are 50%.<br/>
 The theory backing this project was presented by Kostas Chalkias (Mysten Labs Head of Cryptography) at the GAME3R Forum in Novemeber of 2022.>><br/>
-The smart contract source code, that is running on Sui devnet, can be found at << TO BE ADDED when merged >>
+The smart contract source code, that is running on Sui devnet, can be found at `satoshi_flip/sources/satoshi_flip.move`.
 
 ## Smart Contract Flow
 
