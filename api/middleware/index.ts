@@ -25,8 +25,8 @@ function errorHandler(
 // used as parameter checking in the /start endpint
 function checkStart(req: Request, res: Response, next: NextFunction) {
   try {
-    if (!req?.body?.minBet) throw new Error('Parameter "minBet" is required');
-    if (!req?.body?.maxBet) throw new Error('Parameter "maxBet" is required');
+    if (!req?.body?.minAmount) throw new Error('Parameter "minAmount" is required');
+    if (!req?.body?.maxAmount) throw new Error('Parameter "maxAmount" is required');
   } catch (error) {
     res.status(errorCode);
     next(error);
