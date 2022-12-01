@@ -16,8 +16,8 @@ import { notifyPlayResult, notifySucess } from "../services/Toasts";
 import { COIN } from "../helpers/constants";
 import Footer from "../components/Footer";
 import GameStatus from "../components/GameStatus";
-import TailsSvg from "../public/svg/capy.svg";
-import HeadsSvg from "../public/svg/capy-text.svg";
+import HeadsSvg from "../public/svg/capy.svg";
+import TailsSvg from "../public/svg/capy-text.svg";
 import GameDetails from "../components/GameDetails";
 
 function MyApp() {
