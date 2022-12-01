@@ -112,7 +112,7 @@ function MyApp() {
     <>
       <Toaster />
       <WalletProvider adapters={adapters}>
-        <div className="App bg-gradient-to-b from-faint-blue to-faint-blue/50 flex flex-col justify-between items-stretch">
+        <div className="App h-screen bg-gradient-to-b from-faint-blue to-faint-blue/50 flex flex-col justify-between items-stretch">
           <Header />
           <div className="w-full mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
             <div className="px-4 py-6 sm:px-0">
