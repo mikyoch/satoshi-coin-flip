@@ -73,12 +73,12 @@ function MyApp() {
     setIsLoading(false);
     if (playerWon)
       setHistory((old) => [
-        { type: "win", id: gameId, text: `${coinSide}/Win` },
+        { type: "address", id: gameId, text: `${coinSide}/Win` },
         ...old,
       ]);
     else
       setHistory((old) => [
-        { type: "loss", id: gameId, text: `${coinSide}/Loss` },
+        { type: "address", id: gameId, text: `${coinSide}/Loss` },
         ...old,
       ]);
     setCurrentTxs((old) => [
