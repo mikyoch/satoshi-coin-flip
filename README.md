@@ -1,9 +1,15 @@
 # Time Locked Satoshi Coin Flip
 
+<<<<<<< HEAD
 A sample UI for presenting the time locked satoshi coin flip.
 You can try it @ : `<public URL>`
 
 Note: This example is developed on Sui DevNet and new releases might affect its availability.
+=======
+A sample UI for presenting the time locked satoshi coin flip. 
+
+Note: This example is developed on Sui DevNet and intermediate releases might affect its availability.
+>>>>>>> 13a240a2cd182556b427d06dba1883dffce780d2
 
 ## Introduction
 
@@ -44,6 +50,7 @@ A simple server is used to protect house private data and calls.
 To try the code here you will need:
 - a Sui address with coins
 - sui cli tool with active network devnet
+- sui compatible wallet on chrome
 - npm
 - node
 
@@ -68,9 +75,9 @@ Also it will set the `PRIVATE_KEY`.
 ### Smart contract
 To deploy the smart contract yourself, if you skipped using the `setEnv.js` script, navigate the the contracts directory `satoshi_flip` and press `sui publish --gas-budget 5000`. Get the package id from the output and put it in the `api/.env` and `ui/.env` files (check the templates for the appropriate variable naming).
 
-### UI
-Navigate to the `ui/` directory and run `npm install`, followed by `npm run dev` for local trials. The UI will start running at `localhost:3000`.
-
 ### API
 Next move to the `api/` directory , do another `npm install`.
 Lastly with `npm run dev` the server will start locally at `localhost:8080` depending on the `PORT` variable of in `api/.env`.
+
+### UI
+Navigate to the `ui/` directory and run `npm install`, followed by `npm run dev` for local trials. The UI will start running at `localhost:3000` and you can start playing.
