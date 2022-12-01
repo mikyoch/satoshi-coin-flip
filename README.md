@@ -10,7 +10,7 @@ Note: This example is developed on Sui DevNet and new releases might affect its 
 We present a fair method to use Sui blockchain in order to conduct a 50 / 50 chance game.
 
 We model it after a coin flip since the chances are 50%.<br/>
-The theory backing this project was presented by Kostas Chalkias (Mysten Labs Head of Cryptography) at the GAME3R Forum in Novemeber of 2022.>><br/>
+The theory backing this project was presented by Kostas Chalkias (Mysten Labs Head of Cryptography) at the GAME3R Forum in Novemeber of 2022.<br/>
 The smart contract source code, that is running on Sui devnet, can be found at `satoshi_flip/sources/satoshi_flip.move`.
 
 ## Smart Contract Flow
@@ -41,7 +41,7 @@ The UI is used to showcase our fairness claim, the player may at any point check
 A simple server is used to protect house private data and calls.
 
 ## Prereqs
-To try the code here you will need:
+To try the example yourself you will need:
 - a Sui address with coins
 - sui cli tool with active network devnet
 - sui compatible wallet on chrome
