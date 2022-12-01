@@ -1,6 +1,6 @@
 import Slot from "./Slot.jsx";
-import HeadsSvg from "../public/svg/heads.svg";
-import TailsSvg from "../public/svg/tails.svg";
+import HeadsSvg from "../public/svg/capy.svg";
+import TailsSvg from "../public/svg/capy-text.svg";
 
 /*
   props.isRunning integer, 0 = tails, 1 = heads, 2 = running

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { COIN } from "../helpers/constants";
-import HeadsSvg from "../public/svg/heads.svg";
-import TailsSvg from "../public/svg/tails.svg";
+import HeadsSvg from "../public/svg/capy.svg";
+import TailsSvg from "../public/svg/capy-text.svg";
 
 // Use callback to reset the res value
 const GameStatus = ({ res, callback, coinside }) => {

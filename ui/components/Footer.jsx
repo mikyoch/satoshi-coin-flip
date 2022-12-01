@@ -1,5 +1,5 @@
 import React from "react";
-import TailsSvg from "../public/svg/tails.svg";
+import TailsSvg from "../public/svg/mystenlabs-icon.svg";
 import MystenLabs from "../public/svg/mystenlabs.svg";
 
 const Footer = () => {

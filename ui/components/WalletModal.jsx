@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useWallet } from "@mysten/wallet-adapter-react";
 import ExplorerLink from "./ExplorerLink";
-import Image from "next/image";
-import HeadsSvg from "../public/svg/heads.svg";
+import SuiSvg from "../public/svg/sui.svg";
 
 export function WalletModal() {
   let { connected } = useWallet();
@@ -129,7 +128,7 @@ export function WalletModal() {
                               <span className="mr-3">
                                 {wallet.name.includes("Sui") ? (
                                   <span className="flex w-4 h-6 text-sui-sky">
-                                    <HeadsSvg />
+                                    <SuiSvg />
                                   </span>
                                 ) : (
                                   <img
