@@ -10,7 +10,7 @@ export default function ExplorerLink({ id, text, type }) {
 
   // adding an else just to be able to show `won#gameId`
   // else url += "objects/";
-  url += `${type}/`;
+  url += `${type === "win" || type === "loss" ? "object" : type}/`;
   url += `${encodeURIComponent(id)}`;
   // what will user see
   const isAddress = type === "address";
@@ -19,7 +19,7 @@ export default function ExplorerLink({ id, text, type }) {
   const isObject = type === "object";
 
   const renderColor = () => {
-    if (!isAddress && !isObject) {
+    if (!isAddress) {
       if (playerLoss) {
         return "text-failure";
       } else if (playerWin) {
