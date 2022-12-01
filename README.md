@@ -35,7 +35,7 @@ The UI will end the game by revealing the secret and transfer 10000 Mist to the 
 
 The contract allows for a variable amount of MIST, up to an amount determined by the house. This UI has locked the amount at 5000 MIST.
 
-The UI is used to showcase our fairness claim since the player is able at any point to check the created objects and transactions on the chain and verify that the hashes match and that the outcome is correct.
+The UI is used to showcase our fairness claim, since the player is able at any point to check the created objects and transactions on the chain and verify that the hashes match and that the outcome is correct.
 
 ## Server
 A simple server is used to protect house private data and calls.
