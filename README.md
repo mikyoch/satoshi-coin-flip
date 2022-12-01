@@ -33,7 +33,7 @@ The house picks the secret and commits the hash and a coin of at least 5000 Mist
 The player is then invited to pick `Tails` or `Heads` which stand for 0 or 1 and lock 5000 Mist of his balance, to guess the predetermined bit.<br/>
 The UI will end the game by revealing the secret and transfer 10000 Mist to the winner.
 
-The contract allows for a variable amount of MIST, up to a determined by the house amount, this UI has locked the amount at 5000 MIST.
+The contract allows for a variable amount of MIST, up to an amount determined by the house. This UI has locked the amount at 5000 MIST.
 
 The UI is used to showcase our fairness claim since the player is able at any point to check the created objects and transactions on the chain and verify that the hashes match and that the outcome is correct.
 
