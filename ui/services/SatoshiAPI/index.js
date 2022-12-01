@@ -6,10 +6,10 @@ const satoshiAPI = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080",
 });
 
-const createGame = (minBet, maxBet) => {
+const createGame = (minAmount, maxAmount) => {
   const data = qs.stringify({
-    minBet,
-    maxBet,
+    minAmount,
+    maxAmount,
   });
 
   return satoshiAPI.post("/game/start", data, {

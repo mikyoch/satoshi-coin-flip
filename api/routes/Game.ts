@@ -22,8 +22,8 @@ router.post(
 
     try {
       let { gameId, transactionDigest } = await GameService.createGame(
-        req.body.minBet,
-        req.body.maxBet
+        req.body.minAmount,
+        req.body.maxAmount
       );
       res.status(200);
       res.json({
@@ -32,7 +32,7 @@ router.post(
       });
     } catch (e: any) {
       console.error(
-        `Bad things have happened while calling /game/start with minBet ${req.body.minBet} and maxBet ${req.body.maxBet} :`,
+        `Bad things have happened while calling /game/start with minAmount ${req.body.minAmount} and maxAmount ${req.body.maxAmount} :`,
         e
       );
       // Forward the error to the error handler

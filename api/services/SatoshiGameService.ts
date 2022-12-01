@@ -27,12 +27,12 @@ class SatoshiGameService {
   }
 
   public createGame(
-    minBet: number = 100,
-    maxBet: number = 5000
+    minAmount: number = 100,
+    maxAmount: number = 5000
   ): Promise<{ gameId: string; transactionDigest: string }> {
     return new Promise(async (resolve, reject) => {
       try {
-        // @todo: check bet values here?
+        // @todo: check guess values here?
         // const coinId = await this.suiService.getLargestBankCoin().id;
         const coinId = await this.suiService.getPlayCoin();
         const { secret, hash } = this.getNewSecretAndHash();
@@ -43,7 +43,7 @@ class SatoshiGameService {
             "satoshi_flip",
             [],
             "start_game",
-            [Array.from(hash), coinId, minBet, maxBet]
+            [Array.from(hash), coinId, minAmount, maxAmount]
           )
           .then((res: any) => {
             // added any here because I don't understand what problem it has with the type
