@@ -16,9 +16,9 @@ const GameStatus = ({ res, callback, coinside }) => {
       ref.current.parentElement
         .querySelector("#game")
         .classList.add("opacity-0");
-
-      triggerClose();
+      setTimeout(handleClose, 5000);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [res]);
 
   const handleClose = () => {
@@ -29,9 +29,7 @@ const GameStatus = ({ res, callback, coinside }) => {
       .classList.remove("opacity-0");
   };
 
-  const triggerClose = () => {
-    setTimeout(handleClose, 5000);
-  };
+
 
   return (
     <>
