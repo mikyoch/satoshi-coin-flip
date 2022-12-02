@@ -131,6 +131,7 @@ export function WalletModal() {
                                     <SuiSvg />
                                   </span>
                                 ) : (
+                                  // eslint-disable-next-line @next/next/no-img-element
                                   <img
                                     src={wallet.icon}
                                     alt={wallet.name}

@@ -17,8 +17,8 @@ const GameDetails = ({ boxHeight }) => {
         </p>
         <p className="pt-2">
           Each game generates a random secret that is hashed and then passed on
-          the new game smart contract along with the house's stake. A user can
-          then play by staking the fixed amount we've defined - 5000 Mists - and
+          the new game smart contract along with the house&apos;s stake. A user can
+          then play by staking the fixed amount we&apos;ve defined - 5000 Mists - and
           selects <span className="underline underline-offset-4">Head</span> or{" "}
           <span className="underline underline-offset-4">Tails</span>. The game
           then ends and the winner is selected. Throughout the entire game,

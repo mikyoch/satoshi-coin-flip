@@ -32,7 +32,7 @@ export default function ExplorerLink({ id, text, type }) {
   return (
     <>
       <div className="first-of-type:text-sui-sky text-sui-text-light">
-        <a href={url} target="_blank" referrer="noreferrer">
+        <a href={url} target="_blank" rel="noreferrer">
           {!isAddress ? (
             <>
               {!playerWin && !playerLoss && isObject ? (
