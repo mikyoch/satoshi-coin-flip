@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useWallet } from "@mysten/wallet-adapter-react";
 import ExplorerLink from "./ExplorerLink";
-import Image from "next/image";
+import SuiSvg from "../public/svg/sui.svg";
 
 export function WalletModal() {
   let { connected } = useWallet();
   const [open, setOpen] = useState(false);
-  const [walletName, setWalletName] = useState('');
+  const [walletName, setWalletName] = useState("");
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -33,8 +33,8 @@ export function WalletModal() {
   useEffect(() => {
     if (!connected) return;
 
-    setWalletName(wallet.name.replace(/\(|\)/g, ''));
-    
+    setWalletName(wallet.name.replace(/\(|\)/g, ""));
+
     getAccounts().then((accounts) => {
       if (accounts && accounts.length) {
         setAccount(accounts[0]);
@@ -67,7 +67,7 @@ export function WalletModal() {
                   <span className="pr-1 text-sui-text-light">
                     Connected address:
                   </span>
-                  <ExplorerLink id={account} type="address" />
+                  <ExplorerLink id={account} type="address" text={account} />
                   <span className="pl-1 text-sui-text-light hidden lg2:inline-flex font-light">
                     ({walletName})
                   </span>
@@ -126,7 +126,19 @@ export function WalletModal() {
                               onClick={() => handleConnect(wallet.name)}
                             >
                               <span className="mr-3">
-                                <img src={wallet.icon} alt={wallet.name} width="16" height="16"/>
+                                {wallet.name.includes("Sui") ? (
+                                  <span className="flex w-4 h-6 text-sui-sky">
+                                    <SuiSvg />
+                                  </span>
+                                ) : (
+                                  // eslint-disable-next-line @next/next/no-img-element
+                                  <img
+                                    src={wallet.icon}
+                                    alt={wallet.name}
+                                    width="16"
+                                    height="16"
+                                  />
+                                )}
                               </span>
                               <span className="text-sui-text-light">
                                 Connect {wallet.name}

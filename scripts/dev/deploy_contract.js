@@ -21,7 +21,7 @@ function setAddressAsCurrent(address) {
 
 function publish() {
   const result = execSync(
-    "sui client publish --gas-budget 10000 --path ../satoshi_flip/ --json"
+    "sui client publish --json --gas-budget 10000 ../satoshi_flip/"
   ).toString();
   const resultJson = JSON.parse(result);
   const packageObject = resultJson?.effects?.created[0]; // Only one object should be created each time

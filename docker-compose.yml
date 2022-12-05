@@ -1,0 +1,23 @@
+version: "3.3"
+
+services:
+  ui:
+    ports:
+      - 3000:3000
+    build:
+      context: ui/
+      dockerfile: Dockerfile
+    volumes:
+      - /app/node_modules
+      - /app/.next
+    env_file:
+      - ./ui/.env
+  api:
+    ports:
+      - 8080:8080
+    build:
+      context: api/
+      dockerfile: Dockerfile
+    env_file:
+      - ./api/.env
+

@@ -3,11 +3,11 @@ import { PACKAGE } from "../helpers/constants";
 import { useWallet } from "@mysten/wallet-adapter-react";
 import { JsonRpcProvider, Network } from "@mysten/sui.js";
 import { notifyError } from "../services/Toasts";
-import {COIN} from "../helpers/constants";
-import HeadsSvg from "../public/svg/heads.svg";
-import TailsSvg from "../public/svg/tails.svg";
+import { COIN } from "../helpers/constants";
+import HeadsSvg from "../public/svg/capy.svg";
+import TailsSvg from "../public/svg/capy-text.svg";
 
-const PlayButton = ({ coinSide, gameID, callback, loading }) => {
+const PlayButton = ({ coinSide, gameID, callback, loading, showChoice }) => {
   // Initialize provider
   const provider = new JsonRpcProvider(Network.DEVNET);
   const { connected, getAccounts, signAndExecuteTransaction } = useWallet();
@@ -43,7 +43,7 @@ const PlayButton = ({ coinSide, gameID, callback, loading }) => {
   };
 
   // Find the largest (or exact) coin from the player's coin collection
-  const getPlayerLargestCoinID = async () => {
+  const getPlayerSuitableCoinID = async () => {
     return new Promise((resolve, reject) => {
       let coinID = "",
         balance = 5000;
@@ -52,16 +52,10 @@ const PlayButton = ({ coinSide, gameID, callback, loading }) => {
         getPlayerCoinObjects().then((playerCoins) => {
           for (let coin of playerCoins) {
             // Return in case the coin has the exact balance we need
-            if (coin.balance === 5000) {
+            if (coin.balance >= 5000) {
               coinID = coin.id;
               balance = coin.balance;
               break;
-            }
-
-            // Return the biggest coin value
-            if (coin.balance >= balance) {
-              coinID = coin.id;
-              balance = coin.balance;
             }
           }
 
@@ -97,15 +91,11 @@ const PlayButton = ({ coinSide, gameID, callback, loading }) => {
   const handleClick = async () => {
     loading(true);
     try {
-      // Get an appropriate coin from the player
-      const playerLargestCoin = await getPlayerLargestCoinID();
-      let splitCoin = playerLargestCoin.coinID;
-
-      // Generate a new coin with value 5000
-      if (playerLargestCoin.balance > 5000) {
-        splitCoin = await splitPlayerCoin(playerLargestCoin);
-      }
       const choice = coinSide === "TAILS" ? COIN.TAILS : COIN.HEADS;
+      showChoice(choice);
+      // Get an appropriate coin from the player
+      const playerCoin = await getPlayerSuitableCoinID();
+
       const transactionResponse = await signAndExecuteTransaction({
         kind: "moveCall",
         data: {
@@ -113,7 +103,7 @@ const PlayButton = ({ coinSide, gameID, callback, loading }) => {
           module: "satoshi_flip",
           function: "play",
           typeArguments: [],
-          arguments: [`${gameID}`, `${choice}`, `${splitCoin}`, "5000"],
+          arguments: [`${gameID}`, `${choice}`, `${playerCoin.coinID}`, "5000"],
           gasBudget: 10000,
         },
       });
