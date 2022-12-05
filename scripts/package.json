@@ -5,7 +5,8 @@
   "main": "deploy_contract.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node ./dev/setEnv.js" 
+    "dev": "node ./dev/setEnv.js",
+    "prod": "node ./prod/deploy_contract.js"
   },
   "author": "",
   "license": "ISC",
