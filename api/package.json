@@ -5,7 +5,8 @@
   "main": "index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon index.ts",
+    "set-up-dev-env": "node ../scripts/dev/setEnv.js",
+    "dev": "npm run set-up-dev-env && nodemon index.ts",
     "prod": "ts-node index.ts",
     "debug": "nodemon index.ts --inspect "
   },
