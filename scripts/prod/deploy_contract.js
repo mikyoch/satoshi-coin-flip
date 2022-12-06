@@ -1,4 +1,3 @@
-// const { execSync } = require("child_process");
 const {
   JsonRpcProvider,
   Network,
