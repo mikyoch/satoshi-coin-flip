@@ -1,7 +1,4 @@
 // const { execSync } = require("child_process");
-const { fromB64 } = require("@mysten/bcs");
-const fs = require("fs");
-
 const {
   JsonRpcProvider,
   Network,
@@ -26,7 +23,7 @@ async function createFundedHouseAccount() {
 
   const signer = new RawSigner(keypair, provider);
   const address = await signer.getAddress();
-  //   await provider.requestSuiFromFaucet(address);
+  await provider.requestSuiFromFaucet(address);
   return { signer, address, privKey };
 }
 
@@ -53,7 +50,5 @@ async function publishSatoshiPackage() {
     console.log("failed to publish package");
   }
 }
-
-publishSatoshiPackage();
 
 module.exports.publishSatoshiPackage = publishSatoshiPackage;
