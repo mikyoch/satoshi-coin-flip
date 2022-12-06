@@ -1,8 +1,9 @@
-FROM node:lts-buster
+FROM node:16-alpine
 WORKDIR /app
-COPY package.json ./
+COPY package*.json ./
+# RUN npm install -g npm
 RUN npm install
 COPY . .
 RUN npm run build
 EXPOSE 3000
-ENTRYPOINT ["npm", "run", "start"]
+CMD ["npm", "run", "start"]
