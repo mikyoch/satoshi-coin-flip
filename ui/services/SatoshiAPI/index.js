@@ -1,6 +1,8 @@
 import axios from "axios";
 import qs from "qs";
 
+
+console.log("Which is the current api url:", process.env.NEXT_PUBLIC_API_BASE_URL);
 const satoshiAPI = axios.create({
   // defaults to dev API
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080",
