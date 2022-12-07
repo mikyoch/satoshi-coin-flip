@@ -7,7 +7,7 @@ import ExplorerLink from "./ExplorerLink";
     `id` is the address, object id or transaction id we want to search on the explorer
     `type` is one of `address` `object` `transaction`
 */
-export default function LinksContainer({ linksArray }) {
+const LinksContainer = ({ linksArray }) => {
     return (
         <div className="w-[95%] p-3 self-center drop-shadow-xl">
             {linksArray.map((item)=> 
@@ -16,3 +16,5 @@ export default function LinksContainer({ linksArray }) {
         </div>
     )
 }
+
+export default LinksContainer;

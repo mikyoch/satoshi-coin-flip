@@ -1,23 +1,14 @@
-// import { useState } from "react";
-
-export default function ExplorerLink({ id, text, type }) {
-  // const [showTooltip, setShowTooltip] = useState(false);
-
+const ExplorerLink = ({ id, text, type }) => {
   let url = "https://explorer.sui.io/";
-  // if (type === "object") url += "objects/";
-  // else if (type === "transaction") url += "transactions/";
-  // else if (type === "address") url += "addresses/";
-
-  // adding an else just to be able to show `won#gameId`
-  // else url += "objects/";
   url += `${type === "win" || type === "loss" ? "object" : type}/`;
   url += `${encodeURIComponent(id)}`;
-  // what will user see
+
   const isAddress = type === "address";
   const playerWin = type === "win";
   const playerLoss = type === "loss";
   const isObject = type === "object";
 
+  // Determine result color: red/green for win/loss type objects
   const renderColor = () => {
     if (!isAddress) {
       if (playerLoss) {
@@ -61,3 +52,5 @@ export default function ExplorerLink({ id, text, type }) {
     </>
   );
 }
+
+export default ExplorerLink;

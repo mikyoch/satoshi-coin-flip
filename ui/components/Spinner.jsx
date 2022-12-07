@@ -1,5 +1,7 @@
-import React from "react";
-
+/**
+ * Spinner component
+ * Use: When you want to show an animated spinner
+ */
 const Spinner = () => {
   return (
     <div className="flex space-x-2">

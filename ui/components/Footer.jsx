@@ -1,4 +1,6 @@
-import React from "react";
+/**
+ * Footer component
+ */
 import TailsSvg from "../public/svg/mystenlabs-icon.svg";
 import MystenLabs from "../public/svg/mystenlabs.svg";
 

@@ -1,4 +1,8 @@
-import { React, useState, useEffect } from "react";
+/**
+ * New Game Button component
+ * Use: Once clicked, the button sends a `new-game` request to the API
+ */
+import { useState, useEffect } from "react";
 import { createGame } from "../services/SatoshiAPI";
 import { notifyError } from "../services/Toasts";
 import { useWallet } from "@mysten/wallet-adapter-react";
@@ -8,7 +12,7 @@ const NewGameButton = (props) => {
   const [disabled, setDisabled] = useState(true);
 
   useEffect(() => {
-    setDisabled(!connected)
+    setDisabled(!connected);
   }, [connected]);
 
   const handleSubmit = async (e) => {
@@ -38,4 +42,4 @@ const NewGameButton = (props) => {
   );
 };
 
-export { NewGameButton };
+export default NewGameButton;
