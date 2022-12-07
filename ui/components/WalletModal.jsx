@@ -51,6 +51,7 @@ export function WalletModal() {
               className="flex-1 text-sui-sky bg-sui-ocean-dark border border-sui-sky text-md px-6 py-3 
           rounded-full hover:bg-sui-ocean hover:text-white"
               onClick={handleClickOpen}
+              id="connect-but"
             >
               <div className="flex align-start">
                 Connect To Wallet
@@ -75,6 +76,7 @@ export function WalletModal() {
                 <button
                   className="text-md px-6 py-3 rounded-full border text-sui-text-light border-sui-ocean hover:bg-sui-ocean"
                   onClick={handleDisconnect}
+                  id="logout-but"
                 >
                   Logout
                 </button>
@@ -118,7 +120,7 @@ export function WalletModal() {
                   <>
                     {!connected && (
                       <div className="flex pt-6 pb-5">
-                        <div className="flex-1">
+                        <div className="flex-1" id="but-container">
                           {wallets.map((wallet, i) => (
                             <button
                               className="w-full flex px-6 py-3 bg-sui-ocean-dark rounded-full my-3 items-center hover:bg-sui-text-dark"
