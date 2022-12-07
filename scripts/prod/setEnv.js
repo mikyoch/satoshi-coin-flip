@@ -72,7 +72,7 @@ async function main() {
 
   const envAPIJson = getEnvJson("api");
   const envUIJson = getEnvJson("ui");
-  envAPIJson.BANKER_ADDRESS = houseAddress;
+  envAPIJson.BANKER_ADDRESS = `0x${houseAddress}`;
   envAPIJson.PRIVATE_KEY = housePrivateKey;
   envAPIJson.PACKAGE_ADDRESS = packageAddress;
   envUIJson.NEXT_PUBLIC_PACKAGE = packageAddress;
