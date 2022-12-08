@@ -41,7 +41,11 @@ const notifyInfo = (msg = "", position = "top-center") => {
     duration: 5000,
     position,
     icon: "ℹ️",
-    style,
+    style: {
+      ...style,
+      padding: "1%",
+      marginTop: "25%"
+    },
   });
 };
 

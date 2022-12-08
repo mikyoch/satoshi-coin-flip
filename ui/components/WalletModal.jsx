@@ -28,7 +28,7 @@ export function WalletModal() {
   };
 
   const handleDisconnect = () => {
-    notifyInfo("You have disconnected your wallet, to continue playing connect again!");
+    notifyInfo("You are disconnected. Connect your wallet to continue playing!");
     disconnect();
   };
 
