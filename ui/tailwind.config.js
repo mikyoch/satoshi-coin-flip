@@ -6,7 +6,6 @@ module.exports = {
     './app/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
-<<<<<<< Updated upstream
     screens: {
       'sm': '640px',
       'md': '768px',
@@ -33,8 +32,6 @@ module.exports = {
       'success': '#74b72e',
       'failure': "#b90e0a",
     },
-=======
->>>>>>> Stashed changes
     extend: {},
   },
   plugins: [],
