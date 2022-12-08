@@ -1,4 +1,8 @@
-import React from "react";
+/**
+ * Play Game Button component
+ * Use: The button will render as heads or tails and will execute the respective moveCall
+ */
+
 import { PACKAGE } from "../helpers/constants";
 import { useWallet } from "@mysten/wallet-adapter-react";
 import { JsonRpcProvider, Network } from "@mysten/sui.js";
@@ -10,7 +14,7 @@ import TailsSvg from "../public/svg/capy-text.svg";
 const PlayButton = ({ coinSide, gameID, callback, loading, showChoice }) => {
   // Initialize provider
   const provider = new JsonRpcProvider(Network.DEVNET);
-  const { connected, getAccounts, signAndExecuteTransaction } = useWallet();
+  const { getAccounts, signAndExecuteTransaction } = useWallet();
 
   // Get all coin objects for the current player
   const getPlayerCoinObjects = async () => {
@@ -65,27 +69,6 @@ const PlayButton = ({ coinSide, gameID, callback, loading, showChoice }) => {
         reject(e);
       }
     });
-  };
-
-  const splitPlayerCoin = async (coinToSplit) => {
-    const coinID = coinToSplit.coinID;
-    const playerAccounts = await getAccounts();
-    const playerActiveAccount = playerAccounts[0];
-
-    try {
-      const splitTxn = await signAndExecuteTransaction({
-        kind: "paySui",
-        data: {
-          inputCoins: [coinID],
-          recipients: [playerActiveAccount],
-          amounts: [5000],
-          gasBudget: 10000,
-        },
-      });
-      return splitTxn.effects.created[0].reference.objectId;
-    } catch (e) {
-      console.log(e);
-    }
   };
 
   const handleClick = async () => {

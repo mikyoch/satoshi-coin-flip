@@ -1,0 +1,1 @@
+sui move build --dump-bytecode-as-base64 --path . > base64Bytecode.json

@@ -1,10 +1,16 @@
-import React, { useEffect, useState } from "react";
+/**
+ * Wallet Modal component
+ * Use: Renders as a `Connect` button which toggles a modal's visibility
+ * The modal integrates the @mysten/wallet-adapter and gives the user the ability 
+ * to connect from a list of available wallets.
+ */
+import { useEffect, useState } from "react";
 import { useWallet } from "@mysten/wallet-adapter-react";
 import ExplorerLink from "./ExplorerLink";
 import SuiSvg from "../public/svg/sui.svg";
 import { notifyInfo } from "../services/Toasts";
 
-export function WalletModal() {
+const WalletModal = () => {
   let { connected } = useWallet();
   const [open, setOpen] = useState(false);
   const [walletName, setWalletName] = useState("");
@@ -38,7 +44,7 @@ export function WalletModal() {
     setWalletName(wallet.name.replace(/\(|\)/g, ""));
 
     getAccounts().then((accounts) => {
-      if (accounts && accounts.length) {
+      if (accounts && accounts?.length) {
         setAccount(accounts[0]);
       }
     });
