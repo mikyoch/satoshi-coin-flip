@@ -6,6 +6,7 @@ module.exports = {
     './app/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
+<<<<<<< Updated upstream
     screens: {
       'sm': '640px',
       'md': '768px',
@@ -21,6 +22,7 @@ module.exports = {
       'sui-sky': '#6fbcf0',
       'sui-ocean': '#2a4362',
       'sui-ocean-dark': '#162a43',
+      'ocean-darker': '#0d1520',
       'faint-blue': '#e6effe',
       'sui-text-dark': '#111111',
       'sui-text-light': '#76839d',
@@ -31,6 +33,8 @@ module.exports = {
       'success': '#74b72e',
       'failure': "#b90e0a",
     },
+=======
+>>>>>>> Stashed changes
     extend: {},
   },
   plugins: [],

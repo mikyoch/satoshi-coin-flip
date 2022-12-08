@@ -8,6 +8,7 @@ import { WalletStandardAdapterProvider } from "@mysten/wallet-adapter-all-wallet
 import { Toaster } from "react-hot-toast";
 
 // Components
+import TopHeader from "../components/TopBar";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 const DynamicGameScreen = dynamic(() => import("../components/GameScreen"), {
@@ -29,7 +30,10 @@ function MyApp() {
       <Toaster />
       <WalletProvider adapters={adapters}>
         <div className="App min-h-screen h-full bg-gradient-to-b from-faint-blue to-faint-blue/50 flex flex-col justify-between items-stretch">
-          <Header />
+          <div>
+            <TopHeader />
+            <Header />
+          </div>
           <div className="w-full mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
             <Suspense fallback={`Loading...`}>
               <DynamicGameScreen />
