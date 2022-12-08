@@ -9,9 +9,7 @@ const envAPIScheme = {
   PRIVATE_KEY: "",
   BANKER_ADDRESS: "",
   PACKAGE_ADDRESS: "",
-  environment: "",
-  trustedOriginsDev: "",
-  trustedOriginsProd: "",
+  TRUSTED_ORIGINS: "",
 };
 
 const envUIScheme = {
@@ -25,8 +23,7 @@ const defaultAPIEnvValues = {
   BANKER_ADDRESS: "",
   PACKAGE_ADDRESS: "",
   environment: "dev",
-  trustedOriginsDev: '["http://localhost:3000"]',
-  trustedOriginsProd: '["https://satoshidomain.sui:3000"]',
+  TRUSTED_ORIGINS: '["http://localhost:3000"]',
 };
 
 const defaultUIEnvValues = {
