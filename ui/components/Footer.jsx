@@ -18,7 +18,7 @@ const Footer = () => {
   };
 
   return (
-    <div className="flex flex-wrap items-center justify-between bg-sui-ocean-dark p-3.5">
+    <div className="flex flex-wrap items-center justify-center lg:justify-between bg-sui-ocean-dark p-3.5">
       <div className="flex items-stretch py-3">
         <span className="text-white/40 h-[15px] w-8">
           <MystenLabsIcon />
@@ -30,12 +30,12 @@ const Footer = () => {
           Copyright © {getYear()}, Mysten Labs, Inc.
         </span>
       </div>
-      <div className="text-xs text-right text-white/50">
+      <div className="text-xs text-center lg:text-right text-white/50">
         <p>
           This is a demo to present a fair method to use Sui blockchain in order
           to conduct a 50/50 chance coin flip game.{" "}
         </p>
-        <p className="pt-2 underline decoration-white/10 underline-offset-4">
+        <p className="flex pt-2 justify-center lg:justify-end underline decoration-white/10 underline-offset-4">
           <Social
             icon={article.svg}
             link={article.link}
