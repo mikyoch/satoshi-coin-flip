@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { useWallet } from "@mysten/wallet-adapter-react";
 import ExplorerLink from "./ExplorerLink";
 import SuiSvg from "../public/svg/sui.svg";
+import { notifyInfo } from "../services/Toasts";
 
 const WalletModal = () => {
   let { connected } = useWallet();
@@ -33,6 +34,7 @@ const WalletModal = () => {
   };
 
   const handleDisconnect = () => {
+    notifyInfo("You are disconnected. Connect your wallet to continue playing!");
     disconnect();
   };
 
