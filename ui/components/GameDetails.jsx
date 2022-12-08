@@ -1,5 +1,7 @@
-import React from "react";
-
+/**
+ * Game Details component
+ * Use: Contains descriptive information about the game
+ */
 const GameDetails = ({ boxHeight }) => {
   return (
     <div className={`${boxHeight} max-w-lg`}>

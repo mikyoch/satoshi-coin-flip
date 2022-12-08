@@ -1,4 +1,9 @@
-import React, { useEffect, useState, useRef } from "react";
+/**
+ * Game Status component
+ * Use: This is a popup like block that appears after the game has finished and
+ * shows the user whether they won or lost
+ */
+import { useEffect, useState, useRef } from "react";
 import { COIN } from "../helpers/constants";
 import HeadsSvg from "../public/svg/capy.svg";
 import TailsSvg from "../public/svg/capy-text.svg";
@@ -18,7 +23,7 @@ const GameStatus = ({ res, callback, coinside }) => {
         .classList.add("opacity-0");
       setTimeout(handleClose, 5000);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [res]);
 
   const handleClose = () => {
@@ -28,8 +33,6 @@ const GameStatus = ({ res, callback, coinside }) => {
       .querySelector("#game")
       .classList.remove("opacity-0");
   };
-
-
 
   return (
     <>
