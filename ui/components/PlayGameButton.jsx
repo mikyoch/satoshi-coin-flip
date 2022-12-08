@@ -14,7 +14,7 @@ import TailsSvg from "../public/svg/capy-text.svg";
 const PlayButton = ({ coinSide, gameID, callback, loading, showChoice }) => {
   // Initialize provider
   const provider = new JsonRpcProvider(Network.DEVNET);
-  const { getAccounts, signAndExecuteTransaction } = useWallet();
+  const { connected, getAccounts, signAndExecuteTransaction } = useWallet();
 
   // Get all coin objects for the current player
   const getPlayerCoinObjects = async () => {
