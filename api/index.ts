@@ -11,10 +11,7 @@ const app: Express = express();
 const port = process.env.PORT;
 
 // Initializing CORS
-const trustedOrigins =
-  process.env.environment === "dev"
-    ? JSON.parse(String(process.env.trustedOriginsDev))
-    : JSON.parse(String(process.env.trustedOriginsProd));
+const trustedOrigins = JSON.parse(String(process.env.TRUSTED_ORIGINS));
 
 app.use(
   cors({

@@ -1,7 +1,8 @@
 const ExplorerLink = ({ id, text, type }) => {
-  let url = "https://explorer.sui.io/";
-  url += `${type === "win" || type === "loss" ? "object" : type}/`;
-  url += `${encodeURIComponent(id)}`;
+  let url =
+    "https://explorer.sui.io/" +
+    `${type === "win" || type === "loss" ? "object" : type}/` +
+    `${encodeURIComponent(id)}`;
 
   const isAddress = type === "address";
   const playerWin = type === "win";
@@ -51,6 +52,6 @@ const ExplorerLink = ({ id, text, type }) => {
       </div>
     </>
   );
-}
+};
 
 export default ExplorerLink;
