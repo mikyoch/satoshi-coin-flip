@@ -16,9 +16,11 @@ const trustedOrigins = JSON.parse(String(process.env.TRUSTED_ORIGINS));
 console.log(`trustedOrigins are: ${trustedOrigins}`);
 
 app.use(
-  cors({
-    origin: trustedOrigins,
-  })
+  cors(
+  //   {
+  //   origin: trustedOrigins,
+  // }
+  )
 );
 
 // Accepted body of requests in x-www-form-urlencoded
