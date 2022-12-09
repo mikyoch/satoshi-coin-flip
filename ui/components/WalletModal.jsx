@@ -1,7 +1,7 @@
 /**
  * Wallet Modal component
  * Use: Renders as a `Connect` button which toggles a modal's visibility
- * The modal integrates the @mysten/wallet-adapter and gives the user the ability 
+ * The modal integrates the @mysten/wallet-adapter and gives the user the ability
  * to connect from a list of available wallets.
  */
 import { useEffect, useState } from "react";
@@ -9,11 +9,25 @@ import { useWallet } from "@mysten/wallet-adapter-react";
 import ExplorerLink from "./ExplorerLink";
 import SuiSvg from "../public/svg/sui.svg";
 import { notifyInfo } from "../services/Toasts";
+import { JsonRpcProvider, Network, MIST_PER_SUI } from "@mysten/sui.js";
 
 const WalletModal = () => {
-  let { connected } = useWallet();
+  let { connected, wallets, wallet, select, disconnect, getAccounts } =
+    useWallet();
   const [open, setOpen] = useState(false);
   const [walletName, setWalletName] = useState("");
+  const [account, setAccount] = useState("");
+  const [accountBalance, setAccountBalance] = useState(0);
+
+  const getBalance = async (account) => {
+    let provider = new JsonRpcProvider(Network.DEVNET);
+    let coinObjs = await provider.getCoinBalancesOwnedByAddress(account);
+    let balance = coinObjs
+      .map((coinObj) => coinObj.details.data.fields.balance)
+      .reduce((curCoin, nextCoin) => curCoin + nextCoin);
+    console.log("balance is", balance / Number(MIST_PER_SUI));
+    setAccountBalance(balance / Number(MIST_PER_SUI));
+  };
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -23,18 +37,15 @@ const WalletModal = () => {
     setOpen(false);
   };
 
-  const { wallets, wallet, select, connecting, disconnect, getAccounts } =
-    useWallet();
-
-  const [account, setAccount] = useState("");
-
   const handleConnect = (walletName) => {
     select(walletName);
     handleClose();
   };
 
   const handleDisconnect = () => {
-    notifyInfo("You are disconnected. Connect your wallet to continue playing!");
+    notifyInfo(
+      "You are disconnected. Connect your wallet to continue playing!"
+    );
     disconnect();
   };
 
@@ -45,6 +56,7 @@ const WalletModal = () => {
 
     getAccounts().then((accounts) => {
       if (accounts && accounts?.length) {
+        getBalance(accounts[0]);
         setAccount(accounts[0]);
       }
     });
@@ -70,15 +82,21 @@ const WalletModal = () => {
             </button>
           ) : (
             <>
-              <div className="flex items-center">
-                <div className="flex flex-1 justify-end text-sm pr-5">
-                  <span className="pr-1 text-sui-text-light">
-                    Connected address:
-                  </span>
-                  <ExplorerLink id={account} type="address" text={account} />
-                  <span className="pl-1 text-sui-text-light hidden lg2:inline-flex font-light">
-                    ({walletName})
-                  </span>
+              <div className="flex items-center justify-end">
+                <div className="grid grid-rows-2">
+                  <div className="flex flex-1  justify-end text-sm pr-5">
+                    <span className="pr-1 text-sui-text-light">
+                      Connected address:
+                    </span>
+                    <ExplorerLink id={account} type="address" text={account} />
+                    <span className="pl-1 text-sui-text-light hidden lg2:inline-flex font-light">
+                      ({walletName})
+                    </span>
+                  </div>
+                  <div className="flex flex-1  justify-end text-sm pr-5">
+                    <span className="pr-1 text-sui-text-light">Balance:</span>
+                    <span className="text-sui-sky">{accountBalance} SUI</span>
+                  </div>
                 </div>
                 <button
                   className="text-md px-6 py-3 rounded-full border text-sui-text-light border-sui-ocean hover:bg-sui-ocean"
@@ -165,6 +183,6 @@ const WalletModal = () => {
       ) : null}
     </>
   );
-}
+};
 
 export default WalletModal;
