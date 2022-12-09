@@ -29,6 +29,7 @@ module.exports = defineConfig({
       framework: "next",
       bundler: "webpack",
     },
+    chromeWebSecurity: false,
   },
   e2e: {
     setupNodeEvents(on, config) {
