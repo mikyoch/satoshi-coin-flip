@@ -95,7 +95,7 @@ const WalletModal = () => {
                   </div>
                   <div className="flex flex-1  justify-end text-sm pr-5">
                     <span className="pr-1 text-sui-text-light">Balance:</span>
-                    <span className="text-sui-sky">{accountBalance} <b>SUI</b></span>
+                    <span className="text-sui-sky"><b>{accountBalance}</b> SUI</span>
                   </div>
                 </div>
                 <button
