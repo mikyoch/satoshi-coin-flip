@@ -11,13 +11,15 @@ const DynamicWalletModal = dynamic(() => import("./WalletModal"), {
   suspense: true,
 });
 
+import TopHeader from "../components/TopBar";
 import Logo from "../public/svg/sui-logo-light.svg";
 import CapySvg from "../public/svg/capy.svg";
 import CapyTxtSvg from "../public/svg/capy-text.svg";
 
 const Header = () => {
   return (
-    <>
+    <div>
+      <TopHeader />
       <div className="bg-sui-ocean-dark px-3.5">
         <div className="py-4">
           <div className="flex justify-between items-center flex-wrap">
@@ -48,7 +50,7 @@ const Header = () => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
