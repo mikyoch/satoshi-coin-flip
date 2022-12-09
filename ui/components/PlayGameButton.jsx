@@ -6,7 +6,7 @@
 import { PACKAGE } from "../helpers/constants";
 import { useWallet } from "@mysten/wallet-adapter-react";
 import { JsonRpcProvider, Network } from "@mysten/sui.js";
-import { notifyError } from "../services/Toasts";
+import { notifyError, notifyInfo } from "../services/Toasts";
 import { COIN } from "../helpers/constants";
 import HeadsSvg from "../public/svg/capy.svg";
 import TailsSvg from "../public/svg/capy-text.svg";
@@ -78,6 +78,12 @@ const PlayButton = ({ coinSide, gameID, callback, loading, showChoice }) => {
       showChoice(choice);
       // Get an appropriate coin from the player
       const playerCoin = await getPlayerSuitableCoinID();
+      if (!playerCoin.coinID) {
+        loading(false);
+        return notifyInfo(
+          "Looks like you are out of coins. Consider requesting some coins from the faucet and try again!"
+        );
+      }
 
       const transactionResponse = await signAndExecuteTransaction({
         kind: "moveCall",
