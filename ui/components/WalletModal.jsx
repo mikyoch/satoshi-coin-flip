@@ -4,7 +4,7 @@
  * The modal integrates the @mysten/wallet-adapter and gives the user the ability
  * to connect from a list of available wallets.
  */
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useWallet } from "@mysten/wallet-adapter-react";
 import ExplorerLink from "./ExplorerLink";
 import SuiSvg from "../public/svg/sui.svg";
@@ -18,15 +18,26 @@ const WalletModal = () => {
   const [walletName, setWalletName] = useState("");
   const [account, setAccount] = useState("");
   const [accountBalance, setAccountBalance] = useState(0);
+  const intervalRef = useRef();
 
   const getBalance = async (account) => {
+    if (!account) return;
     let provider = new JsonRpcProvider(Network.DEVNET);
     let coinObjs = await provider.getCoinBalancesOwnedByAddress(account);
     let balance = coinObjs
       .map((coinObj) => coinObj.details.data.fields.balance)
       .reduce((curCoin, nextCoin) => curCoin + nextCoin);
-    console.log("balance is", balance / Number(MIST_PER_SUI));
     setAccountBalance(balance / Number(MIST_PER_SUI));
+  };
+
+  const setBalanceCheckInterval = (accounts, interval = 3000) => {
+    intervalRef.current = setInterval(async () => {
+      await getBalance(accounts[0]);
+    }, interval);
+  };
+
+  const clearBalanceCheckInterval = () => {
+    clearInterval(intervalRef.current);
   };
 
   const handleClickOpen = () => {
@@ -46,6 +57,7 @@ const WalletModal = () => {
     notifyInfo(
       "You are disconnected. Connect your wallet to continue playing!"
     );
+    clearBalanceCheckInterval();
     disconnect();
   };
 
@@ -57,9 +69,12 @@ const WalletModal = () => {
     getAccounts().then((accounts) => {
       if (accounts && accounts?.length) {
         getBalance(accounts[0]);
+        setBalanceCheckInterval(accounts);
         setAccount(accounts[0]);
       }
     });
+
+    return clearBalanceCheckInterval();
   }, [wallet, connected, getAccounts]);
 
   return (
@@ -95,7 +110,9 @@ const WalletModal = () => {
                   </div>
                   <div className="flex flex-1  justify-end text-sm pr-5">
                     <span className="pr-1 text-sui-text-light">Balance:</span>
-                    <span className="text-sui-sky"><b>{accountBalance}</b> SUI</span>
+                    <span className="text-sui-sky">
+                      <b>{accountBalance}</b> SUI
+                    </span>
                   </div>
                 </div>
                 <button
