@@ -70,7 +70,7 @@ function GameScreen() {
     setIsLoading(false);
     if (playerWon)
       setHistory((old) => [
-        { type: "win", id: gameId, text: `${coinSide}/Win` },
+        { type: "win", id: gameId, text: `${coinSide}/Win`, amount: "+10,000" },
         ...old,
       ]);
     else
@@ -87,7 +87,12 @@ function GameScreen() {
 
   const playButtonClicked = (choice, transactionId) => {
     setCurrentTxs((old) => [
-      { id: transactionId, type: "transaction", text: "Play Tx" },
+      {
+        id: transactionId,
+        type: "transaction",
+        text: "Play Tx",
+        amount: "-5000",
+      },
       ...old,
     ]);
     finish(choice);

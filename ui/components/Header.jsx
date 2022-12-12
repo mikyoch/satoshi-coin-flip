@@ -27,7 +27,7 @@ const Header = () => {
               <Link href="/">
                 <Logo />
               </Link>
-              <div className="hidden xs:flex w-auto h-4 border-l-2 border-white/5 sm:ml-10 sm:pl-5">
+              <div className="hidden xs:flex w-auto h-4 border-l-2 border-white/5 sm:ml-10 sm:pl-5 selection:bg-sui-sky/40 selection:text-white/90">
                 <span className="flex flex-auto text-sui-text-light px-5 items-center">
                   <span className="flex w-6 h-6 mr-2 text-sui-text-light">
                     <CapySvg />
