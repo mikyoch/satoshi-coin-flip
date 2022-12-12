@@ -1,9 +1,9 @@
-import MyApp from './_app';
+import MyApp from "./_app";
 
 export default function Home() {
   return (
     <>
-        <MyApp />
+      <MyApp />
     </>
-  )
+  );
 }

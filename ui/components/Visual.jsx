@@ -1,5 +1,6 @@
-import Image from "next/image";
 import Slot from "./Slot.jsx";
+import HeadsSvg from "../public/svg/capy.svg";
+import TailsSvg from "../public/svg/capy-text.svg";
 
 /*
   props.isRunning integer, 0 = tails, 1 = heads, 2 = running
@@ -8,36 +9,40 @@ import Slot from "./Slot.jsx";
   Pass <Visual isRunning=0 /> to get only "tails"
   Pass <Visual isRunning=1 /> to get only "heads"
 */
-export default function Visual(props) {
-    const isRunning = props.isRunning === 2;
-    const result = props.isRunning === 0 ? "tails" : "heads";
+const Visual = (props) => {
+  const isRunning = props.isRunning === 2;
+  const result = props.isRunning === 0 ? "tails" : "heads";
 
-    return (
-        <>
-          {isRunning ? (
-            <div className="coin-slot">
-              <Slot />
-            </div>
-          ) : (
-            <div className="coin-slot">
-              <div
-                id="slot"
-                className="slot bg-white overflow-hidden dark:bg-gray-700 h-[250px] md:h-[320px] rounded-lg shadow flex items-center justify-center"
-              >
-                <div>
-                  <div className="block w-full border-4 border-double border-yellow-400 rounded-full text-center text-5xl md:text-6xl py-6">
-                    <Image
-                      src={`/${result}.jpg`}
-                      alt={result}
-                      width="64"
-                      height="64"
-                    />
+  return (
+    <>
+      {isRunning ? (
+        <div className="coin-slot">
+          <Slot />
+        </div>
+      ) : (
+        <div className="coin-slot">
+          <div
+            id="slot"
+            className="slot bg-transparent overflow-hidden rounded-lg flex items-center justify-center drop-shadow-xl my-[55%]"
+          >
+            <div>
+              <div className="block bg-sui-ocean border-4 border-sui-ocean-dark rounded-full text-center p-6">
+                {result === "tails" ? (
+                  <div className="text-sui-sky h-[50px] w-[50px] flex items-center justify-center">
+                    <TailsSvg />
                   </div>
-                </div>
+                ) : (
+                  <div className="text-sui-sky h-[50px] w-[50px] flex items-center justify-center">
+                    <HeadsSvg />
+                  </div>
+                )}
               </div>
             </div>
-          )}
-        </>
-      );
-
+          </div>
+        </div>
+      )}
+    </>
+  );
 }
+
+export default Visual;

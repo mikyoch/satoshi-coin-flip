@@ -7,12 +7,14 @@ import ExplorerLink from "./ExplorerLink";
     `id` is the address, object id or transaction id we want to search on the explorer
     `type` is one of `address` `object` `transaction`
 */
-export default function LinksContainer({ linksArray }) {
+const LinksContainer = ({ linksArray }) => {
     return (
-        <div className="w-[17rem] bg-white rounded-md text-sui-sky">
+        <div className="w-[100%] pl-7 self-center drop-shadow-xl">
             {linksArray.map((item)=> 
-                <ExplorerLink key={item.id} type={item.type} id={item.id} />
+                <ExplorerLink key={item.id} type={item.type} id={item.id} text={item.text} amount={item?.amount} />
             )}
         </div>
     )
 }
+
+export default LinksContainer;

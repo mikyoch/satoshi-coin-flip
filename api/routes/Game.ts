@@ -1,4 +1,4 @@
-import express, { Router, Request, Response } from "express";
+import express, { Router, Request, Response, NextFunction } from "express";
 import { checkEnd, checkStart } from "../middleware";
 import services from "../services/";
 
@@ -14,46 +14,60 @@ router.get("/objects", (req: Request, res: Response) => {
   });
 });
 
-router.post("/start", checkStart, async (req: Request, res: Response) => {
-  console.log("body:", req.body);
+router.post(
+  "/start",
+  checkStart,
+  async (req: Request, res: Response, next: NextFunction) => {
+    console.log("POST /game/start with body:", req.body);
 
-  try {
-    let gameId = await GameService.createGame(req.body.minBet, req.body.maxBet);
-    res.status(200);
-    res.json({
-      gameId,
-    });
-  } catch (e) {
-    console.error(
-      `Bad things have happened while calling /game/start with minBet ${req.body.minBet} and maxBet ${req.body.maxBet} :`,
-      e
-    );
-    res.status(500);
-    res.json({
-      error: e,
-    });
+    try {
+      let { gameId, transactionDigest } = await GameService.createGame(
+        req.body.minAmount,
+        req.body.maxAmount
+      );
+      res.status(200);
+      res.json({
+        gameId,
+        transactionDigest,
+      });
+    } catch (e: any) {
+      console.error(
+        `Bad things have happened while calling /game/start with minAmount ${req.body.minAmount} and maxAmount ${req.body.maxAmount} :`,
+        e
+      );
+      // Forward the error to the error handler
+      res.status(500);
+      next(e);
+    }
   }
-});
+);
 
-router.post("/end", checkEnd, async (req: Request, res: Response) => {
-  console.log("body:", req.body);
+router.post(
+  "/end",
+  checkEnd,
+  async (req: Request, res: Response, next: NextFunction) => {
+    console.log("POST /game/end with body:", req.body);
 
-  try {
-    let response = await GameService.endGame(req.body.gameId);
-    res.status(200);
-    res.json({
-      playerWon: response,
-    });
-  } catch (e) {
-    console.error(
-      `Bad things have happened while calling /game/end with id "${req.body.gameId}":`,
-      e
-    );
-    res.status(500);
-    res.json({
-      error: e,
-    });
+    try {
+      let { playerWon, transactionDigest } = await GameService.endGame(
+        req.body.gameId
+      );
+      res.status(200);
+      res.json({
+        playerWon,
+        transactionDigest,
+      });
+    } catch (e) {
+      console.error(
+        `Bad things have happened while calling /game/end with id "${req.body.gameId}":`,
+        e
+      );
+      // Forward the error to the error handler
+
+      res.status(500);
+      next(e);
+    }
   }
-});
+);
 
 export default router;

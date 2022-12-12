@@ -7,6 +7,9 @@
 
 # testing
 /coverage
+**/cypress/plugins/
+**/cypress/videos/
+**/cypress/downloads/
 
 # next.js
 **/.next/
@@ -38,3 +41,5 @@ next-env.d.ts
 **/.env
 
 **/.vscode
+
+**/sui.log.*
