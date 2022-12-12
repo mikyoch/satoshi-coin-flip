@@ -23,7 +23,7 @@ const NewGameButton = (props) => {
       let response = await createGame(100, 5000);
       props.callback(response.data.gameId, response.data.transactionDigest);
     } catch (e) {
-      notifyError("Uh oh, something went wrong. Please try again later!");
+      notifyError("Something went wrong. Please try again later!");
       console.error(e);
       props.loading(false);
     }
