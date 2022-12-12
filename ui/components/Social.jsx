@@ -10,6 +10,7 @@ const Social = ({ icon, link, text, revert = false }) => {
       href={link}
       className={`flex group items-center ${revert ? "flex-row-reverse" : ""}`}
       target="_blank"
+      rel="noreferrer"
     >
       {!!icon && (
         <span
