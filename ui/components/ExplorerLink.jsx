@@ -1,4 +1,4 @@
-const ExplorerLink = ({ id, text, type }) => {
+const ExplorerLink = ({ id, text, type, amount }) => {
   let url =
     "https://explorer.sui.io/" +
     `${type === "win" || type === "loss" ? "object" : type}/` +
@@ -41,7 +41,20 @@ const ExplorerLink = ({ id, text, type }) => {
                   <span className={`${renderColor()} + pr-1 capitalize`}>
                     {`${text}:`}
                   </span>
-                  <span className="text-inherit/50">{`${id}`}</span>
+                  <span className="table-cell truncate max-w-[3rem] sm:max-w-[8rem] md:max-w-[12rem] lg:max-w-[18rem] lg2:max-w-[23rem] xl:max-w-[100%] text-inherit/50">{`${id}`}</span>
+                  {amount && (
+                    <>
+                      <span className="text-ocean-darker text-xs"> <b>[</b> </span>
+                      <span
+                        className={
+                          "text-xs " +
+                          (Number(amount) < 0 ? "text-amber" : "text-success")
+                        }
+                      >{`${amount}`}</span>
+                      <span className="text-[0.6rem] text-sui-text-light"> MIST</span>
+                      <span className="text-ocean-darker text-xs"> <b>]</b></span>
+                    </>
+                  )}
                 </>
               )}
             </>

@@ -4,18 +4,43 @@
  * The modal integrates the @mysten/wallet-adapter and gives the user the ability
  * to connect from a list of available wallets.
  */
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useWallet } from "@mysten/wallet-adapter-react";
 import ExplorerLink from "./ExplorerLink";
 import SuiSvg from "../public/svg/sui.svg";
 import { notifyInfo } from "../services/Toasts";
+import { JsonRpcProvider, Network, MIST_PER_SUI } from "@mysten/sui.js";
 import Social from "./Social";
 import ExternalLink from "../public/svg/arrow-up-right.svg";
 
 const WalletModal = () => {
-  let { connected } = useWallet();
+  let { connected, wallets, wallet, select, disconnect, getAccounts } =
+    useWallet();
   const [open, setOpen] = useState(false);
   const [walletName, setWalletName] = useState("");
+  const [account, setAccount] = useState("");
+  const [accountBalance, setAccountBalance] = useState(0);
+  const intervalRef = useRef();
+
+  const getBalance = async (account) => {
+    if (!account) return;
+    let provider = new JsonRpcProvider(Network.DEVNET);
+    let coinObjs = await provider.getCoinBalancesOwnedByAddress(account);
+    let balance = coinObjs
+      .map((coinObj) => coinObj.details.data.fields.balance)
+      .reduce((curCoin, nextCoin) => curCoin + nextCoin);
+    setAccountBalance(balance / Number(MIST_PER_SUI));
+  };
+
+  const setBalanceCheckInterval = (accounts, interval = 3000) => {
+    intervalRef.current = setInterval(async () => {
+      await getBalance(accounts[0]);
+    }, interval);
+  };
+
+  const clearBalanceCheckInterval = () => {
+    clearInterval(intervalRef.current);
+  };
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -24,11 +49,6 @@ const WalletModal = () => {
   const handleClose = () => {
     setOpen(false);
   };
-
-  const { wallets, wallet, select, connecting, disconnect, getAccounts } =
-    useWallet();
-
-  const [account, setAccount] = useState("");
 
   const handleConnect = (walletName) => {
     select(walletName);
@@ -39,6 +59,7 @@ const WalletModal = () => {
     notifyInfo(
       "You are disconnected. Connect your wallet to continue playing!"
     );
+    clearBalanceCheckInterval();
     disconnect();
   };
 
@@ -49,9 +70,13 @@ const WalletModal = () => {
 
     getAccounts().then((accounts) => {
       if (accounts && accounts?.length) {
+        getBalance(accounts[0]);
+        setBalanceCheckInterval(accounts);
         setAccount(accounts[0]);
       }
     });
+
+    return clearBalanceCheckInterval();
   }, [wallet, connected, getAccounts]);
 
   return (
@@ -74,15 +99,23 @@ const WalletModal = () => {
             </button>
           ) : (
             <>
-              <div className="flex items-center">
-                <div className="flex flex-1 justify-end text-sm pr-5">
-                  <span className="pr-1 text-sui-text-light">
-                    Connected address:
-                  </span>
-                  <ExplorerLink id={account} type="address" text={account} />
-                  <span className="pl-1 text-sui-text-light hidden lg2:inline-flex font-light">
-                    ({walletName})
-                  </span>
+              <div className="flex items-center justify-end">
+                <div className="grid grid-rows-2">
+                  <div className="flex flex-1  justify-end text-sm pr-5">
+                    <span className="pr-1 text-sui-text-light">
+                      Connected address:
+                    </span>
+                    <ExplorerLink id={account} type="address" text={account} />
+                    <span className="pl-1 text-sui-text-light hidden lg2:inline-flex font-light">
+                      ({walletName})
+                    </span>
+                  </div>
+                  <div className="flex flex-1  justify-end text-sm pr-5">
+                    <span className="pr-1 text-sui-text-light">Balance:</span>
+                    <span className="text-sui-sky">
+                      <b>{accountBalance}</b> SUI
+                    </span>
+                  </div>
                 </div>
                 <button
                   className="text-md px-6 py-3 rounded-full border text-sui-text-light border-sui-ocean hover:bg-sui-ocean"
