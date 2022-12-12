@@ -1,7 +1,7 @@
 /**
  * Wallet Modal component
  * Use: Renders as a `Connect` button which toggles a modal's visibility
- * The modal integrates the @mysten/wallet-adapter and gives the user the ability 
+ * The modal integrates the @mysten/wallet-adapter and gives the user the ability
  * to connect from a list of available wallets.
  */
 import { useEffect, useState } from "react";
@@ -9,6 +9,8 @@ import { useWallet } from "@mysten/wallet-adapter-react";
 import ExplorerLink from "./ExplorerLink";
 import SuiSvg from "../public/svg/sui.svg";
 import { notifyInfo } from "../services/Toasts";
+import Social from "./Social";
+import ExternalLink from "../public/svg/arrow-up-right.svg";
 
 const WalletModal = () => {
   let { connected } = useWallet();
@@ -34,7 +36,9 @@ const WalletModal = () => {
   };
 
   const handleDisconnect = () => {
-    notifyInfo("You are disconnected. Connect your wallet to continue playing!");
+    notifyInfo(
+      "You are disconnected. Connect your wallet to continue playing!"
+    );
     disconnect();
   };
 
@@ -127,32 +131,77 @@ const WalletModal = () => {
                     {!connected && (
                       <div className="flex pt-6 pb-5">
                         <div className="flex-1">
-                          {wallets.map((wallet, i) => (
-                            <button
-                              className="w-full flex px-6 py-3 bg-sui-ocean-dark rounded-full my-3 items-center hover:bg-sui-text-dark"
-                              key={i}
-                              onClick={() => handleConnect(wallet.name)}
-                            >
-                              <span className="mr-3">
-                                {wallet.name.includes("Sui") ? (
-                                  <span className="flex w-4 h-6 text-sui-sky">
-                                    <SuiSvg />
-                                  </span>
-                                ) : (
-                                  // eslint-disable-next-line @next/next/no-img-element
-                                  <img
-                                    src={wallet.icon}
-                                    alt={wallet.name}
-                                    width="16"
-                                    height="16"
+                          {wallets.length > 0 ? (
+                            wallets.map((wallet, i) => (
+                              <button
+                                className="w-full flex px-6 py-3 bg-sui-ocean-dark rounded-full my-3 items-center hover:bg-sui-text-dark"
+                                key={i}
+                                onClick={() => handleConnect(wallet.name)}
+                              >
+                                <span className="mr-3">
+                                  {wallet.name.includes("Sui") ? (
+                                    <span className="flex w-4 h-6 text-sui-sky">
+                                      <SuiSvg />
+                                    </span>
+                                  ) : (
+                                    // eslint-disable-next-line @next/next/no-img-element
+                                    <img
+                                      src={wallet.icon}
+                                      alt={wallet.name}
+                                      width="16"
+                                      height="16"
+                                    />
+                                  )}
+                                </span>
+                                <span className="text-sui-text-light">
+                                  Connect {wallet.name}
+                                </span>
+                              </button>
+                            ))
+                          ) : (
+                            <div className="flex text-sui-text-light items-start justify-center">
+                              <span className="py-1 text-amber/70">
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  strokeWidth="1.5"
+                                  stroke="currentColor"
+                                  className="w-8 h-8"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"
                                   />
-                                )}
+                                </svg>
                               </span>
-                              <span className="text-sui-text-light">
-                                Connect {wallet.name}
-                              </span>
-                            </button>
-                          ))}
+                              <div className="flex flex-col px-3">
+                                <span>
+                                  Oops! We can't find an available wallet.
+                                </span>
+                                <span>Install a wallet to continue.</span>
+                                <div className="flex -ml-2 pt-6">
+                                  <div className="border border-sui-sky/50 rounded-full px-3 py-1">
+                                    <Social
+                                      icon={ExternalLink}
+                                      link="https://chrome.google.com/webstore/detail/ethos-sui-wallet/mcbigmjiafegjnnogedioegffbooigli"
+                                      text="Ethos Wallet"
+                                      revert="true"
+                                    />
+                                  </div>
+                                  <div className="border border-sui-sky/50 rounded-full px-3 py-1 ml-2">
+                                    <Social
+                                      icon={ExternalLink}
+                                      link="https://chrome.google.com/webstore/detail/sui-wallet/opcgpfmipidbgpenhmajoajpbobppdil"
+                                      text="Sui Wallet"
+                                      revert="true"
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
                     )}
@@ -165,6 +214,6 @@ const WalletModal = () => {
       ) : null}
     </>
   );
-}
+};
 
 export default WalletModal;
