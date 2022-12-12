@@ -4,7 +4,7 @@
  * The modal integrates the @mysten/wallet-adapter and gives the user the ability
  * to connect from a list of available wallets.
  */
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useWallet } from "@mysten/wallet-adapter-react";
 import ExplorerLink from "./ExplorerLink";
 import SuiSvg from "../public/svg/sui.svg";
@@ -32,11 +32,11 @@ const WalletModal = () => {
     setAccountBalance(balance / Number(MIST_PER_SUI));
   };
 
-  const setBalanceCheckInterval = (accounts, interval = 3000) => {
+  const setBalanceCheckInterval = useCallback((accounts, interval = 3000) => {
     intervalRef.current = setInterval(async () => {
       await getBalance(accounts[0]);
     }, interval);
-  };
+  }, []);
 
   const clearBalanceCheckInterval = () => {
     clearInterval(intervalRef.current);
@@ -77,7 +77,7 @@ const WalletModal = () => {
     });
 
     return clearBalanceCheckInterval();
-  }, [wallet, connected, getAccounts]);
+  }, [wallet, connected, getAccounts, setBalanceCheckInterval]);
 
   return (
     <>
@@ -210,7 +210,9 @@ const WalletModal = () => {
                                 </svg>
                               </span>
                               <div className="flex flex-col px-3">
-                                <span>We can't find an available wallet.</span>
+                                <span>
+                                  We can&apos;t find an available wallet.
+                                </span>
                                 <span>Install a wallet to continue.</span>
                                 <div className="flex -ml-2 pt-6">
                                   <div className="border border-sui-sky/50 rounded-full px-3 py-1">
