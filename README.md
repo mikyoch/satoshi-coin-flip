@@ -1,7 +1,7 @@
 # Time Locked Satoshi Coin Flip
 
 A sample UI for presenting the time locked satoshi coin flip.
-You can try it @ : `<public URL>`
+You can try it at : `https://satoshi-flip.sui.io/`
 
 Note: This example is developed on Sui DevNet and new releases might affect its availability.
 
@@ -55,9 +55,7 @@ Clone the repo locally.<br/>
 Navigate to the api folder `api/` and edit (or create) the `api/.env` file, set the following values to ones that make sense for you:
 
 - `PORT=8080`
-- `environment=dev`
-- `trustedOriginsDev=["http://localhost:3000"]`
-- `trustedOriginsProd=[""]`
+- `TRUSTED_ORIGINS=["http://localhost:3000"]`
 - `BANKER_ADDRESS=<your Sui address or leave empty if you will run the setEnv.js script>`
 - `PACKAGE_ADDRESS=<the address of the satoshi_flip package on the Sui network you use or leave empty and run the setEnv.js script>`
 - `PRIVATE_KEY=<the private key coresponding to the active address in a [byte array] or leave empty if you intend to run the setEnv.js script>`
