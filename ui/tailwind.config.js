@@ -7,6 +7,7 @@ module.exports = {
   ],
   theme: {
     screens: {
+      'xs': '390px',
       'sm': '640px',
       'md': '768px',
       'lg': '1024px',
@@ -21,6 +22,7 @@ module.exports = {
       'sui-sky': '#6fbcf0',
       'sui-ocean': '#2a4362',
       'sui-ocean-dark': '#162a43',
+      'ocean-darker': '#0d1520',
       'faint-blue': '#e6effe',
       'sui-text-dark': '#111111',
       'sui-text-light': '#76839d',

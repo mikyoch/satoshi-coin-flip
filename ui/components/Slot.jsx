@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import HeadsSvg from "../public/svg/heads.svg";
-import TailsSvg from "../public/svg/tails.svg";
+import HeadsSvg from "../public/svg/capy.svg";
+import TailsSvg from "../public/svg/capy-text.svg";
 
-export default function Slot() {
+const Slot = () => {
   const [slotSlides, setSlotSlides] = useState(["heads"]);
   const spinningArray = ["heads", "tails"];
 
@@ -43,3 +43,5 @@ export default function Slot() {
     </div>
   );
 }
+
+export default Slot;

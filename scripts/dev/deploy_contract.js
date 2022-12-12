@@ -2,7 +2,7 @@ const fs = require("fs");
 const { execSync } = require("child_process");
 
 function getAddress() {
-  const data = fs.readFileSync("./.env", { encoding: "utf-8" });
+  const data = fs.readFileSync("./../api/.env", { encoding: "utf-8" });
   const lines = data.split("\n");
   for (let line of lines) {
     if (line.indexOf("BANKER_ADDRESS") >= 0) {
@@ -21,7 +21,7 @@ function setAddressAsCurrent(address) {
 
 function publish() {
   const result = execSync(
-    "sui client publish --gas-budget 10000 --path ../satoshi_flip/ --json"
+    "sui client publish --json --gas-budget 10000 ../satoshi_flip/"
   ).toString();
   const resultJson = JSON.parse(result);
   const packageObject = resultJson?.effects?.created[0]; // Only one object should be created each time

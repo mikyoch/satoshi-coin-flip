@@ -1,13 +1,46 @@
-import React, { useEffect, useState } from "react";
+/**
+ * Wallet Modal component
+ * Use: Renders as a `Connect` button which toggles a modal's visibility
+ * The modal integrates the @mysten/wallet-adapter and gives the user the ability
+ * to connect from a list of available wallets.
+ */
+import { useEffect, useRef, useState } from "react";
 import { useWallet } from "@mysten/wallet-adapter-react";
 import ExplorerLink from "./ExplorerLink";
-import Image from "next/image";
-import HeadsSvg from "../public/svg/heads.svg";
+import SuiSvg from "../public/svg/sui.svg";
+import { notifyInfo } from "../services/Toasts";
+import { JsonRpcProvider, Network, MIST_PER_SUI } from "@mysten/sui.js";
+import Social from "./Social";
+import ExternalLink from "../public/svg/arrow-up-right.svg";
 
-export function WalletModal() {
-  let { connected } = useWallet();
+const WalletModal = () => {
+  let { connected, wallets, wallet, select, disconnect, getAccounts } =
+    useWallet();
   const [open, setOpen] = useState(false);
   const [walletName, setWalletName] = useState("");
+  const [account, setAccount] = useState("");
+  const [accountBalance, setAccountBalance] = useState(0);
+  const intervalRef = useRef();
+
+  const getBalance = async (account) => {
+    if (!account) return;
+    let provider = new JsonRpcProvider(Network.DEVNET);
+    let coinObjs = await provider.getCoinBalancesOwnedByAddress(account);
+    let balance = coinObjs
+      .map((coinObj) => coinObj.details.data.fields.balance)
+      .reduce((curCoin, nextCoin) => curCoin + nextCoin);
+    setAccountBalance(balance / Number(MIST_PER_SUI));
+  };
+
+  const setBalanceCheckInterval = (accounts, interval = 3000) => {
+    intervalRef.current = setInterval(async () => {
+      await getBalance(accounts[0]);
+    }, interval);
+  };
+
+  const clearBalanceCheckInterval = () => {
+    clearInterval(intervalRef.current);
+  };
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -17,17 +50,16 @@ export function WalletModal() {
     setOpen(false);
   };
 
-  const { wallets, wallet, select, connecting, disconnect, getAccounts } =
-    useWallet();
-
-  const [account, setAccount] = useState("");
-
   const handleConnect = (walletName) => {
     select(walletName);
     handleClose();
   };
 
   const handleDisconnect = () => {
+    notifyInfo(
+      "You are disconnected. Connect your wallet to continue playing!"
+    );
+    clearBalanceCheckInterval();
     disconnect();
   };
 
@@ -37,16 +69,20 @@ export function WalletModal() {
     setWalletName(wallet.name.replace(/\(|\)/g, ""));
 
     getAccounts().then((accounts) => {
-      if (accounts && accounts.length) {
+      if (accounts && accounts?.length) {
+        getBalance(accounts[0]);
+        setBalanceCheckInterval(accounts);
         setAccount(accounts[0]);
       }
     });
+
+    return clearBalanceCheckInterval();
   }, [wallet, connected, getAccounts]);
 
   return (
     <>
       <div className="w-full flex flex-wrap space-x-2 justify-end">
-        <div className="flex-1 text-right">
+        <div className="flex-1 sm:text-right text-center">
           {!connected ? (
             <button
               className="flex-1 text-sui-sky bg-sui-ocean-dark border border-sui-sky text-md px-6 py-3 
@@ -63,18 +99,26 @@ export function WalletModal() {
             </button>
           ) : (
             <>
-              <div className="flex items-center">
-                <div className="flex flex-1 justify-end text-sm pr-5">
-                  <span className="pr-1 text-sui-text-light">
-                    Connected address:
-                  </span>
-                  <ExplorerLink id={account} type="address" text={account} />
-                  <span className="pl-1 text-sui-text-light hidden lg2:inline-flex font-light">
-                    ({walletName})
-                  </span>
+              <div className="flex flex-col sm:flex-row items-center justify-end">
+                <div className="grid grid-rows-2">
+                  <div className="flex sm:flex-row flex-col flex-1 sm:justify-end justify-center text-sm sm:pr-5">
+                    <span className="pr-1 text-sui-text-light">
+                      Connected address:
+                    </span>
+                    <ExplorerLink id={account} type="address" text={account} />
+                    <span className="pl-1 text-sui-text-light hidden lg2:inline-flex font-light">
+                      ({walletName})
+                    </span>
+                  </div>
+                  <div className="flex flex-1 sm:justify-end justify-center text-sm pr-5">
+                    <span className="pr-1 text-sui-text-light">Balance:</span>
+                    <span className="text-sui-sky">
+                      <b>{accountBalance}</b> SUI
+                    </span>
+                  </div>
                 </div>
                 <button
-                  className="text-md px-6 py-3 rounded-full border text-sui-text-light border-sui-ocean hover:bg-sui-ocean"
+                  className="text-md px-6 py-3 sm:mt-0 mt-3 rounded-full border text-sui-text-light border-sui-ocean hover:bg-sui-ocean"
                   onClick={handleDisconnect}
                 >
                   Logout
@@ -86,7 +130,7 @@ export function WalletModal() {
       </div>
       {open ? (
         <>
-          <div className="flex justify-center items-center overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none bg-sui-ocean-dark bg-opacity-50">
+          <div className="flex justify-center items-center overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none bg-sui-ocean-dark bg-opacity-50 selection:bg-sui-sky/40 selection:text-white/90">
             <div className="relative w-auto my-4 mx-auto max-w-3xl">
               <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-sui-ocean outline-none focus:outline-none">
                 <div className="flex items-start justify-end p-2.5">
@@ -120,31 +164,75 @@ export function WalletModal() {
                     {!connected && (
                       <div className="flex pt-6 pb-5">
                         <div className="flex-1">
-                          {wallets.map((wallet, i) => (
-                            <button
-                              className="w-full flex px-6 py-3 bg-sui-ocean-dark rounded-full my-3 items-center hover:bg-sui-text-dark"
-                              key={i}
-                              onClick={() => handleConnect(wallet.name)}
-                            >
-                              <span className="mr-3">
-                                {wallet.name.includes("Sui") ? (
-                                  <span className="flex w-4 h-6 text-sui-sky">
-                                    <HeadsSvg />
-                                  </span>
-                                ) : (
-                                  <img
-                                    src={wallet.icon}
-                                    alt={wallet.name}
-                                    width="16"
-                                    height="16"
+                          {wallets.length > 0 ? (
+                            wallets.map((wallet, i) => (
+                              <button
+                                className="w-full flex px-6 py-3 bg-sui-ocean-dark rounded-full my-3 items-center hover:bg-sui-text-dark"
+                                key={i}
+                                onClick={() => handleConnect(wallet.name)}
+                              >
+                                <span className="mr-3">
+                                  {wallet.name.includes("Sui") ? (
+                                    <span className="flex w-4 h-6 text-sui-sky">
+                                      <SuiSvg />
+                                    </span>
+                                  ) : (
+                                    // eslint-disable-next-line @next/next/no-img-element
+                                    <img
+                                      src={wallet.icon}
+                                      alt={wallet.name}
+                                      width="16"
+                                      height="16"
+                                    />
+                                  )}
+                                </span>
+                                <span className="text-sui-text-light">
+                                  Connect {wallet.name}
+                                </span>
+                              </button>
+                            ))
+                          ) : (
+                            <div className="flex text-sui-text-light items-start justify-center">
+                              <span className="py-1 text-amber/70">
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  strokeWidth="1.5"
+                                  stroke="currentColor"
+                                  className="w-8 h-8"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"
                                   />
-                                )}
+                                </svg>
                               </span>
-                              <span className="text-sui-text-light">
-                                Connect {wallet.name}
-                              </span>
-                            </button>
-                          ))}
+                              <div className="flex flex-col px-3">
+                                <span>We can't find an available wallet.</span>
+                                <span>Install a wallet to continue.</span>
+                                <div className="flex -ml-2 pt-6">
+                                  <div className="border border-sui-sky/50 rounded-full px-3 py-1">
+                                    <Social
+                                      icon={ExternalLink}
+                                      link="https://chrome.google.com/webstore/detail/ethos-sui-wallet/mcbigmjiafegjnnogedioegffbooigli"
+                                      text="Ethos Wallet"
+                                      revert="true"
+                                    />
+                                  </div>
+                                  <div className="border border-sui-sky/50 rounded-full px-3 py-1 ml-2">
+                                    <Social
+                                      icon={ExternalLink}
+                                      link="https://chrome.google.com/webstore/detail/sui-wallet/opcgpfmipidbgpenhmajoajpbobppdil"
+                                      text="Sui Wallet"
+                                      revert="true"
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
                     )}
@@ -157,6 +245,6 @@ export function WalletModal() {
       ) : null}
     </>
   );
-}
+};
 
 export default WalletModal;

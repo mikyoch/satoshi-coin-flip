@@ -36,4 +36,17 @@ const notifyError = (msg = "", position = "top-center") => {
   });
 };
 
-export { notifySucess, notifyError, notifyPlayResult };
+const notifyInfo = (msg = "", position = "top-center") => {
+  toast(msg, {
+    duration: 5000,
+    position,
+    icon: "ℹ️",
+    style: {
+      ...style,
+      padding: "1%",
+      marginTop: "25%"
+    },
+  });
+};
+
+export { notifySucess, notifyError, notifyInfo, notifyPlayResult };

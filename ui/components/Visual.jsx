@@ -1,6 +1,6 @@
 import Slot from "./Slot.jsx";
-import HeadsSvg from "../public/svg/heads.svg";
-import TailsSvg from "../public/svg/tails.svg";
+import HeadsSvg from "../public/svg/capy.svg";
+import TailsSvg from "../public/svg/capy-text.svg";
 
 /*
   props.isRunning integer, 0 = tails, 1 = heads, 2 = running
@@ -9,7 +9,7 @@ import TailsSvg from "../public/svg/tails.svg";
   Pass <Visual isRunning=0 /> to get only "tails"
   Pass <Visual isRunning=1 /> to get only "heads"
 */
-export default function Visual(props) {
+const Visual = (props) => {
   const isRunning = props.isRunning === 2;
   const result = props.isRunning === 0 ? "tails" : "heads";
 
@@ -44,3 +44,5 @@ export default function Visual(props) {
     </>
   );
 }
+
+export default Visual;

@@ -1,11 +1,15 @@
-import React from "react";
+/**
+ * Play Game Button component
+ * Use: The button will render as heads or tails and will execute the respective moveCall
+ */
+
 import { PACKAGE } from "../helpers/constants";
 import { useWallet } from "@mysten/wallet-adapter-react";
 import { JsonRpcProvider, Network } from "@mysten/sui.js";
-import { notifyError } from "../services/Toasts";
+import { notifyError, notifyInfo } from "../services/Toasts";
 import { COIN } from "../helpers/constants";
-import HeadsSvg from "../public/svg/heads.svg";
-import TailsSvg from "../public/svg/tails.svg";
+import HeadsSvg from "../public/svg/capy.svg";
+import TailsSvg from "../public/svg/capy-text.svg";
 
 const PlayButton = ({ coinSide, gameID, callback, loading, showChoice }) => {
   // Initialize provider
@@ -67,27 +71,6 @@ const PlayButton = ({ coinSide, gameID, callback, loading, showChoice }) => {
     });
   };
 
-  const splitPlayerCoin = async (coinToSplit) => {
-    const coinID = coinToSplit.coinID;
-    const playerAccounts = await getAccounts();
-    const playerActiveAccount = playerAccounts[0];
-
-    try {
-      const splitTxn = await signAndExecuteTransaction({
-        kind: "paySui",
-        data: {
-          inputCoins: [coinID],
-          recipients: [playerActiveAccount],
-          amounts: [5000],
-          gasBudget: 10000,
-        },
-      });
-      return splitTxn.effects.created[0].reference.objectId;
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
   const handleClick = async () => {
     loading(true);
     try {
@@ -95,6 +78,12 @@ const PlayButton = ({ coinSide, gameID, callback, loading, showChoice }) => {
       showChoice(choice);
       // Get an appropriate coin from the player
       const playerCoin = await getPlayerSuitableCoinID();
+      if (!playerCoin.coinID) {
+        loading(false);
+        return notifyInfo(
+          "Looks like you are out of coins. Consider requesting some coins from the faucet and try again!"
+        );
+      }
 
       const transactionResponse = await signAndExecuteTransaction({
         kind: "moveCall",
@@ -132,7 +121,8 @@ const PlayButton = ({ coinSide, gameID, callback, loading, showChoice }) => {
     <>
       <button
         onClick={handleClick}
-        className="group bg-gray-dark text-white/70 px-6 py-3 mx-2 lowercase rounded-full shadow hover:shadow-lg outline-none focus:outline-none"
+        disabled={!connected}
+        className="group bg-gray-dark text-white/70 px-6 py-3 mx-2 lowercase rounded-full shadow hover:shadow-lg outline-none focus:outline-none  disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed disabled:text-white/50"
       >
         <span className="group-hover:text-white/80 flex items-center justify-center capitalize pr-1">
           <span className="flex justify-center w-6 h-6 text-sui-sky/60 group-hover:text-sui-sky/100">

@@ -1,25 +1,17 @@
-// import { useState } from "react";
+const ExplorerLink = ({ id, text, type, amount }) => {
+  let url =
+    "https://explorer.sui.io/" +
+    `${type === "win" || type === "loss" ? "object" : type}/` +
+    `${encodeURIComponent(id)}`;
 
-export default function ExplorerLink({ id, text, type }) {
-  // const [showTooltip, setShowTooltip] = useState(false);
-
-  let url = "https://explorer.sui.io/";
-  // if (type === "object") url += "objects/";
-  // else if (type === "transaction") url += "transactions/";
-  // else if (type === "address") url += "addresses/";
-
-  // adding an else just to be able to show `won#gameId`
-  // else url += "objects/";
-  url += `${type}/`;
-  url += `${encodeURIComponent(id)}`;
-  // what will user see
   const isAddress = type === "address";
   const playerWin = type === "win";
   const playerLoss = type === "loss";
   const isObject = type === "object";
 
+  // Determine result color: red/green for win/loss type objects
   const renderColor = () => {
-    if (!isAddress && !isObject) {
+    if (!isAddress) {
       if (playerLoss) {
         return "text-failure";
       } else if (playerWin) {
@@ -32,7 +24,7 @@ export default function ExplorerLink({ id, text, type }) {
   return (
     <>
       <div className="first-of-type:text-sui-sky text-sui-text-light">
-        <a href={url} target="_blank" referrer="noreferrer">
+        <a href={url} target="_blank" rel="noreferrer" className="">
           {!isAddress ? (
             <>
               {!playerWin && !playerLoss && isObject ? (
@@ -49,15 +41,30 @@ export default function ExplorerLink({ id, text, type }) {
                   <span className={`${renderColor()} + pr-1 capitalize`}>
                     {`${text}:`}
                   </span>
-                  <span className="text-inherit/50">{`${id}`}</span>
+                  <span className="table-cell truncate max-w-[3rem] sm:max-w-[8rem] md:max-w-[12rem] lg:max-w-[18rem] lg2:max-w-[23rem] xl:max-w-[100%] text-inherit/50">{`${id}`}</span>
+                  {amount && (
+                    <>
+                      <span className="text-ocean-darker text-xs"> <b>[</b> </span>
+                      <span
+                        className={
+                          "text-xs " +
+                          (Number(amount) < 0 ? "text-amber" : "text-success")
+                        }
+                      >{`${amount}`}</span>
+                      <span className="text-[0.6rem] text-sui-text-light"> MIST</span>
+                      <span className="text-ocean-darker text-xs"> <b>]</b></span>
+                    </>
+                  )}
                 </>
               )}
             </>
           ) : (
-            <span className="text-inherit/50">{`${text}`}</span>
+            <span className="text-inherit/50 block mx-auto truncate max-w-[50%] xs:max-w-[80%] sm:max-w-[100%]">{`${text}`}</span>
           )}
         </a>
       </div>
     </>
   );
-}
+};
+
+export default ExplorerLink;

@@ -18,12 +18,12 @@ router.post(
   "/start",
   checkStart,
   async (req: Request, res: Response, next: NextFunction) => {
-    console.log("body:", req.body);
+    console.log("POST /game/start with body:", req.body);
 
     try {
       let { gameId, transactionDigest } = await GameService.createGame(
-        req.body.minBet,
-        req.body.maxBet
+        req.body.minAmount,
+        req.body.maxAmount
       );
       res.status(200);
       res.json({
@@ -32,7 +32,7 @@ router.post(
       });
     } catch (e: any) {
       console.error(
-        `Bad things have happened while calling /game/start with minBet ${req.body.minBet} and maxBet ${req.body.maxBet} :`,
+        `Bad things have happened while calling /game/start with minAmount ${req.body.minAmount} and maxAmount ${req.body.maxAmount} :`,
         e
       );
       // Forward the error to the error handler
@@ -46,7 +46,7 @@ router.post(
   "/end",
   checkEnd,
   async (req: Request, res: Response, next: NextFunction) => {
-    console.log("body:", req.body);
+    console.log("POST /game/end with body:", req.body);
 
     try {
       let { playerWon, transactionDigest } = await GameService.endGame(

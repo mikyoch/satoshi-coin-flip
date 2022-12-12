@@ -61,10 +61,7 @@ class SuiService implements SuiServiceInterface {
   private async populateGasCoins() {
     try {
       const gasCoins = await this.getAllCoins();
-      if (
-        gasCoins.length > 5 &&
-        this.ensureAvailableCoins(gasCoins, 5, 5000)
-      ) {
+      if (gasCoins.length > 5 && this.ensureAvailableCoins(gasCoins, 5, 5000)) {
         // pick the first 5 coins
         this.gasCoins = gasCoins
           .filter((coin, index) => index < 5)
@@ -87,16 +84,14 @@ class SuiService implements SuiServiceInterface {
     }
   }
 
-  private async mergeCoins(coinsToMerge: { id: string; balance: number }[]) {
-    return this.signer.paySui({
+  private async mergeCoins(
+    coinsToMerge: { id: string; balance: number }[],
+    gasBudget = 10000
+  ) {
+    return this.signer.payAllSui({
       inputCoins: [...coinsToMerge.map((coin) => coin.id)],
-      recipients: [String(process.env.BANKER_ADDRESS)],
-      amounts: [
-        coinsToMerge
-          .map((coin) => coin.balance)
-          .reduce((prevCoin, currCoin) => prevCoin + currCoin),
-      ],
-      gasBudget: 10000,
+      recipient: String(process.env.BANKER_ADDRESS),
+      gasBudget,
     });
   }
 
@@ -109,13 +104,16 @@ class SuiService implements SuiServiceInterface {
 
     const smallGasCoins = gasCoins.filter((coin) => coin.balance < 5000);
 
-    if (smallGasCoins.length > 1) {
-      await this.mergeCoins(smallGasCoins);
+    if (smallGasCoins.length > 0) {
+      const largestCoin = await this.getLargestBankCoin();
+      console.log("Small coins found, merging...");
+      await this.mergeCoins([largestCoin, ...smallGasCoins]);
       await this.populateGasCoins();
     }
   }
 
   private async getNextGasCoin() {
+    // @todo: how do we recover if this call fails?
     await this.checkGasCoinBalances();
 
     const coinIdIndex = this.gasCoins.findIndex(
