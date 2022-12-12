@@ -248,7 +248,7 @@ function GameScreen() {
             </div>
           </div>
         </div>
-        <div className="relative flex justify-between items-stretch flex-wrap py-6">
+        <div className="relative flex justify-between items-stretch flex-wrap py-6 sm:flex-row flex-col">
           <div id="history" className="flex-1 flex flex-col mr-[12px]">
             <div className="relative flex justify-center items-end mb-3">
               <h2 className="pb-2 text-center">History</h2>

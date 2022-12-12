@@ -31,7 +31,7 @@ const TopHeader = () => {
   return (
     <div className="bg-ocean-darker px-3.5">
       <div className="py-2.5">
-        <div className="flex justify-between items-center flex-wrap">
+        <div className="flex justify-between items-center flex-wrap flex-col sm:flex-row">
           <div className="flex items-center text-sm text-sui-text-light">
             <Social
               icon={article.svg}
@@ -40,7 +40,7 @@ const TopHeader = () => {
               revert={true}
             />
           </div>
-          <div className="flex items-center text-sui-text-light text-sm">
+          <div className="w-full sm:w-auto flex items-center text-sui-text-light text-sm sm:pt-0 pt-2 justify-between sm:pl-0 pl-4">
             <Social icon={github.svg} link={github.link} text={github.text} />
             <Social icon={site.svg} link={site.link} text={site.text} />
           </div>

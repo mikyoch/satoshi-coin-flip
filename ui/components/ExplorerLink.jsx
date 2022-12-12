@@ -24,7 +24,7 @@ const ExplorerLink = ({ id, text, type, amount }) => {
   return (
     <>
       <div className="first-of-type:text-sui-sky text-sui-text-light">
-        <a href={url} target="_blank" rel="noreferrer">
+        <a href={url} target="_blank" rel="noreferrer" className="">
           {!isAddress ? (
             <>
               {!playerWin && !playerLoss && isObject ? (
@@ -59,7 +59,7 @@ const ExplorerLink = ({ id, text, type, amount }) => {
               )}
             </>
           ) : (
-            <span className="text-inherit/50">{`${text}`}</span>
+            <span className="text-inherit/50 block mx-auto truncate max-w-[50%] xs:max-w-[80%] sm:max-w-[100%]">{`${text}`}</span>
           )}
         </a>
       </div>

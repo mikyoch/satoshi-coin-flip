@@ -82,7 +82,7 @@ const WalletModal = () => {
   return (
     <>
       <div className="w-full flex flex-wrap space-x-2 justify-end">
-        <div className="flex-1 text-right">
+        <div className="flex-1 sm:text-right text-center">
           {!connected ? (
             <button
               className="flex-1 text-sui-sky bg-sui-ocean-dark border border-sui-sky text-md px-6 py-3 
@@ -99,9 +99,9 @@ const WalletModal = () => {
             </button>
           ) : (
             <>
-              <div className="flex items-center justify-end">
+              <div className="flex flex-col sm:flex-row items-center justify-end">
                 <div className="grid grid-rows-2">
-                  <div className="flex flex-1  justify-end text-sm pr-5">
+                  <div className="flex sm:flex-row flex-col flex-1 sm:justify-end justify-center text-sm sm:pr-5">
                     <span className="pr-1 text-sui-text-light">
                       Connected address:
                     </span>
@@ -110,7 +110,7 @@ const WalletModal = () => {
                       ({walletName})
                     </span>
                   </div>
-                  <div className="flex flex-1  justify-end text-sm pr-5">
+                  <div className="flex flex-1 sm:justify-end justify-center text-sm pr-5">
                     <span className="pr-1 text-sui-text-light">Balance:</span>
                     <span className="text-sui-sky">
                       <b>{accountBalance}</b> SUI
@@ -118,7 +118,7 @@ const WalletModal = () => {
                   </div>
                 </div>
                 <button
-                  className="text-md px-6 py-3 rounded-full border text-sui-text-light border-sui-ocean hover:bg-sui-ocean"
+                  className="text-md px-6 py-3 sm:mt-0 mt-3 rounded-full border text-sui-text-light border-sui-ocean hover:bg-sui-ocean"
                   onClick={handleDisconnect}
                 >
                   Logout
