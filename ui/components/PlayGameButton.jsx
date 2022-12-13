@@ -1,3 +1,6 @@
+// Copyright (c) Mysten Labs, Inc.
+// SPDX-License-Identifier: Apache-2.0
+
 /**
  * Play Game Button component
  * Use: The button will render as heads or tails and will execute the respective moveCall

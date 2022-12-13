@@ -1,3 +1,6 @@
+// Copyright (c) Mysten Labs, Inc.
+// SPDX-License-Identifier: Apache-2.0
+
 import Slot from "./Slot.jsx";
 import HeadsSvg from "../public/svg/capy.svg";
 import TailsSvg from "../public/svg/capy-text.svg";

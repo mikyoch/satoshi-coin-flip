@@ -1,3 +1,6 @@
+// Copyright (c) Mysten Labs, Inc.
+// SPDX-License-Identifier: Apache-2.0
+
 const ExplorerLink = ({ id, text, type, amount }) => {
   let url =
     "https://explorer.sui.io/" +
@@ -30,29 +33,36 @@ const ExplorerLink = ({ id, text, type, amount }) => {
               {!playerWin && !playerLoss && isObject ? (
                 <>
                   <span
-                    className={`${renderColor()} + pr-1 text-sm capitalize`}
+                    className={`sm:inline-block hidden ${renderColor()} pr-1 align-bottom text-sm capitalize`}
                   >
                     {text ? `${text}:` : `${type}:`}
                   </span>
-                  <span className="text-inherit/50 text-sm">{`${id}`}</span>
+                  <span className="inline-block align-bottom text-inherit/50 text-sm max-w-[80vw] truncate">{`${id}`}</span>
                 </>
               ) : (
                 <>
-                  <span className={`${renderColor()} + pr-1 capitalize`}>
+                  <span
+                    className={`${renderColor()} + pr-1 capitalize font-medium align-bottom`}
+                  >
                     {`${text}:`}
                   </span>
-                  <span className="table-cell truncate max-w-[3rem] sm:max-w-[8rem] md:max-w-[12rem] lg:max-w-[18rem] lg2:max-w-[23rem] xl:max-w-[100%] text-inherit/50">{`${id}`}</span>
+                  <span className="inline-block align-bottom text-inherit/50 max-w-[35vw] truncate lg2:max-w-[30vw] lg:max-w-[28vw]">
+                    {`${id}`}
+                  </span>
                   {amount && (
                     <>
-                      <span className="text-ocean-darker text-xs"> <b>[</b> </span>
-                      <span
-                        className={
-                          "text-xs " +
-                          (Number(amount) < 0 ? "text-amber" : "text-success")
-                        }
-                      >{`${amount}`}</span>
-                      <span className="text-[0.6rem] text-sui-text-light"> MIST</span>
-                      <span className="text-ocean-darker text-xs"> <b>]</b></span>
+                      <div className="inline-flex items-end bg-gray-dark/10 rounded-full px-2 ml-1">
+                        <span
+                          className={
+                            "text-xs pr-1 font-light " +
+                            (Number(amount) < 0 ? "text-amber" : "text-success")
+                          }
+                        >{`${amount}`}</span>
+                        <span className="font-light text-[0.6rem] text-sui-text-light">
+                          {" "}
+                          MIST
+                        </span>
+                      </div>
                     </>
                   )}
                 </>
