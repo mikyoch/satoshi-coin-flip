@@ -1,3 +1,6 @@
+// Copyright (c) Mysten Labs, Inc.
+// SPDX-License-Identifier: Apache-2.0
+
 import { useMemo, Suspense } from "react";
 import dynamic from "next/dynamic";
 import "../styles/globals.css";

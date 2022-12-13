@@ -1,3 +1,6 @@
+// Copyright (c) Mysten Labs, Inc.
+// SPDX-License-Identifier: Apache-2.0
+
 import express, { Router, Request, Response, NextFunction } from "express";
 import { checkEnd, checkStart } from "../middleware";
 import services from "../services/";

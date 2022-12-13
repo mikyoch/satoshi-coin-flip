@@ -1,3 +1,6 @@
+// Copyright (c) Mysten Labs, Inc.
+// SPDX-License-Identifier: Apache-2.0
+
 /**
  * Game Screen component
  * Use: Loads and connects every component necessary for the user to play the game

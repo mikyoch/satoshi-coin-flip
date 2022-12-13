@@ -1,3 +1,6 @@
+// Copyright (c) Mysten Labs, Inc.
+// SPDX-License-Identifier: Apache-2.0
+
 const ExplorerLink = ({ id, text, type, amount }) => {
   let url =
     "https://explorer.sui.io/" +

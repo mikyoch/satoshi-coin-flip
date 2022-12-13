@@ -1,3 +1,6 @@
+// Copyright (c) Mysten Labs, Inc.
+// SPDX-License-Identifier: Apache-2.0
+
 /**
  * New Game Button component
  * Use: Once clicked, the button sends a `new-game` request to the API

@@ -1,3 +1,6 @@
+// Copyright (c) Mysten Labs, Inc.
+// SPDX-License-Identifier: Apache-2.0
+
 import { NextFunction, Request, Response } from "express";
 
 // @todo: define in a const files specific error codes

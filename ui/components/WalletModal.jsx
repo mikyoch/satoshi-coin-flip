@@ -1,3 +1,6 @@
+// Copyright (c) Mysten Labs, Inc.
+// SPDX-License-Identifier: Apache-2.0
+
 /**
  * Wallet Modal component
  * Use: Renders as a `Connect` button which toggles a modal's visibility
