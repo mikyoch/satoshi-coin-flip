@@ -251,8 +251,11 @@ function GameScreen() {
             </div>
           </div>
         </div>
-        <div className="relative flex justify-between items-stretch flex-wrap py-6 sm:flex-row flex-col">
-          <div id="history" className="flex-1 flex flex-col mr-[12px]">
+        <div className="relative flex justify-between items-stretch flex-wrap py-6 lg:flex-row flex-col">
+          <div
+            id="history"
+            className="flex-1 flex flex-col mr-[12px] lg:mb-0 mb-8"
+          >
             <div className="relative flex justify-center items-end mb-3">
               <h2 className="pb-2 text-center">History</h2>
               <span className="absolute w-[200px] h-[4px] rounded-full bg-gradient-to-r from-sui-ocean/0 via-sui-ocean/10 to-sui-ocean/0"></span>

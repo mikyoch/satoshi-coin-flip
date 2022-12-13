@@ -11,13 +11,21 @@ import ExplorerLink from "./ExplorerLink";
     `type` is one of `address` `object` `transaction`
 */
 const LinksContainer = ({ linksArray }) => {
-    return (
-        <div className="w-[100%] pl-7 self-center drop-shadow-xl">
-            {linksArray.map((item)=> 
-                <ExplorerLink key={item.id} type={item.type} id={item.id} text={item.text} amount={item?.amount} />
-            )}
-        </div>
-    )
-}
+  return (
+    <div className="flex w-[100%] pl-7 self-center drop-shadow-xl justify-center">
+      <div className="flex flex-col">
+        {linksArray.map((item) => (
+          <ExplorerLink
+            key={item.id}
+            type={item.type}
+            id={item.id}
+            text={item.text}
+            amount={item?.amount}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
 
 export default LinksContainer;
