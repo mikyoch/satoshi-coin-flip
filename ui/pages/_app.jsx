@@ -10,6 +10,7 @@ import { Toaster } from "react-hot-toast";
 // Components
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import PlausibleAnalytics from "../components/PlausibleAnalystics";
 const DynamicGameScreen = dynamic(() => import("../components/GameScreen"), {
   suspense: true,
 });
@@ -27,6 +28,7 @@ function MyApp() {
   return (
     <>
       <Toaster />
+      <PlausibleAnalytics />
       <WalletProvider adapters={adapters}>
         <div className="App min-h-screen h-full bg-gradient-to-b from-faint-blue to-faint-blue/50 flex flex-col justify-between items-stretch">
           <Header />
