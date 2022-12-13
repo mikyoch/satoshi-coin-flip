@@ -51,7 +51,7 @@ const ExplorerLink = ({ id, text, type, amount }) => {
                   </span>
                   {amount && (
                     <>
-                      <div className="inline-flex items-end bg-gray-dark/10 rounded-full px-2">
+                      <div className="inline-flex items-end bg-gray-dark/10 rounded-full px-2 ml-1">
                         <span
                           className={
                             "text-xs pr-1 font-light " +
