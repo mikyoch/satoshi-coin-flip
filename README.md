@@ -75,7 +75,7 @@ If you left any or both of <code>BANKER_ADDRESS</code> and <code>PACKAGE_ADDRESS
 This script will set the first <code>ED25519</code> address you own as the active-address and will publish the contract on the active network (must be devnet).
 Also it will set the <code>PRIVATE_KEY</code>.
 
-## Smart contract (custom set up)
+### Smart contract (custom set up)
 To deploy the smart contract yourself, if you skipped using the <code>setEnv.js</code> script, navigate the the contracts directory <code>satoshi_flip</code> and press <code>sui publish --gas-budget 5000</code>. Get the package id from the output and put it in the <code>api/.env</code> and <code>ui/.env</code> files (check the templates for the appropriate variable naming).
 
 </details><br/>
