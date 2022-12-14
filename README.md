@@ -1,7 +1,7 @@
 # Time Locked Satoshi Coin Flip
 
 A sample UI for presenting the time locked satoshi coin flip.
-You can try it at : `https://satoshi-flip.sui.io/`
+You can try it at: [https://satoshi-flip.sui.io](https://satoshi-flip.sui.io)
 
 Note: This example is developed on Sui DevNet and new releases might affect its availability.
 
