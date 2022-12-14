@@ -52,12 +52,12 @@ To try the example yourself you will need:
 ## Usage
 If you'd like to give the code a try here's how you can set it up:
 
-Clone the repo locally.<br/>
-First navigate to the scripts folder and run `npm install`<br/>
-Next the `api/.env` and `ui/.env` files need to be populated<br/>
-There are two possible ways of setting the required .env files:
-1. **Automatic** - *(Recomended)* By simply running either the api or the ui, the `setEnv.js` script (located in the `scripts` folder) will be executed and the env files will be created.
-1. **Manual** - Check section '*(Optional) Configuring dotenv files manually*' below
+1) Clone the repo locally
+2) Navigate to the scripts folder and run `npm install`
+3) Next, the `api/.env` and `ui/.env` files need to be populated.<br/>
+    There are two possible ways of setting the required .env files:
+    - a) **Automatic** - *(Recomended)* By simply running either the api or the ui, the `setEnv.js` script (located in the `scripts` folder) will be executed and the env files will be created.
+    - b) **Manual** - Check section '*(Optional) Configuring dotenv files manually*' below
 
 <details>
 <summary> <b>(Optional) Configuring dotenv files manually</b> </summary>
