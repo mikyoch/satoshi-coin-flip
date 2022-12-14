@@ -63,7 +63,7 @@ If you'd like to give the code a try here's how you can set it up:
 <summary> <b>(Optional) Configuring dotenv files manually</b> </summary>
 Navigate to the api folder <code>api/</code> and edit (or create) the <code>api/.env</code> file, set the following values to ones that make sense for you:
 
-```json
+```dotenv
 PORT=8080
 TRUSTED_ORIGINS=["http://localhost:3000"]
 BANKER_ADDRESS=<your Sui address or leave empty, the setEnv.js script runs on api and ui launch>
