@@ -39,7 +39,7 @@ The UI is used to showcase our fairness claim, since the player is able at any p
 
 ## Server
 A simple server is used to protect house private data and calls.<br/>
-
+More details can be found in `api/README.md` file
 
 ## Prereqs
 To try the example yourself you will need:
@@ -53,20 +53,32 @@ To try the example yourself you will need:
 If you'd like to give the code a try here's how you can set it up:
 
 Clone the repo locally.<br/>
-Navigate to the api folder `api/` and edit (or create) the `api/.env` file, set the following values to ones that make sense for you:
+First navigate to the scripts folder and run `npm install`<br/>
+Next the `api/.env` and `ui/.env` files need to be populated<br/>
+There are two possible ways of setting the required .env files:
+1. **Automatic** - *(Recomended)* By simply running either the api or the ui, the `setEnv.js` script (located in the `scripts` folder) will be executed and the env files will be created.
+1. **Manual** - Check section '*(Optional) Configuring dotenv files manually*' below
 
-- `PORT=8080`
-- `TRUSTED_ORIGINS=["http://localhost:3000"]`
-- `BANKER_ADDRESS=<your Sui address or leave empty if you will run the setEnv.js script>`
-- `PACKAGE_ADDRESS=<the address of the satoshi_flip package on the Sui network you use or leave empty and run the setEnv.js script>`
-- `PRIVATE_KEY=<the private key coresponding to the active address in a [byte array] or leave empty if you intend to run the setEnv.js script>`
+<details>
+<summary> <b>(Optional) Configuring dotenv files manually</b> </summary>
+Navigate to the api folder <code>api/</code> and edit (or create) the <code>api/.env</code> file, set the following values to ones that make sense for you:
 
-If you left any or both of `BANKER_ADDRESS` and `PACKAGE_ADDRESS` empty then run `node setEnv.js` to have them automatically completed.
-This script will set the first `ED25519` address you own as the active-address and will publish the contract on the active network (must be devnet).
-Also it will set the `PRIVATE_KEY`.
+```json
+PORT=8080
+TRUSTED_ORIGINS=["http://localhost:3000"]
+BANKER_ADDRESS=<your Sui address or leave empty, the setEnv.js script runs on api and ui launch>
+PACKAGE_ADDRESS=<the address of the satoshi_flip package on the Sui network you use or leave empty, the setEnv.js script runs on api and ui launch>
+PRIVATE_KEY=<the private key coresponding to the active address in a [byte array] or leave empty since the setEnv.js script runs on api and ui launch>
+```
 
-### Smart contract
-To deploy the smart contract yourself, if you skipped using the `setEnv.js` script, navigate the the contracts directory `satoshi_flip` and press `sui publish --gas-budget 5000`. Get the package id from the output and put it in the `api/.env` and `ui/.env` files (check the templates for the appropriate variable naming).
+If you left any or both of <code>BANKER_ADDRESS</code> and <code>PACKAGE_ADDRESS</code> empty then navigate to <code>scripts</code> folder and run <code>npm run dev</code> to have them automatically completed. 
+This script will set the first <code>ED25519</code> address you own as the active-address and will publish the contract on the active network (must be devnet).
+Also it will set the <code>PRIVATE_KEY</code>.
+
+## Smart contract (custom set up)
+To deploy the smart contract yourself, if you skipped using the <code>setEnv.js</code> script, navigate the the contracts directory <code>satoshi_flip</code> and press <code>sui publish --gas-budget 5000</code>. Get the package id from the output and put it in the <code>api/.env</code> and <code>ui/.env</code> files (check the templates for the appropriate variable naming).
+
+</details><br/>
 
 ### API
 Next move to the `api/` directory, do another `npm install`.

@@ -26,5 +26,5 @@ These are the main differences between these 2 scripts
 - Run `npm run dev`
 
 ## Project set up (prod)
-- If there is a new version of the satoshi flip contract run the `compileToBase64Bytecode.sh` script that is located in the `satoshi_flip` folder
+- If there is a new version of the satoshi flip contract run the `compileToBase64Bytecode.sh` script that is located in the `satoshi_flip` folder. This script requires the sui cli to be installed locally.
 - Run `npm run prod`
