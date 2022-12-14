@@ -38,7 +38,8 @@ The contract allows for a variable amount of MIST, up to an amount determined by
 The UI is used to showcase our fairness claim, since the player is able at any point to check the created objects and transactions on the chain and verify that the hashes match and that the outcome is correct.
 
 ## Server
-A simple server is used to protect house private data and calls.
+A simple server is used to protect house private data and calls.<br/>
+
 
 ## Prereqs
 To try the example yourself you will need:

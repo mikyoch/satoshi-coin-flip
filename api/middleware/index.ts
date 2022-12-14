@@ -20,7 +20,7 @@ function errorHandler(
   res: Response,
   next: NextFunction
 ) {
-  res.status(res.statusCode || 500).send({ error: err });
+  res.status(res.statusCode || 500).send({ message: err.message || err, stack: err.stack || "N/A" });
   console.error("Error Handler:", err);
   // next(err);
 }
@@ -28,8 +28,10 @@ function errorHandler(
 // used as parameter checking in the /start endpint
 function checkStart(req: Request, res: Response, next: NextFunction) {
   try {
-    if (!req?.body?.minAmount) throw new Error('Parameter "minAmount" is required');
-    if (!req?.body?.maxAmount) throw new Error('Parameter "maxAmount" is required');
+    if (!req?.body?.minAmount)
+      throw new Error('Parameter "minAmount" is required');
+    if (!req?.body?.maxAmount)
+      throw new Error('Parameter "maxAmount" is required');
   } catch (error) {
     res.status(errorCode);
     next(error);
