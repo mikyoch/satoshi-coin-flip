@@ -80,6 +80,7 @@ To deploy the smart contract yourself, if you skipped using the <code>setEnv.js<
 
 </details><br/>
 
+---
 ### API
 Next move to the `api/` directory, do another `npm install`.
 Lastly with `npm run dev` the server will start locally at `localhost:8080` depending on the `PORT` variable of in `api/.env`.
