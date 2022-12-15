@@ -10,7 +10,7 @@ Includes the following endpoints:
 1. Node installed locally and sui cli
 1. Go to the *scripts* folder and run `npm install`
 ## Get started
-1. GO to the *api* folder and run `cd api`
+1. Go to the *api* folder and run `cd api`
 1. Run `npm install`
 1. Run the api with `npm run dev` (this command will also set the .env file if semi-complete and will create it if it doesn't exist)
 

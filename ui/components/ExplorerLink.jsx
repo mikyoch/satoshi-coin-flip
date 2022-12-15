@@ -50,20 +50,18 @@ const ExplorerLink = ({ id, text, type, amount }) => {
                     {`${id}`}
                   </span>
                   {amount && (
-                    <>
-                      <div className="inline-flex items-end bg-gray-dark/10 rounded-full px-2 ml-1">
-                        <span
-                          className={
-                            "text-xs pr-1 font-light " +
-                            (Number(amount) < 0 ? "text-amber" : "text-success")
-                          }
-                        >{`${amount}`}</span>
-                        <span className="font-light text-[0.6rem] text-sui-text-light">
-                          {" "}
-                          MIST
-                        </span>
-                      </div>
-                    </>
+                    <div className="inline-flex items-end bg-gray-dark/10 rounded-full px-2 ml-1">
+                      <span
+                        className={
+                          "text-xs pr-1 font-light " +
+                          (Number(amount) < 0 ? "text-amber" : "text-success")
+                        }
+                      >{`${amount}`}</span>
+                      <span className="font-light text-[0.6rem] text-sui-text-light">
+                        {" "}
+                        MIST
+                      </span>
+                    </div>
                   )}
                 </>
               )}

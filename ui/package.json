@@ -7,7 +7,8 @@
     "dev": "npm run set-up-dev-env && next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prod": "next build && next export && cp -r ./out/* $npm_config_gh_pages_path && echo \"Output successfully copied to $npm_config_gh_pages_path\""
   },
   "dependencies": {
     "@mysten/sui.js": "^0.17.1",

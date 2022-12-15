@@ -66,7 +66,6 @@ router.post(
         e
       );
       // Forward the error to the error handler
-
       res.status(500);
       next(e);
     }

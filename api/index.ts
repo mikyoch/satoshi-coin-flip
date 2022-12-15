@@ -33,9 +33,6 @@ app.use(
   })
 );
 
-// we can use json requests if we prefer
-// app.use(express.json({}));
-
 // --------- Routes "/game" ---------
 app.use("/game", gameRoutes);
 

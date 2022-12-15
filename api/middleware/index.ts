@@ -6,14 +6,14 @@ import { NextFunction, Request, Response } from "express";
 // @todo: define in a const files specific error codes
 const errorCode = 400;
 
-// handles errors related to non existing endpoints
+// Handles errors related to non existing endpoints
 function notFound(req: Request, res: Response, next: NextFunction) {
   res.status(404);
   const error = new Error("Not Found: " + req.originalUrl);
   next(error);
 }
 
-// handles generic errors that can happen during execution of the services
+// Handles generic errors that can happen during execution of the services
 function errorHandler(
   err: Error,
   req: Request,
@@ -22,10 +22,9 @@ function errorHandler(
 ) {
   res.status(res.statusCode || 500).send({ message: err.message || err, stack: err.stack || "N/A" });
   console.error("Error Handler:", err);
-  // next(err);
 }
 
-// used as parameter checking in the /start endpint
+// Used as parameter checking in the /start endpint
 function checkStart(req: Request, res: Response, next: NextFunction) {
   try {
     if (!req?.body?.minAmount)
@@ -40,7 +39,7 @@ function checkStart(req: Request, res: Response, next: NextFunction) {
   next();
 }
 
-// used as parameter checking in the /end endpint
+// Used as parameter checking in the /end endpint
 function checkEnd(req: Request, res: Response, next: NextFunction) {
   try {
     if (!req?.body?.gameId) throw new Error('Parameter "gameId" is required');
