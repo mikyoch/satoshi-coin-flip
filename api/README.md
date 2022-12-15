@@ -1,6 +1,6 @@
 # Satoshi Server
 The Satoshi API is responsible for making sensitive Sui module calls.<br/>
-Postman collection with available calls and sample responses can be found in the `api/Satoshi Flip endpoints.postman_collection.json` file. <br/>
+Postman collection with available calls and sample responses can be found in the [api folder](./Satoshi%20Flip%20endpoints.postman_collection.json). <br/>
 
 Includes the following endpoints:
 - `POST /game/start` - Creates a new secret and submits it along with the house's stake by calling the `start_game` method of the satoshi_flip module. Handles coin object equivocation with a round robin approach.
@@ -16,4 +16,4 @@ Includes the following endpoints:
 
 ## General Debugging notes
 - If the API does not start, ensure that all the .env values have been properly set by the `setEnv.js` script. Dotenv schema can be found in the `.env.template` file.
-- The `setEnv.js` script can be manually invoked by running `npm run set-up-dev-env` within the API folder or via the scripts folder (further instructions can be found there)
+- The `setEnv.js` script can be manually invoked by running `npm run set-up-dev-env` within the API folder or via the scripts folder (further instructions can be [here](../scripts))

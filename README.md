@@ -11,7 +11,7 @@ We present a fair method to use Sui blockchain in order to conduct a 50 / 50 cha
 
 We model it after a coin flip since the chances are 50%.<br/>
 The theory backing this project was presented by Kostas Chalkias (Chief Cryptographer @Mysten Labs) at GAME3R 2022.<br/>
-The smart contract source code that is running on Sui devnet can be found at `satoshi_flip/sources/satoshi_flip.move`.
+The smart contract source code that is running on Sui devnet can be found in [satoshi_flip folder](satoshi_flip/sources/satoshi_flip.move).
 
 ## Smart Contract Flow
 
@@ -39,7 +39,7 @@ The UI is used to showcase our fairness claim, since the player is able at any p
 
 ## Server
 A simple server is used to protect house private data and calls.<br/>
-More details can be found in `api/README.md` file
+More details can be found in the [api readme](api)
 
 ## Prereqs
 To try the example yourself you will need:
@@ -56,7 +56,7 @@ If you'd like to give the code a try here's how you can set it up:
 2) Navigate to the scripts folder and run `npm install`
 3) Next, the `api/.env` and `ui/.env` files need to be populated.<br/>
     There are two possible ways of setting the required .env files:
-    - a) **Automatic** - *(Recomended)* By simply running either the api or the ui, the `setEnv.js` script (located in the `scripts` folder) will be executed and the env files will be created.
+    - a) **Automatic** - *(Recomended)* By simply running either the api or the ui, the `setEnv.js` script (located in the [scripts folder](scripts/dev)) will be executed and the env files will be created.
     - b) **Manual** - Check section '*(Optional) Configuring dotenv files manually*' below
 
 <details>
