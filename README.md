@@ -72,7 +72,7 @@ If you did not provide values for `BANKER_ADDRESS` or `PACKAGE_ADDRESS`, navigat
 
 ### Smart contract (custom set up)
 
-YOu can deploy the smart contract yourself. If you skipped using the setEnv.js script, navigate the the /satoshi_flip/sources folder that contains the satoshi_flip.move smart contract, and then run the following command:
+You can deploy the smart contract yourself. If you skipped using the setEnv.js script, navigate the the /satoshi_flip/sources folder that contains the satoshi_flip.move smart contract, and then run the following command:
 ```sh
 sui publish --gas-budget 5000
 ``` 
