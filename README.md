@@ -1,6 +1,6 @@
 # Time-locked Satoshi Coin Flip
 
-This sample prvides an example UI to present a time-locked Satoshi Coin Flip game. You can try it out at [https://satoshi-flip.sui.io](https://satoshi-flip.sui.io).
+This sample provides an example UI to present a time-locked Satoshi Coin Flip game. You can try it out at [https://satoshi-flip.sui.io](https://satoshi-flip.sui.io).
 
 **Note:** This example runs on Sui DevNet. The site may be briefly unavailable while weekly network updates deploy.
 
