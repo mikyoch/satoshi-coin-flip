@@ -31,7 +31,8 @@ const WalletModal = () => {
     let coinObjs = await provider.getCoinBalancesOwnedByAddress(account);
     let balance = coinObjs
       .map((coinObj) => coinObj.details.data.fields.balance)
-      .reduce((curCoin, nextCoin) => curCoin + nextCoin);
+      .reduce((curCoin, nextCoin) => Number(curCoin) + Number(nextCoin));
+
     setAccountBalance(balance / Number(MIST_PER_SUI));
   };
 
