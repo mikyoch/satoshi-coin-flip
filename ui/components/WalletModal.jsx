@@ -27,16 +27,20 @@ const WalletModal = () => {
 
   const getBalance = async (account) => {
     if (!account) return;
-    let provider = new JsonRpcProvider(Network.DEVNET);
-    let coinObjs = await provider.getCoinBalancesOwnedByAddress(account);
-    let balance = coinObjs
-      .map((coinObj) => coinObj.details.data.fields.balance)
-      .reduce((curCoin, nextCoin) => Number(curCoin) + Number(nextCoin));
+    try {
+      let provider = new JsonRpcProvider(Network.DEVNET);
+      let coinObjs = await provider.getCoinBalancesOwnedByAddress(account);
+      let balance = coinObjs
+        .map((coinObj) => coinObj.details.data.fields.balance)
+        .reduce((curCoin, nextCoin) => Number(curCoin) + Number(nextCoin));
 
-    setAccountBalance(balance / Number(MIST_PER_SUI));
+      setAccountBalance(balance / Number(MIST_PER_SUI));
+    } catch (error) {
+      console.error("Could not set balance");
+    }
   };
 
-  const setBalanceCheckInterval = useCallback((accounts, interval = 3000) => {
+  const setBalanceCheckInterval = useCallback((accounts, interval = 5000) => {
     intervalRef.current = setInterval(async () => {
       await getBalance(accounts[0]);
     }, interval);

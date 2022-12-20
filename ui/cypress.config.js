@@ -5,9 +5,9 @@ const execa = require("execa");
 const getPluginPathBasedOnOS = () => {
   let pathPrefix = process.platform == "linux" ? `${process.env.PWD}/` : "";
   let pathSuffix = "cypress/plugins/Wallets/Sui-Wallet";
-  let extraSuffix = process.platform == "linux" ? "/Sui-Wallet" : "";
+  // let extraSuffix = process.platform == "linux" ? "/Sui-Wallet" : "";
 
-  return pathPrefix + pathSuffix + extraSuffix;
+  return pathPrefix + pathSuffix;
 };
 
 const findBrowser = () => {
