@@ -1,5 +1,10 @@
-import React from "react";
+// Copyright (c) Mysten Labs, Inc.
+// SPDX-License-Identifier: Apache-2.0
 
+/**
+ * Game Details component
+ * Use: Contains descriptive information about the game
+ */
 const GameDetails = ({ boxHeight }) => {
   return (
     <div className={`${boxHeight} max-w-lg`}>

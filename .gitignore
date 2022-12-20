@@ -9,11 +9,12 @@
 /coverage
 **/cypress/videos
 **/cypress/screeshots
-**/cypress/plugins/Wallets/**
+**/cypress/plugins/
+**/cypress/downloads/
 
 # next.js
 **/.next/
-/out/
+**/out/
 
 # production
 **/build

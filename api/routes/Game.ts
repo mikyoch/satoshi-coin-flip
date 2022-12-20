@@ -1,3 +1,6 @@
+// Copyright (c) Mysten Labs, Inc.
+// SPDX-License-Identifier: Apache-2.0
+
 import express, { Router, Request, Response, NextFunction } from "express";
 import { checkEnd, checkStart } from "../middleware";
 import services from "../services/";
@@ -18,7 +21,7 @@ router.post(
   "/start",
   checkStart,
   async (req: Request, res: Response, next: NextFunction) => {
-    console.log("body:", req.body);
+    console.log("POST /game/start with body:", req.body);
 
     try {
       let { gameId, transactionDigest } = await GameService.createGame(
@@ -46,7 +49,7 @@ router.post(
   "/end",
   checkEnd,
   async (req: Request, res: Response, next: NextFunction) => {
-    console.log("body:", req.body);
+    console.log("POST /game/end with body:", req.body);
 
     try {
       let { playerWon, transactionDigest } = await GameService.endGame(

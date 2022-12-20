@@ -1,3 +1,6 @@
+// Copyright (c) Mysten Labs, Inc.
+// SPDX-License-Identifier: Apache-2.0
+
 import ExplorerLink from "./ExplorerLink";
 
 /* 
@@ -7,12 +10,22 @@ import ExplorerLink from "./ExplorerLink";
     `id` is the address, object id or transaction id we want to search on the explorer
     `type` is one of `address` `object` `transaction`
 */
-export default function LinksContainer({ linksArray }) {
-    return (
-        <div className="w-[95%] p-3 self-center drop-shadow-xl">
-            {linksArray.map((item)=> 
-                <ExplorerLink key={item.id} type={item.type} id={item.id} text={item.text} />
-            )}
-        </div>
-    )
-}
+const LinksContainer = ({ linksArray }) => {
+  return (
+    <div className="flex w-[100%] pl-7 self-center drop-shadow-xl justify-center">
+      <div className="flex flex-col">
+        {linksArray.map((item) => (
+          <ExplorerLink
+            key={item.id}
+            type={item.type}
+            id={item.id}
+            text={item.text}
+            amount={item?.amount}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default LinksContainer;

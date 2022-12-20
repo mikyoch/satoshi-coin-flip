@@ -1,9 +1,14 @@
+// Copyright (c) Mysten Labs, Inc.
+// SPDX-License-Identifier: Apache-2.0
+
 import axios from "axios";
 import qs from "qs";
 
+
+console.log("Which is the current api url:", process.env.NEXT_PUBLIC_API_BASE_URL);
 const satoshiAPI = axios.create({
-  // defaults to dev API
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080",
+  // FIXME: quick fix since env variables can't be passed on k8s to nextjs.
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || "https://satoshi-flip-api.sui.io",
 });
 
 const createGame = (minAmount, maxAmount) => {

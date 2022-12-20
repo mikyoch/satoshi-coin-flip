@@ -11,7 +11,7 @@ services:
       - /app/node_modules
       - /app/.next
     env_file:
-      - ./ui/.env
+      - ./ui/.env.local
   api:
     ports:
       - 8080:8080
