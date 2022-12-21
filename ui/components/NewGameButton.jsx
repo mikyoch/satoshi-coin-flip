@@ -36,6 +36,7 @@ const NewGameButton = (props) => {
     <>
       <button
         onClick={handleSubmit}
+        id="new-game-btn"
         className="bg-sui-ocean text-white px-6 py-3 rounded-full cursor-pointer shadow hover:shadow-lg outline-none focus:outline-none disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed disabled:text-white/50"
         disabled={disabled}
       >
