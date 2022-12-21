@@ -26,7 +26,7 @@ Fairness is ensured and verifiable by:
 
 The House assumes the role of the UI. Any player can join, connect a Sui-compatible wallet (Ethos, Suiet and Sui Wallet supported currently), and then start a new game by clicking **New Game**.
 
-The House picks the secret and commits the hash and a coin of at least 5000 MIST. The House then askes the player to choose **Tails** or **Heads** (0 or 1 respectively), to guess the predetermined bit. When the player chooses, it locks 5000 MIST of the player's balance in their wallet. 
+The House picks the secret and commits the hash and a coin of at least 5000 MIST. The House then asks the player to choose **Tails** or **Heads** (0 or 1 respectively), to guess the predetermined bit. When the player chooses, it locks 5000 MIST of the player's balance in their wallet. 
 
 To end the game, the House reveals the secret and then transfers 10000 MIST to the winner.
 
