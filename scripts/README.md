@@ -2,7 +2,7 @@
 
 This folder contains scripts that utilize the SuiClient CLI and Linux Bash commands to initialize the project configuration and deploy the satoshi_coin_flip module.
 
-**Note:** Running the scripts directly from this folder is not required as they are automatically invoked when the API or UI run.
+**Note:** Running the scripts directly from this folder is not required as they are automatically invoked when you run the API or UI.
 
 ## Disclaimer
 
