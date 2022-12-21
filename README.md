@@ -43,7 +43,7 @@ The example uses a simple server to protect House private data and calls. You ca
 To try the example yourself you will need:
  - a Sui address with SUI coins
  - Sui Client CLI (installed when you install Sui) set to connect to Devnet
- - A Sui-compatible wallet on a Chrome-based browser
+ - A Sui-compatible wallet on a Chromium-based browser
  - npm
  - Node
 
@@ -53,11 +53,11 @@ Follow these steps to try out the code yourself:
  1. Clone the repository locally
  1. Navigate to the `/scripts` folder and run `npm install`
  1. Next, populate the `api/.env` and `ui/.env` files. There are two ways to set the required .env files:
-    1. **Automatic** - *(Recomended)* Simply run either the API or the UI to execute the `setEnv.js` script (located in the [scripts folder](scripts/dev)), which creates the .env files.
+    1. **Automatic** - *(Recommended)* Simply run either the API or the UI to execute the `setEnv.js` script (located in the [scripts folder](scripts/dev)), which creates the .env files.
     1. **Manual** - Expand the *Configure .env files manually* section to see details.
 
 <details>
-<summary> <b>Configure dotenv files manually</b> </summary>
+<summary> <b>Configure .env files manually</b> </summary>
 Navigate to the `/api` folder and edit (or create) the `api/.env` file. Set values for the following settings as appropriate for your environment:
 
 ```
@@ -77,14 +77,14 @@ You can deploy the smart contract yourself. If you skipped using the setEnv.js s
 sui publish --gas-budget 5000
 ``` 
 
-Get the package ID returned, and from the output and put it in the `api/.env` and `ui/.env` files. Check the templates for the appropriate variable naming.
+Get the package ID returned, and include it in the `api/.env` and `ui/.env` files. Check the templates for the appropriate variable naming.
 
 </details><br/>
 
 ---
 ### API
 Next move to the `api/` directory, do another `npm install`.
-Lastly with `npm run dev` the server will start locally at `localhost:8080` depending on the `PORT` variable of in `api/.env`.
+Lastly with `npm run dev` the server will start locally at `localhost:8080` depending on the `PORT` variable in `api/.env`.
 
 ### UI
 Navigate to the `ui/` directory and run `npm install`, followed by `npm run dev` for local trials. The UI will start running at `localhost:3000` and you can start playing.
