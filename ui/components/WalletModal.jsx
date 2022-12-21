@@ -96,7 +96,7 @@ const WalletModal = () => {
               className="flex-1 text-sui-sky bg-sui-ocean-dark border border-sui-sky text-md px-6 py-3 
           rounded-full hover:bg-sui-ocean hover:text-white"
               onClick={handleClickOpen}
-              id="connect-but"
+              id="connect-btn"
             >
               <div className="flex align-start">
                 Connect To Wallet
@@ -129,7 +129,7 @@ const WalletModal = () => {
                 <button
                   className="text-md px-6 py-3 sm:mt-0 mt-3 rounded-full border text-sui-text-light border-sui-ocean hover:bg-sui-ocean"
                   onClick={handleDisconnect}
-                  id="logout-but"
+                  id="logout-btn"
                 >
                   Logout
                 </button>
@@ -173,7 +173,7 @@ const WalletModal = () => {
                   <>
                     {!connected && (
                       <div className="flex pt-6 pb-5">
-                        <div className="flex-1" id="but-container">
+                        <div className="flex-1" id="wallet-btn-container">
                           {wallets.length > 0 ? (
                             wallets.map((wallet, i) => (
                               <button
