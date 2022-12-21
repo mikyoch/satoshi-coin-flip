@@ -124,6 +124,7 @@ const PlayButton = ({ coinSide, gameID, callback, loading, showChoice }) => {
     <>
       <button
         onClick={handleClick}
+        id={coinSide}
         disabled={!connected}
         className="group bg-gray-dark text-white/70 px-6 py-3 mx-2 lowercase rounded-full shadow hover:shadow-lg outline-none focus:outline-none  disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed disabled:text-white/50"
       >
