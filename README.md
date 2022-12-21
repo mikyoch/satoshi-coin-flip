@@ -8,7 +8,7 @@ This sample provides an example UI to present a time-locked Satoshi Coin Flip ga
 
 We present a fair method to use the Sui blockchain to conduct a 50 / 50 game of chance. We model the example after a 2-sided coin flip with a 50% chance for each outcome, Tails or Heads.
 
-Kostas Chalkias, Chief Cryptographer at Mysten Labs, presented the theory behind this project at [GAME3R 2022](https://gam3r.org/).
+Kostas Chalkias, Chief Cryptographer at Mysten Labs, presented the theory behind this project at [GAM3R 2022](https://gam3r.org/).
 
 You can find the source code for the smart contract (satoshi_flip.move) that executes on Sui Devnet in the [satoshi_flip](satoshi_flip/sources/satoshi_flip.move) folder.
 
@@ -24,7 +24,7 @@ Fairness is ensured and verifiable by:
 
 ## UI Flow
 
-The House assumes the role of the UI. Any player can join, connect a Sui-compatible wallet (Ethos and Sui Wallet supported currently), and then start a new game by clicking **New Game**.
+The House assumes the role of the UI. Any player can join, connect a Sui-compatible wallet (Ethos, Suiet and Sui Wallet supported currently), and then start a new game by clicking **New Game**.
 
 The House picks the secret and commits the hash and a coin of at least 5000 MIST. The House then askes the player to choose **Tails** or **Heads** (0 or 1 respectively), to guess the predetermined bit. When the player chooses, it locks 5000 MIST of the player's balance in their wallet. 
 
