@@ -16,7 +16,7 @@ You can find the source code for the smart contract (satoshi_flip.move) that exe
 
 The smart contract works for any two players. The player that starts the game takes the role of the House. The House picks a random secret and commits on chain the hash of the secret. The House is responsible for picking a properly random secret.
 
-The other player can wager a guess on a predetermined bit of this secret, either 0 or 1 (Tails or Heads). The House then reveals the secret and the smart contract determines the winner.
+The other player guesses the outcome on a predetermined bit of this secret, either 0 or 1 (Tails or Heads). The House then reveals the secret and the smart contract determines the winner.
 
 Fairness is ensured and verifiable by:
  1. Hashing the secret and verifying that it matches the initial hash the House submitted (this is also verified by the contract).
