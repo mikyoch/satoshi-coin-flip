@@ -6,7 +6,7 @@ This folder contains scripts that utilize the SuiClient CLI and Linux Bash comma
 
 ## Disclaimer
 
-Dev and prod environments currently do not differentiate the initialization process, rather they are different ways to do the same thing: set up the .env files.
+Dev and prod environments currently do not differentiate the initialization process, they rather provide different ways to do the same thing: set up the .env files.
  - `npm run dev` utilizes the Sui Client CLI to deploy the smart contract
  - `npm run prod` utilizes the JS / TS Sui SDK to deploy the smart contract
 
