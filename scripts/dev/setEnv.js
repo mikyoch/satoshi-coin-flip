@@ -1,3 +1,6 @@
+// Copyright (c) Mysten Labs, Inc.
+// SPDX-License-Identifier: Apache-2.0
+
 const { execSync } = require("child_process");
 const { fromB64 } = require("@mysten/bcs");
 const { Ed25519PublicKey } = require("@mysten/sui.js");

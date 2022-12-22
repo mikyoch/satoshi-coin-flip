@@ -1,8 +1,9 @@
-import SatoshiGameService from "./SatoshiGameService";
-// import { SuiService } from "./SuiService";
+// Copyright (c) Mysten Labs, Inc.
+// SPDX-License-Identifier: Apache-2.0
 
-// using this export method to maintain a shared storage between .ts files
+import SatoshiGameService from "./SatoshiGameService";
+
+// Using this export method to maintain a shared storage between .ts files
 export default {
-  // SuiService: new SuiService(),
   SatoshiGameService: new SatoshiGameService(),
 };

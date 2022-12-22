@@ -1,3 +1,6 @@
+// Copyright (c) Mysten Labs, Inc.
+// SPDX-License-Identifier: Apache-2.0
+
 /**
  * Play Game Button component
  * Use: The button will render as heads or tails and will execute the respective moveCall
@@ -121,6 +124,7 @@ const PlayButton = ({ coinSide, gameID, callback, loading, showChoice }) => {
     <>
       <button
         onClick={handleClick}
+        id={coinSide}
         disabled={!connected}
         className="group bg-gray-dark text-white/70 px-6 py-3 mx-2 lowercase rounded-full shadow hover:shadow-lg outline-none focus:outline-none  disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed disabled:text-white/50"
       >

@@ -1,3 +1,6 @@
+// Copyright (c) Mysten Labs, Inc.
+// SPDX-License-Identifier: Apache-2.0
+
 import { SuiService, SuiServiceInterface } from "./SuiService";
 import SHA3 from "sha3";
 
@@ -32,8 +35,7 @@ class SatoshiGameService {
   ): Promise<{ gameId: string; transactionDigest: string }> {
     return new Promise(async (resolve, reject) => {
       try {
-        // @todo: check guess values here?
-        // const coinId = await this.suiService.getLargestBankCoin().id;
+        // @todo: check min and max values here?
         const coinId = await this.suiService.getPlayCoin();
         const { secret, hash } = this.getNewSecretAndHash();
 
@@ -46,7 +48,6 @@ class SatoshiGameService {
             [Array.from(hash), coinId, minAmount, maxAmount]
           )
           .then((res: any) => {
-            // added any here because I don't understand what problem it has with the type
             const effects = res?.EffectsCert
               ? res?.EffectsCert?.effects?.effects
               : res?.effects;

@@ -1,3 +1,6 @@
+// Copyright (c) Mysten Labs, Inc.
+// SPDX-License-Identifier: Apache-2.0
+
 /**
  * Game Status component
  * Use: This is a popup like block that appears after the game has finished and

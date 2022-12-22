@@ -7,9 +7,11 @@
 
 # testing
 /coverage
+**/cypress/videos
+**/cypress/screeshots
 **/cypress/plugins/
-**/cypress/videos/
 **/cypress/downloads/
+**/cypress/screenshots/
 
 # next.js
 **/.next/

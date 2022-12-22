@@ -1,3 +1,6 @@
+// Copyright (c) Mysten Labs, Inc.
+// SPDX-License-Identifier: Apache-2.0
+
 /**
  * Game Details component
  * Use: Contains descriptive information about the game
@@ -13,14 +16,14 @@ const GameDetails = ({ boxHeight }) => {
           <span className="text-sui-ocean font-medium underline underline-offset-4">
             Sui blockchain
           </span>
-          . The UI assumes the role of one player and each game requires a 5000
-          Mists stake. This is implemented on{" "}
-          <span className="font-medium">Sui DevNet</span>.
+          . The UI assumes the role of the House, and each game requires a 5000
+          MIST stake. This is implemented on{" "}
+          <span className="font-medium">Sui Devnet</span>.
         </p>
         <p className="pt-2">
-          Each game generates a random secret that is hashed and then passed on
-          the new game smart contract along with the house&apos;s stake. A user can
-          then play by staking the fixed amount we&apos;ve defined - 5000 Mists - and
+          Each game generates a random secret. The secret is hashed and then commits on-chain
+          the new game smart contract along with the House&apos;s stake. A user can
+          then play by staking the fixed amount we&apos;ve defined - 5000 MIST - and
           selects <span className="underline underline-offset-4">Head</span> or{" "}
           <span className="underline underline-offset-4">Tails</span>. The game
           then ends and the winner is selected. Throughout the entire game,
