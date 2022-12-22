@@ -24,7 +24,7 @@ Fairness is ensured and verifiable by:
 
 ## UI Flow
 
-The House assumes the role of the UI. Any player can join, connect a Sui-compatible wallet (Ethos, Suiet and Sui Wallet supported currently), and then start a new game by clicking **New Game**.
+The House assumes the role of the UI. Any player can join, connect a Sui-compatible wallet (Ethos and Sui Wallet supported currently), and then start a new game by clicking **New Game**.
 
 The House picks the secret and commits the hash and a coin of at least 5000 MIST. The House then asks the player to choose **Tails** or **Heads** (0 or 1 respectively), to guess the predetermined bit. When the player chooses, it locks 5000 MIST of the player's balance in their wallet. 
 
