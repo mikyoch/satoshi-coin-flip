@@ -7,8 +7,7 @@ import qs from "qs";
 
 console.log("Which is the current api url:", process.env.NEXT_PUBLIC_API_BASE_URL);
 const satoshiAPI = axios.create({
-  // FIXME: quick fix since env variables can't be passed on k8s to nextjs.
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || "https://satoshi-flip-api.sui.io",
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
 });
 
 const createGame = (minAmount, maxAmount) => {

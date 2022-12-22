@@ -14,16 +14,18 @@ const app: Express = express();
 const port = process.env.PORT;
 
 // Initializing CORS
-console.log(`Will try to JSON parse: ${process.env.TRUSTED_ORIGINS}, which is of type: ${typeof process.env.TRUSTED_ORIGINS}`);
+console.log(
+  `Will try to JSON parse: ${
+    process.env.TRUSTED_ORIGINS
+  }, which is of type: ${typeof process.env.TRUSTED_ORIGINS}`
+);
 const trustedOrigins = JSON.parse(String(process.env.TRUSTED_ORIGINS));
 console.log(`trustedOrigins are: ${trustedOrigins}`);
 
 app.use(
-  cors(
-  //   {
-  //   origin: trustedOrigins,
-  // }
-  )
+  cors({
+    origin: trustedOrigins,
+  })
 );
 
 // Accepted body of requests in x-www-form-urlencoded
@@ -32,9 +34,6 @@ app.use(
     extended: true,
   })
 );
-
-// we can use json requests if we prefer
-// app.use(express.json({}));
 
 // --------- Routes "/game" ---------
 app.use("/game", gameRoutes);

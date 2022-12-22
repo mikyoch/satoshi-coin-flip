@@ -1,0 +1,630 @@
+{
+	"info": {
+		"_postman_id": "3ca37087-9932-4b24-b8eb-5f01e49179ef",
+		"name": "Satoshi Flip endpoints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Start Game",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "minAmount",
+							"value": "100",
+							"description": "minAmount is the minimum amount accepted for a bet",
+							"type": "default"
+						},
+						{
+							"key": "maxAmount",
+							"value": "5000",
+							"description": "maxAmount is the maximum amount accepted for a bet",
+							"type": "default"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:8080/game/start",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"game",
+						"start"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Start Game - (200) Success",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "minAmount",
+									"value": "100",
+									"description": "minAmount is the minimum amount accepted for a bet",
+									"type": "default"
+								},
+								{
+									"key": "maxAmount",
+									"value": "5000",
+									"description": "maxAmount is the maximum amount accepted for a bet",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:8080/game/start",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"game",
+								"start"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "122"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"7a-f59aUY7DS1dxfDLY00HUiWz/y+g\""
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 14 Dec 2022 19:54:57 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"gameId\": \"0xa03eb6b869d6ad797d4747b7af83e60597f99ae9\",\n    \"transactionDigest\": \"DYeFQyKEpEnbKd6U6vKLVkLqSnBNtEjRyHCYzRkvssq9\"\n}"
+				},
+				{
+					"name": "Start Game - (400) Missing a body parameter",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "minAmount",
+									"value": "100",
+									"description": "minAmount is the minimum amount accepted for a bet",
+									"type": "default"
+								},
+								{
+									"key": "maxAmount",
+									"value": "5000",
+									"description": "maxAmount is the maximum amount accepted for a bet",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:8080/game/start",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"game",
+								"start"
+							]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "1576"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"628-MzERLQANBvf9RPARsD6ZO4UbVUY\""
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 14 Dec 2022 20:22:56 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"message\": \"Parameter \\\"minAmount\\\" is required\",\n    \"stack\": \"Error: Parameter \\\"minAmount\\\" is required\\n    at checkStart (/home/stefanos/Documents/satoshi-coin-flip/api/middleware/index.ts:32:13)\\n    at Layer.handle [as handle_request] (/home/stefanos/Documents/satoshi-coin-flip/api/node_modules/.pnpm/express@4.18.2/node_modules/express/lib/router/layer.js:95:5)\\n    at next (/home/stefanos/Documents/satoshi-coin-flip/api/node_modules/.pnpm/express@4.18.2/node_modules/express/lib/router/route.js:144:13)\\n    at Route.dispatch (/home/stefanos/Documents/satoshi-coin-flip/api/node_modules/.pnpm/express@4.18.2/node_modules/express/lib/router/route.js:114:3)\\n    at Layer.handle [as handle_request] (/home/stefanos/Documents/satoshi-coin-flip/api/node_modules/.pnpm/express@4.18.2/node_modules/express/lib/router/layer.js:95:5)\\n    at /home/stefanos/Documents/satoshi-coin-flip/api/node_modules/.pnpm/express@4.18.2/node_modules/express/lib/router/index.js:284:15\\n    at Function.process_params (/home/stefanos/Documents/satoshi-coin-flip/api/node_modules/.pnpm/express@4.18.2/node_modules/express/lib/router/index.js:346:12)\\n    at next (/home/stefanos/Documents/satoshi-coin-flip/api/node_modules/.pnpm/express@4.18.2/node_modules/express/lib/router/index.js:280:10)\\n    at Function.handle (/home/stefanos/Documents/satoshi-coin-flip/api/node_modules/.pnpm/express@4.18.2/node_modules/express/lib/router/index.js:175:3)\\n    at router (/home/stefanos/Documents/satoshi-coin-flip/api/node_modules/.pnpm/express@4.18.2/node_modules/express/lib/router/index.js:47:12)\"\n}"
+				}
+			]
+		},
+		{
+			"name": "End Game",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "gameId",
+							"value": "0xa03eb6b869d6ad797d4747b7af83e60597f99ae9",
+							"description": "A gameId that was created with the game/start endpoint",
+							"type": "default"
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/game/end",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"game",
+						"end"
+					],
+					"query": [
+						{
+							"key": "test",
+							"value": null,
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "End Game - (200) Success",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "gameId",
+									"value": "0xa03eb6b869d6ad797d4747b7af83e60597f99ae9",
+									"description": "A gameId that was created with the /start endpoint",
+									"type": "default"
+								}
+							],
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/game/end",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"game",
+								"end"
+							],
+							"query": [
+								{
+									"key": "test",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "86"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"56-lSKCLsD9uoDniiydzMYuYRdVMhU\""
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 14 Dec 2022 19:55:33 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"playerWon\": false,\n    \"transactionDigest\": \"8xLSdn9tYxu72phsSELsGAsoMdDZU1fNxcEiWvajQTyK\"\n}"
+				},
+				{
+					"name": "End Game - (500) Invalid gameId",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "gameId",
+									"value": "0xa03eb6b869d6ad797d4747b7af83e60597f99ae9",
+									"description": "A gameId that was created with the game/start endpoint",
+									"type": "default"
+								}
+							],
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/game/end",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"game",
+								"end"
+							],
+							"query": [
+								{
+									"key": "test",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"status": "Internal Server Error",
+					"code": 500,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "55"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"37-VlDijP7eBOiIDW2dcs1bOa3Ezis\""
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 14 Dec 2022 20:29:05 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"message\": \"Given gameId does not exist\",\n    \"stack\": \"N/A\"\n}"
+				},
+				{
+					"name": "End Game - (500) Missing a body parameter",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "gameId",
+									"value": "0xa03eb6b869d6ad797d4747b7af83e60597f99ae9",
+									"description": "A gameId that was created with the game/start endpoint",
+									"type": "default",
+									"disabled": true
+								}
+							],
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/game/end",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"game",
+								"end"
+							],
+							"query": [
+								{
+									"key": "test",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "1568"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"620-4gbQaocewCsuMh39mu33ynk2Nnw\""
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 14 Dec 2022 20:30:50 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"message\": \"Parameter \\\"gameId\\\" is required\",\n    \"stack\": \"Error: Parameter \\\"gameId\\\" is required\\n    at checkEnd (/home/stefanos/Documents/satoshi-coin-flip/api/middleware/index.ts:46:35)\\n    at Layer.handle [as handle_request] (/home/stefanos/Documents/satoshi-coin-flip/api/node_modules/.pnpm/express@4.18.2/node_modules/express/lib/router/layer.js:95:5)\\n    at next (/home/stefanos/Documents/satoshi-coin-flip/api/node_modules/.pnpm/express@4.18.2/node_modules/express/lib/router/route.js:144:13)\\n    at Route.dispatch (/home/stefanos/Documents/satoshi-coin-flip/api/node_modules/.pnpm/express@4.18.2/node_modules/express/lib/router/route.js:114:3)\\n    at Layer.handle [as handle_request] (/home/stefanos/Documents/satoshi-coin-flip/api/node_modules/.pnpm/express@4.18.2/node_modules/express/lib/router/layer.js:95:5)\\n    at /home/stefanos/Documents/satoshi-coin-flip/api/node_modules/.pnpm/express@4.18.2/node_modules/express/lib/router/index.js:284:15\\n    at Function.process_params (/home/stefanos/Documents/satoshi-coin-flip/api/node_modules/.pnpm/express@4.18.2/node_modules/express/lib/router/index.js:346:12)\\n    at next (/home/stefanos/Documents/satoshi-coin-flip/api/node_modules/.pnpm/express@4.18.2/node_modules/express/lib/router/index.js:280:10)\\n    at Function.handle (/home/stefanos/Documents/satoshi-coin-flip/api/node_modules/.pnpm/express@4.18.2/node_modules/express/lib/router/index.js:175:3)\\n    at router (/home/stefanos/Documents/satoshi-coin-flip/api/node_modules/.pnpm/express@4.18.2/node_modules/express/lib/router/index.js:47:12)\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Get created games",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/game/objects",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"game",
+						"objects"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Get created games - (200) Success",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/game/objects",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"game",
+								"objects"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "103"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"67-6MgE//hs9IJQ0YM8xWOgc5aWaC0\""
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 14 Dec 2022 19:56:09 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"gameIds\": [\n        \"0xa03eb6b869d6ad797d4747b7af83e60597f99ae9\",\n        \"0x44b329e27fc1b935d3b4075b098cfff7274ce609\"\n    ]\n}"
+				}
+			]
+		},
+		{
+			"name": "Endpoint doesn't exist",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/wrong_path",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"wrong_path"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Endpoint doesn't exist - (404) Not found",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/wrong_path",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"wrong_path"
+							]
+						}
+					},
+					"status": "Not Found",
+					"code": 404,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "1555"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"613-fdftHfDdqVO6JbagUDmBGmMJ0wI\""
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 14 Dec 2022 20:22:47 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"message\": \"Not Found: /wrong_path\",\n    \"stack\": \"Error: Not Found: /wrong_path\\n    at notFound (/home/stefanos/Documents/satoshi-coin-flip/api/middleware/index.ts:12:17)\\n    at Layer.handle [as handle_request] (/home/stefanos/Documents/satoshi-coin-flip/api/node_modules/.pnpm/express@4.18.2/node_modules/express/lib/router/layer.js:95:5)\\n    at trim_prefix (/home/stefanos/Documents/satoshi-coin-flip/api/node_modules/.pnpm/express@4.18.2/node_modules/express/lib/router/index.js:328:13)\\n    at /home/stefanos/Documents/satoshi-coin-flip/api/node_modules/.pnpm/express@4.18.2/node_modules/express/lib/router/index.js:286:9\\n    at Function.process_params (/home/stefanos/Documents/satoshi-coin-flip/api/node_modules/.pnpm/express@4.18.2/node_modules/express/lib/router/index.js:346:12)\\n    at next (/home/stefanos/Documents/satoshi-coin-flip/api/node_modules/.pnpm/express@4.18.2/node_modules/express/lib/router/index.js:280:10)\\n    at urlencodedParser (/home/stefanos/Documents/satoshi-coin-flip/api/node_modules/.pnpm/body-parser@1.20.1/node_modules/body-parser/lib/types/urlencoded.js:91:7)\\n    at Layer.handle [as handle_request] (/home/stefanos/Documents/satoshi-coin-flip/api/node_modules/.pnpm/express@4.18.2/node_modules/express/lib/router/layer.js:95:5)\\n    at trim_prefix (/home/stefanos/Documents/satoshi-coin-flip/api/node_modules/.pnpm/express@4.18.2/node_modules/express/lib/router/index.js:328:13)\\n    at /home/stefanos/Documents/satoshi-coin-flip/api/node_modules/.pnpm/express@4.18.2/node_modules/express/lib/router/index.js:286:9\"\n}"
+				}
+			]
+		}
+	]
+}

@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "cypress": "cypress open"
+    "cypress": "cypress open",
+    "prod": "next build && next export && cp -r ./out/* $npm_config_gh_pages_path && echo \"Output successfully copied to $npm_config_gh_pages_path\""
   },
   "dependencies": {
     "@mysten/sui.js": "^0.17.1",

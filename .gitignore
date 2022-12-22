@@ -11,6 +11,7 @@
 **/cypress/screeshots
 **/cypress/plugins/
 **/cypress/downloads/
+**/cypress/screenshots/
 
 # next.js
 **/.next/
