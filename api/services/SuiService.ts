@@ -29,14 +29,16 @@ class SuiService implements SuiServiceInterface {
   private signer: RawSigner;
   private gasCoins: string[];
   private gasCoinSelection: string;
+  private playCoins: string[];
 
   constructor() {
     // @todo: parameterized initialization here?
     this.provider = new JsonRpcProvider(Network.DEVNET);
     this.signer = this.getSigner();
     this.gasCoins = [];
+    this.playCoins = [];
     this.gasCoinSelection = "";
-    this.populateGasCoins();
+    this.populateGasCoins().then(() => this.populatePlayCoins());
   }
 
   private getSigner(): RawSigner {
@@ -65,7 +67,8 @@ class SuiService implements SuiServiceInterface {
     try {
       const gasCoins = await this.getAllCoins();
       if (gasCoins.length > 5 && this.ensureAvailableCoins(gasCoins, 5, 5000)) {
-        // pick the first 5 coins
+        // pick the largest 5 coins
+        gasCoins.sort((a, b) => b.balance - a.balance);
         this.gasCoins = gasCoins
           .filter((coin, index) => index < 5)
           .map((coin) => coin.id);
@@ -82,9 +85,58 @@ class SuiService implements SuiServiceInterface {
         );
       }
       this.gasCoinSelection = this.gasCoins[0];
+      console.log("Gas coins", this.gasCoins);
     } catch (e) {
       console.error("Populating gas coins failed: ", e);
     }
+  }
+
+  private async createPlayCoins(
+    largeCoinId: string,
+    numOfCoins: number,
+    balancePerCoin: number = 5000,
+    gasFees: number = 10000
+  ) {
+    console.log("Low supply on play coins, creating...");
+    const playCoins = await this.signer.paySui({
+      inputCoins: [largeCoinId],
+      recipients: [
+        ...Array(numOfCoins).fill(String(process.env.BANKER_ADDRESS)),
+      ],
+      amounts: [...Array(numOfCoins).fill(balancePerCoin)],
+      gasBudget: gasFees,
+    });
+    // @TODO: what happens with concurent requests? are they going to trigger the check multiple times?
+    return playCoins;
+  }
+
+  private async populatePlayCoins(gasFees = 10000) {
+    // check if we already have some suitable play coins
+    let playCoins = (await this.getAllCoins()).filter(
+      (coin) => coin.balance === 5000
+    );
+
+    this.playCoins = playCoins.map((coin) => coin.id);
+    console.log("get play coins", playCoins);
+
+    if (playCoins.length > 0) return playCoins;
+
+    // if not create some
+    let largeCoin = await this.getLargestBankCoin();
+    let canBeCreated = Math.floor((largeCoin.balance - gasFees) / 5000);
+    console.log("can be created", canBeCreated);
+    if (canBeCreated >= 50) {
+      // creating arbitrarily 50 coins
+      await this.createPlayCoins(largeCoin.id, 50, 5000, gasFees);
+
+      playCoins = (await this.getAllCoins()).filter(
+        (coin) => coin.balance === 5000
+      );
+
+      this.playCoins = playCoins.map((coin) => coin.id);
+    }
+
+    return playCoins;
   }
 
   private async mergeCoins(
@@ -105,11 +157,11 @@ class SuiService implements SuiServiceInterface {
       this.gasCoins.some((coinId) => coinId === coin.id)
     );
 
-    const smallGasCoins = gasCoins.filter((coin) => coin.balance < 5000);
+    const smallGasCoins = gasCoins.filter((coin) => coin.balance <= 10000);
 
     if (smallGasCoins.length > 0) {
       const largestCoin = await this.getLargestBankCoin();
-      console.log("Small coins found, merging...");
+      console.log(`Small coins found, merging into ${largestCoin.id}...`);
       await this.mergeCoins([largestCoin, ...smallGasCoins]);
       await this.populateGasCoins();
     }
@@ -125,10 +177,11 @@ class SuiService implements SuiServiceInterface {
     // select nextIndex + 1 and wrap around if we are at the end
     const nextIndex = (coinIdIndex + 1) % this.gasCoins.length;
     this.gasCoinSelection = this.gasCoins.at(nextIndex) || "";
+    console.log("Gas coin", this.gasCoinSelection);
     return this.gasCoinSelection;
   }
 
-  private getAllCoins(): Promise<{ id: any; balance: any }[]> {
+  private getAllCoins(): Promise<{ id: any; balance: number }[]> {
     return new Promise((resolve, reject) => {
       this.provider
         .getObjectsOwnedByAddress(String(process.env.BANKER_ADDRESS))
@@ -137,10 +190,10 @@ class SuiService implements SuiServiceInterface {
           this.provider
             .getObjectBatch(coinObjects.map((x) => x.objectId))
             .then((res) => {
-              const coins: { id: any; balance: any }[] = res.map((x) => {
+              const coins: { id: any; balance: number }[] = res.map((x) => {
                 return {
                   id: Object(x?.details)?.data?.fields?.id?.id,
-                  balance: Object(x?.details)?.data?.fields?.balance,
+                  balance: Number(Object(x?.details)?.data?.fields?.balance),
                 };
               });
               resolve(coins);
@@ -178,19 +231,15 @@ class SuiService implements SuiServiceInterface {
   public async getPlayCoin(): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        // Find the largest coin that is not in gasPayment coins to use as stake
-        let gasCoin = await this.getLargestBankCoin();
-        if (!gasCoin.id) {
-          console.log("Banker low on funds... ");
-          await this.provider.requestSuiFromFaucet(
-            String(process.env.BANKER_ADDRESS)
-          );
-          console.log("Requested from faucet successfully!");
+        // Check if we have play coins available
+        if (this.playCoins.length === 0) {
+          // if none are found create some
+          await this.populatePlayCoins();
         }
+        // get a play coin from the allocated play coins
+        let playCoin = this.playCoins.pop();
 
-        gasCoin = await this.getLargestBankCoin();
-
-        resolve(gasCoin.id);
+        resolve(playCoin || "");
       } catch (e) {
         reject(e);
       }
