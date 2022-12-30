@@ -63,6 +63,15 @@ class SuiService implements SuiServiceInterface {
     return suitableCoins >= minAmount;
   }
 
+  private async requestFromFaucet() {
+    console.log("Banker low on funds, requesting from faucet...");
+    const faucetRes: any = await this.provider.requestSuiFromFaucet(
+      String(process.env.BANKER_ADDRESS)
+    );
+    console.log("Requested from faucet successfully!");
+    return faucetRes;
+  }
+
   private async populateGasCoins() {
     try {
       const gasCoins = await this.getAllCoins();
@@ -74,12 +83,7 @@ class SuiService implements SuiServiceInterface {
           .map((coin) => coin.id);
       } else {
         // if no suitable coins were found request from the faucet
-        const faucetRes: any = await this.provider.requestSuiFromFaucet(
-          String(process.env.BANKER_ADDRESS)
-        );
-        console.log(
-          "Banker low on funds... Requested from faucet successfully!"
-        );
+        const faucetRes: any = await this.requestFromFaucet();
         this.gasCoins = faucetRes.transferred_gas_objects.map(
           (el: any) => el.id
         );
@@ -97,7 +101,13 @@ class SuiService implements SuiServiceInterface {
     balancePerCoin: number = 5000,
     gasFees: number = 10000
   ) {
-    console.log("Low supply on play coins, creating...");
+    if (!largeCoinId) {
+      const faucetRes: any = await this.requestFromFaucet();
+      largeCoinId = faucetRes?.transferred_gas_objects?.[0]?.id;
+    }
+    console.log(
+      `Low supply on play coins, creating ${numOfCoins} from coin with id ${largeCoinId}`
+    );
     const playCoins = await this.signer.paySui({
       inputCoins: [largeCoinId],
       recipients: [
@@ -111,32 +121,35 @@ class SuiService implements SuiServiceInterface {
   }
 
   private async populatePlayCoins(gasFees = 10000) {
-    // check if we already have some suitable play coins
-    let playCoins = (await this.getAllCoins()).filter(
-      (coin) => coin.balance === 5000
-    );
-
-    this.playCoins = playCoins.map((coin) => coin.id);
-    console.log("get play coins", playCoins);
-
-    if (playCoins.length > 0) return playCoins;
-
-    // if not create some
-    let largeCoin = await this.getLargestBankCoin();
-    let canBeCreated = Math.floor((largeCoin.balance - gasFees) / 5000);
-    console.log("can be created", canBeCreated);
-    if (canBeCreated >= 50) {
-      // creating arbitrarily 50 coins
-      await this.createPlayCoins(largeCoin.id, 50, 5000, gasFees);
-
-      playCoins = (await this.getAllCoins()).filter(
+    try {
+      // check if we already have some suitable play coins
+      let playCoins = (await this.getAllCoins()).filter(
         (coin) => coin.balance === 5000
       );
 
       this.playCoins = playCoins.map((coin) => coin.id);
-    }
 
-    return playCoins;
+      if (playCoins.length > 0) return playCoins;
+
+      // if not create some
+      let largeCoin = await this.getLargestBankCoin();
+      let canBeCreated = Math.floor((largeCoin.balance - gasFees) / 5000);
+      console.log("Coins that can be created", canBeCreated);
+      if (canBeCreated >= 50) {
+        // creating arbitrarily 50 coins of 5000 balance each
+        await this.createPlayCoins(largeCoin.id, 50, 5000, gasFees);
+
+        playCoins = (await this.getAllCoins()).filter(
+          (coin) => coin.balance === 5000
+        );
+
+        this.playCoins = playCoins.map((coin) => coin.id);
+      }
+
+      return playCoins;
+    } catch (e) {
+      console.error("Could not populate play coins: ", e);
+    }
   }
 
   private async mergeCoins(
@@ -214,7 +227,8 @@ class SuiService implements SuiServiceInterface {
           for (let coin of bankCoins) {
             if (
               coin.balance >= largestCoin.balance &&
-              !this.gasCoins.some((coinId) => coinId === coin.id)
+              !this.gasCoins.some((coinId) => coinId === coin.id) &&
+              coin.id !== "0x95f938719f601bfde8349727b5d239b5f3320aa1"
             ) {
               largestCoin = coin;
             }
