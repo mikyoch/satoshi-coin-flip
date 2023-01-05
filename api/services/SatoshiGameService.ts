@@ -37,6 +37,7 @@ class SatoshiGameService {
       try {
         // @todo: check min and max values here?
         const coinId = await this.suiService.getPlayCoin();
+        console.log('Play coin', coinId);
         const { secret, hash } = this.getNewSecretAndHash();
 
         this.suiService
