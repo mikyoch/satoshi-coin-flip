@@ -117,6 +117,7 @@ class SuiService implements SuiServiceInterface {
       gasBudget: gasFees,
     });
     // @TODO: what happens with concurent requests? are they going to trigger the check multiple times?
+    // yes it does...
     return playCoins;
   }
 
@@ -227,8 +228,7 @@ class SuiService implements SuiServiceInterface {
           for (let coin of bankCoins) {
             if (
               coin.balance >= largestCoin.balance &&
-              !this.gasCoins.some((coinId) => coinId === coin.id) &&
-              coin.id !== "0x95f938719f601bfde8349727b5d239b5f3320aa1"
+              !this.gasCoins.some((coinId) => coinId === coin.id)
             ) {
               largestCoin = coin;
             }
@@ -246,6 +246,7 @@ class SuiService implements SuiServiceInterface {
     return new Promise(async (resolve, reject) => {
       try {
         // Check if we have play coins available
+        console.log('Available play coins', this.playCoins.length);
         if (this.playCoins.length === 0) {
           // if none are found create some
           await this.populatePlayCoins();
