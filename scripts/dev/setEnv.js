@@ -3,7 +3,7 @@
 
 const { execSync } = require("child_process");
 const { fromB64 } = require("@mysten/bcs");
-const { Ed25519PublicKey } = require("@mysten/sui.js");
+const { Ed25519Keypair } = require("@mysten/sui.js");
 const fs = require("fs");
 const { deploy } = require("./deploy_contract");
 
@@ -83,15 +83,15 @@ function main() {
       break;
     }
   }
-  const pubKeyArr = edKeypair.slice(0, 32);
-  const privKeyArr = edKeypair.slice(32);
 
-  const pubKeyClass = new Ed25519PublicKey(pubKeyArr);
-  const pubkey = `0x${pubKeyClass.toSuiAddress()}`;
+  const privKeyArr = edKeypair;
+  const keypair = Ed25519Keypair.fromSeed(Uint8Array.from(privKeyArr));
+
+  const bankerAddress = `0x${keypair.getPublicKey().toSuiAddress()}`;
 
   const envAPIJson = getEnvJson("api");
   const envUIJson = getEnvJson("ui");
-  envAPIJson.BANKER_ADDRESS = pubkey;
+  envAPIJson.BANKER_ADDRESS = bankerAddress;
   envAPIJson.PRIVATE_KEY = privKeyArr;
   // write initial api and ui env (if it doesn't exist) because it is needed for the deployment
   writeEnv(envAPIJson, "api");
