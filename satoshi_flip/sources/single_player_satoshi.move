@@ -22,6 +22,8 @@ module satoshi_flip::single_player_satoshi {
 
     // errors
     const EInvalidBlsSig: u64 = 0;
+    const EInvalidPlayer: u64 = 1;
+    // const ECoinBalanceNotEnough: u64 = 9; // reserved from satoshi_flip.move
 
     // structs
     struct Outcome has key {
@@ -94,7 +96,8 @@ module satoshi_flip::single_player_satoshi {
 
     // this is the old play + end_game function combined
     public entry fun play(game: Game, bls_sig: vector<u8>, house_data: &mut HouseData, ctx: &mut TxContext) {
-        // @todo: ensure tx sender is the same as game.player
+        // Ensure tx sender is the same as game.player
+        assert!(game.player == tx_context::sender(ctx), EInvalidPlayer);
 
         // Step 1: Check the bls signature, if its invalid abort
         let is_sig_valid = bls12381_min_sig_verify(&bls_sig, &house_data.public_key, &object::id_bytes(&game));
