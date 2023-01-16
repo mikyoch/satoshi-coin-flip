@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import express, { Router, Request, Response, NextFunction } from "express";
-import { checkEnd, checkStart } from "../middleware";
+import { checkEnd, checkSign, checkStart, checkVerify } from "../middleware";
 import services from "../services/";
 
 const GameService = services.SatoshiGameService;
@@ -66,6 +66,49 @@ router.post(
         e
       );
       // Forward the error to the error handler
+      res.status(500);
+      next(e);
+    }
+  }
+);
+
+router.post(
+  "/sign",
+  checkSign,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const sig = services.BlsService.sign(req?.body?.gameId);
+
+      res.status(200);
+      res.json({
+        blsSig: Array.from(sig),
+      });
+    } catch (e) {
+      console.error(
+        `Error creating bls signature for gameId ${req.body.gameId}`,
+        e
+      );
+      res.status(500);
+      next(e);
+    }
+  }
+);
+
+router.post(
+  "/verify",
+  checkVerify,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const valid = services.BlsService.verify(req?.body?.msg, JSON.parse(req?.body?.sig));
+      res.status(200);
+      res.json({
+        valid,
+      });
+    } catch (e) {
+      console.error(
+        `Error verifying bls signature for msg ${req.body.msg} and sig ${req.body.sig}`,
+        e
+      );
       res.status(500);
       next(e);
     }

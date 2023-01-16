@@ -21,6 +21,7 @@
     "typescript": "^4.9.3"
   },
   "dependencies": {
+    "@chainsafe/blst": "^0.2.8",
     "@mysten/sui.js": "^0.20.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
