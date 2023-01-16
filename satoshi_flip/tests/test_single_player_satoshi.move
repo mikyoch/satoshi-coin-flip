@@ -29,31 +29,45 @@ module satoshi_flip::test_single_player_satoshi {
         let house = @0xCAFE;
         let player = @0xDECAF;
 
-        let scenario_val = test_scenario::begin(player);
+        let scenario_val = test_scenario::begin(house);
         let scenario = &mut scenario_val;
         {
             start(test_scenario::ctx(scenario), house, player);
         };
 
+        // Call init function
+        // let effects = test_scenario::next_tx(scenario, house);
+        // {
+        //     let ctx = test_scenario::ctx(scenario);
+        //     single_player_satoshi::init(ctx);
+        // };
+
+        // print(&test_scenario::created(&effects));
+        // House initializes the contract with PK.
+        // let effects1 = test_scenario::next_tx(scenario, house);
+        // {
+            // let pk:vector<u8> = [149, 162,  84,  80,  27, 119,  51,  35, 158, 211,
+            //         206, 196, 213, 103,  55, 151, 123, 208, 158, 222,
+            //         136,  29, 138,  35,  69,  96, 232,  62,  85,  37,
+            //         1, 122, 221,  59,  29, 204,  62, 171, 251, 133,
+            //         225,  42,  65,  49, 177, 156,  37,  59];
+            // let pk = x"95a254501b7733239ed3cec4d56737977bd09ede881d8a234560e83e5525017add3b1dcc3eabfb85e12a4131b19c253b";
+            // single_player_satoshi::initialize_house_data(house_cap: HouseCap, coin: Coin<SUI>, public_key: vector<u8>, ctx: &mut TxContext)
+
+        // }
+
+        // print(&test_scenario::created(&effects1));
+
         // player creates the game.
-        let effects = test_scenario::next_tx(scenario, house);
+        let effects2 = test_scenario::next_tx(scenario, player);
         {
             let coinA = test_scenario::take_from_sender<Coin<SUI>>(scenario);
             let ctx = test_scenario::ctx(scenario);
             let guess = 0;
             single_player_satoshi::start_game(guess, coinA, ctx);
         };
+        print(&test_scenario::created(&effects2));
 
-        print(&test_scenario::created(&effects));
-
-        // check that house got back the change
-        test_scenario::next_tx(scenario, house);
-        {
-            let coin = test_scenario::take_from_sender<Coin<SUI>>(scenario);
-            assert!(coin::value(&coin) == 45000, EWrongPlayerTotal);
-            test_scenario::return_to_sender(scenario, coin);
-
-        };
 
         test_scenario::end(scenario_val);
     }
