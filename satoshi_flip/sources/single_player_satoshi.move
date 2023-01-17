@@ -8,7 +8,7 @@ module satoshi_flip::single_player_satoshi {
     use sui::coin::{Self, Coin};
     use sui::balance::{Self, Balance};
     use sui::sui::SUI;
-    use sui::bls12381::bls12381_min_sig_verify;
+    use sui::bls12381::bls12381_min_pk_verify;
     use sui::object::{Self, UID};
     use sui::tx_context::{Self, TxContext};
     use sui::transfer;
@@ -17,13 +17,16 @@ module satoshi_flip::single_player_satoshi {
 
     // consts 
     // do we care about cancelation in this version?
-    const EpochsCancelAfter: u64 = 7;
+    const EPOCHS_CANCEL_AFTER: u64 = 7;
     const STAKE: u64 = 5000;
 
     // errors
     const EInvalidBlsSig: u64 = 10;
     const EInvalidPlayer: u64 = 11;
     const ECallerNotHouse: u64 = 12;
+    const ECanNotCancel: u64 = 13;
+    const EInvalidGuess: u64 = 14;
+    const EInsufficientBalance: u64 = 15;
     // const ECoinBalanceNotEnough: u64 = 9; // reserved from satoshi_flip.move
 
     // structs
@@ -83,25 +86,25 @@ module satoshi_flip::single_player_satoshi {
     }
 
     // House can have multiple accounts so giving the contract balance is not limited
-    public entry fun top_up(house_data: &mut HouseData, coin: Coin<SUI>, ctx: &mut TxContext) {
+    public entry fun top_up(house_data: &mut HouseData, coin: Coin<SUI>, _: &mut TxContext) {        
         let balance = coin::into_balance(coin);
         balance::join(&mut house_data.balance, balance);
     }
 
+    // House can withdraw the entire balance of the house
     public entry fun withdraw(house_data: &mut HouseData, ctx: &mut TxContext) {
         // only the house address can withdraw funds
         assert!(tx_context::sender(ctx) == house_data.house, ECallerNotHouse);
 
         let total_balance = balance::value(&house_data.balance);
-        let balance = balance::split(&mut house_data.balance, total_balance);
-        let coin = coin::from_balance(balance, ctx);
+        let coin = coin::take(&mut house_data.balance, total_balance, ctx);
         transfer::transfer(coin, house_data.house);
     }
 
     public entry fun start_game(guess: u8, coin: Coin<SUI>, ctx: &mut TxContext) {
-
+        assert!(guess == 1 || guess == 0, EInvalidGuess);
         // get the user coin
-        // @todo: check that there is enough balance
+        assert!(coin::value(&coin) >= STAKE, EInsufficientBalance);
         let stake_coin = satoshi_flip::give_change(coin, STAKE, ctx);
         let stake = coin::into_balance(stake_coin);
 
@@ -122,27 +125,26 @@ module satoshi_flip::single_player_satoshi {
         assert!(game.player == tx_context::sender(ctx), EInvalidPlayer);
 
         // Step 1: Check the bls signature, if its invalid abort
-        let is_sig_valid = bls12381_min_sig_verify(&bls_sig, &house_data.public_key, &object::id_bytes(&game));
-        assert!(!is_sig_valid, EInvalidBlsSig);
+        let is_sig_valid = bls12381_min_pk_verify(&bls_sig, &house_data.public_key, &object::id_bytes(&game));
+        assert!(is_sig_valid, EInvalidBlsSig);
 
         // Step 2: Determine winner
         let first_byte = vector::borrow(&bls_sig, 0);
         let player_won: bool = game.guess == *first_byte % 2;
 
-        // Step 3: Game destruction Distribute funds based on result
+        // Step 3: Game destruction. Distribute funds based on result
         let Game {id, guess_placed_epoch: _, stake, guess, player} = game;
         object::delete(id);
         if(player_won) {
-            // Step 3.b: If player wins, get the stake from the house and merge it inside the games stake. Then transfer the balance to the player
-            // @todo: check that there is enough balance. What if the user funds are taken but the house doesn't have enough balance?
+            // Step 3.a: If player wins, get the stake from the house and merge it inside the games stake. Then transfer the balance to the player
+            // @todo: check that there is enough balance. What if the user funds are taken but the house doesn't have enough balance? Should this check be moved somewhere else?
             let house_stake = balance::split(&mut house_data.balance, STAKE);
             balance::join(&mut stake, house_stake);
 
             let coin: Coin<SUI> = coin::from_balance(stake, ctx);
             transfer::transfer(coin, player);
-            // @todo: create an outcome object here or emit an event?
         }else{
-            // Step 3.c: If house wins, then add the game stake to the house_data.house_balance
+            // Step 3.b: If house wins, then add the game stake to the house_data.house_balance
             balance::join(&mut house_data.balance, stake);
         };
 
@@ -153,6 +155,20 @@ module satoshi_flip::single_player_satoshi {
         };
 
         transfer::share_object(outcome);
+    }
+
+    // @todo: support here to enable the house to end as well?
+
+    public entry fun cancel_game(game: Game, ctx: &mut TxContext) {
+        let Game {id, guess_placed_epoch, stake, guess: _, player} = game;
+        // Only the player who created the game can cancel it
+        assert!(tx_context::sender(ctx) == player, EInvalidPlayer);
+        let caller_epoch = tx_context::epoch(ctx);
+        // Ensure that minimum epochs have passed before user can cancel
+        assert!(guess_placed_epoch + EPOCHS_CANCEL_AFTER <= caller_epoch, ECanNotCancel);
+        object::delete(id);
+        let coin = coin::from_balance(stake, ctx);
+        transfer::transfer(coin, player);
     }
 
 }
