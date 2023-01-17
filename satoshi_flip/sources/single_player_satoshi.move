@@ -18,11 +18,12 @@ module satoshi_flip::single_player_satoshi {
     // consts 
     // do we care about cancelation in this version?
     const EpochsCancelAfter: u64 = 7;
-    const Stake: u64 = 5000;
+    const STAKE: u64 = 5000;
 
     // errors
-    const EInvalidBlsSig: u64 = 0;
-    const EInvalidPlayer: u64 = 1;
+    const EInvalidBlsSig: u64 = 10;
+    const EInvalidPlayer: u64 = 11;
+    const ECallerNotHouse: u64 = 12;
     // const ECoinBalanceNotEnough: u64 = 9; // reserved from satoshi_flip.move
 
     // structs
@@ -60,6 +61,11 @@ module satoshi_flip::single_player_satoshi {
         transfer::transfer(house_cap, tx_context::sender(ctx))
     }
 
+    #[test_only]
+    public fun init_for_testing(ctx: &mut TxContext) {
+        init(ctx)
+    }
+
     // functions
     public entry fun initialize_house_data(house_cap: HouseCap, coin: Coin<SUI>, public_key: vector<u8>, ctx: &mut TxContext) {
         let house_data = HouseData {
@@ -76,11 +82,27 @@ module satoshi_flip::single_player_satoshi {
         transfer::share_object(house_data);
     }
 
-    public entry fun start_game(guess: u8, coin: Coin<SUI>, ctx: &mut TxContext){
+    // House can have multiple accounts so giving the contract balance is not limited
+    public entry fun top_up(house_data: &mut HouseData, coin: Coin<SUI>, ctx: &mut TxContext) {
+        let balance = coin::into_balance(coin);
+        balance::join(&mut house_data.balance, balance);
+    }
+
+    public entry fun withdraw(house_data: &mut HouseData, ctx: &mut TxContext) {
+        // only the house address can withdraw funds
+        assert!(tx_context::sender(ctx) == house_data.house, ECallerNotHouse);
+
+        let total_balance = balance::value(&house_data.balance);
+        let balance = balance::split(&mut house_data.balance, total_balance);
+        let coin = coin::from_balance(balance, ctx);
+        transfer::transfer(coin, house_data.house);
+    }
+
+    public entry fun start_game(guess: u8, coin: Coin<SUI>, ctx: &mut TxContext) {
 
         // get the user coin
         // @todo: check that there is enough balance
-        let stake_coin = satoshi_flip::give_change(coin, Stake, ctx);
+        let stake_coin = satoshi_flip::give_change(coin, STAKE, ctx);
         let stake = coin::into_balance(stake_coin);
 
         let new_game = Game {
@@ -101,7 +123,7 @@ module satoshi_flip::single_player_satoshi {
 
         // Step 1: Check the bls signature, if its invalid abort
         let is_sig_valid = bls12381_min_sig_verify(&bls_sig, &house_data.public_key, &object::id_bytes(&game));
-        assert!(is_sig_valid, EInvalidBlsSig);
+        assert!(!is_sig_valid, EInvalidBlsSig);
 
         // Step 2: Determine winner
         let first_byte = vector::borrow(&bls_sig, 0);
@@ -113,7 +135,7 @@ module satoshi_flip::single_player_satoshi {
         if(player_won) {
             // Step 3.b: If player wins, get the stake from the house and merge it inside the games stake. Then transfer the balance to the player
             // @todo: check that there is enough balance. What if the user funds are taken but the house doesn't have enough balance?
-            let house_stake = balance::split(&mut house_data.balance, Stake);
+            let house_stake = balance::split(&mut house_data.balance, STAKE);
             balance::join(&mut stake, house_stake);
 
             let coin: Coin<SUI> = coin::from_balance(stake, ctx);
@@ -131,7 +153,6 @@ module satoshi_flip::single_player_satoshi {
         };
 
         transfer::share_object(outcome);
-
     }
 
 }
