@@ -69,6 +69,45 @@ module satoshi_flip::single_player_satoshi {
         init(ctx)
     }
 
+    // --------------- Outcome Accessors ---------------
+    public fun outcome_guess(outcome: &Outcome): u8 {
+        outcome.guess
+    }
+
+    public fun player_won(outcome: &Outcome): bool {
+        outcome.player_won
+    }
+
+    // --------------- HouseData Accessors ---------------
+    public fun balance(house_data: &HouseData): u64 {
+        balance::value(&house_data.balance)
+    }
+
+    public fun house(house_data: &HouseData): address {
+        house_data.house
+    }
+
+    public fun public_key(house_data: &HouseData): vector<u8> {
+        house_data.public_key
+    }
+
+    // --------------- Game Accessors ---------------
+    public fun guess_placed_epoch(game: &Game): u64 {
+        game.guess_placed_epoch
+    }
+
+    public fun stake(game: &Game): u64 {
+        balance::value(&game.stake)
+    }
+
+    public fun game_guess(game: &Game): u8 {
+        game.guess
+    }
+
+    public fun player(game: &Game): address {
+        game.player
+    }
+
     // functions
     public entry fun initialize_house_data(house_cap: HouseCap, coin: Coin<SUI>, public_key: vector<u8>, ctx: &mut TxContext) {
         let house_data = HouseData {
@@ -136,7 +175,7 @@ module satoshi_flip::single_player_satoshi {
         let Game {id, guess_placed_epoch: _, stake, guess, player} = game;
         object::delete(id);
         if(player_won) {
-            // Step 3.a: If player wins, get the stake from the house and merge it inside the games stake. Then transfer the balance to the player
+            // Step 3.a: If player wins, get the stake from the house and merge it inside the games stake. Then transfer the balance as a coin to the player
             // @todo: check that there is enough balance. What if the user funds are taken but the house doesn't have enough balance? Should this check be moved somewhere else?
             let house_stake = balance::split(&mut house_data.balance, STAKE);
             balance::join(&mut stake, house_stake);
