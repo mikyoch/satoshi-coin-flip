@@ -110,6 +110,7 @@ module satoshi_flip::single_player_satoshi {
 
     // functions
     public entry fun initialize_house_data(house_cap: HouseCap, coin: Coin<SUI>, public_key: vector<u8>, ctx: &mut TxContext) {
+        assert!(coin::value(&coin) > 0, EInsufficientBalance);
         let house_data = HouseData {
             id: object::new(ctx),
             balance: coin::into_balance(coin),

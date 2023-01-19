@@ -865,4 +865,44 @@ module satoshi_flip::test_single_player_satoshi {
 
         test_scenario::end(scenario_val);
     }
+
+    #[test]
+    #[expected_failure(abort_code = EInsufficientBalance)]
+    fun house_wrong_initialization() {
+        let house = @0xCAFE;
+        let player = @0xDECAF;
+
+        let scenario_val = test_scenario::begin(house);
+        let scenario = &mut scenario_val;
+        {
+            start(test_scenario::ctx(scenario), house, player);
+        };
+
+        // Call init function, transfer HouseCap to the house
+        test_scenario::next_tx(scenario, house);
+        {
+            let ctx = test_scenario::ctx(scenario);
+            single_player_satoshi::init_for_testing(ctx);
+        };
+
+        // create a 0 balance coin
+        test_scenario::next_tx(scenario, house);
+        {
+            let zero_coin = coin::mint_for_testing<SUI>(0, test_scenario::ctx(scenario));
+            transfer::transfer(zero_coin, house);
+        };
+
+        // House initializes the contract with PK.
+        test_scenario::next_tx(scenario, house);
+        {
+            let house_cap = test_scenario::take_from_sender<HouseCap>(scenario);
+
+            let house_coin = test_scenario::take_from_sender<Coin<SUI>>(scenario);
+            let ctx = test_scenario::ctx(scenario);
+            single_player_satoshi::initialize_house_data(house_cap, house_coin, PK, ctx);
+        };
+
+        test_scenario::end(scenario_val);
+    }
+    
 }
