@@ -1,7 +1,7 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-module satoshi_flip::single_player_satoshi {
+module satoshi_flip::satoshi_only_player_interactions {
     // imports
     use std::vector;
 
@@ -27,7 +27,6 @@ module satoshi_flip::single_player_satoshi {
     const ECanNotCancel: u64 = 13;
     const EInvalidGuess: u64 = 14;
     const EInsufficientBalance: u64 = 15;
-    const EGameHasAlreadyBeenCanceled: u64 = 16;
     // const ECoinBalanceNotEnough: u64 = 9; // reserved from satoshi_flip.move
 
     // structs
@@ -111,10 +110,6 @@ module satoshi_flip::single_player_satoshi {
         game.player
     }
 
-    public fun player_randomness(game: &Game): vector<u8> {
-        game.user_randomness
-    }
-
     // functions
     public entry fun initialize_house_data(house_cap: HouseCap, coin: Coin<SUI>, public_key: vector<u8>, ctx: &mut TxContext) {
         assert!(coin::value(&coin) > 0, EInsufficientBalance);
@@ -164,46 +159,54 @@ module satoshi_flip::single_player_satoshi {
             user_randomness
         };
 
-        transfer::share_object(new_game);
+        transfer::transfer(new_game, tx_context::sender(ctx));
     }
 
     // this is the old play + end_game function combined
-    public entry fun play(game: &mut Game, bls_sig: vector<u8>, house_data: &mut HouseData, ctx: &mut TxContext) {
-        // Ensure tx sender is the house
-        assert!(house_data.house == tx_context::sender(ctx), ECallerNotHouse);
+    public entry fun play(game: Game, bls_sig: vector<u8>, house_data: &mut HouseData, ctx: &mut TxContext) {
+        // Ensure tx sender is the same as game.player
+        assert!(game.player == tx_context::sender(ctx), EInvalidPlayer);
 
-        // Step 1: Check the bls signature, if its invalid, house loses
-        let messageVector = *&object::id_bytes(game);
-        // let Game {id, guess_placed_epoch: _, user_randomness, stake, guess, player} = game;
-        vector::append(&mut messageVector, player_randomness(game));
+        // Step 1: Check the bls signature, if its invalid, house looses
+        let messageVector = *&object::id_bytes(&game);
+        let Game {id, guess_placed_epoch: _, user_randomness, stake, guess, player} = game;
+        vector::append(&mut messageVector, user_randomness);
         let is_sig_valid = bls12381_min_pk_verify(&bls_sig, &house_data.public_key, &messageVector);
         // assert!(is_sig_valid, EInvalidBlsSig);
         // Step 2: Determine winner
         let first_byte = vector::borrow(&bls_sig, 0);
-        let player_won: bool = game.guess == *first_byte % 2;
+        let player_won: bool = guess == *first_byte % 2;
 
-        // Step 3: Distribute funds based on result
+        // Step 3: ID destruction. Distribute funds based on result
+        object::delete(id);
 
         if(!is_sig_valid || player_won){
-            // Step 3.a: If player wins, get the stake from the house and merge it inside the games stake. Then transfer the balance as a coin to the player
-            // @todo: check that there is enough balance. What if the user funds are taken but the house doesn't have enough balance? Should this check be moved somewhere else?
-            let house_stake = balance::split(&mut house_data.balance, STAKE);
-            balance::join(&mut game.stake, house_stake);
+            if(player_won) {
+                // Step 3.a: If player wins, get the stake from the house and merge it inside the games stake. Then transfer the balance as a coin to the player
+                // @todo: check that there is enough balance. What if the user funds are taken but the house doesn't have enough balance? Should this check be moved somewhere else?
+                let house_stake = balance::split(&mut house_data.balance, STAKE);
+                balance::join(&mut stake, house_stake);
 
-            let total_balance = balance::value(&game.stake);
-            let coin = coin::take(&mut game.stake, total_balance, ctx);
-            // let coin: Coin<SUI> = coin::from_balance(game.stake, ctx);
-            transfer::transfer(coin, game.player);
+                let coin: Coin<SUI> = coin::from_balance(stake, ctx);
+                transfer::transfer(coin, player);
+            }else{
+                // Step 3.b: If house wins, then add the game stake to the house_data.house_balance
+                balance::join(&mut house_data.balance, stake);
+            };
+
         } else {
-            // Step 3.b: If house wins, then add the game stake to the house_data.house_balance
-            let coin = coin::take(&mut game.stake, STAKE, ctx);
-            balance::join(&mut house_data.balance, coin::into_balance(coin));
+            // if signature invalid player wins
+            let house_stake = balance::split(&mut house_data.balance, STAKE);
+            balance::join(&mut stake, house_stake);
+
+            let coin: Coin<SUI> = coin::from_balance(stake, ctx);
+            transfer::transfer(coin, player);
         };
 
         let outcome = Outcome {
             id: object::new(ctx),
             player_won,
-            guess: game.guess,
+            guess,
             message: messageVector
         };
 
@@ -212,16 +215,16 @@ module satoshi_flip::single_player_satoshi {
 
     // @todo: support here to enable the house to end as well?
 
-    public entry fun cancel_game(game: &mut Game, ctx: &mut TxContext) {
+    public entry fun cancel_game(game: Game, ctx: &mut TxContext) {
+        let Game {id, guess_placed_epoch, stake, guess: _, user_randomness:_, player} = game;
         // Only the player who created the game can cancel it
-        assert!(tx_context::sender(ctx) == game.player, EInvalidPlayer);
+        assert!(tx_context::sender(ctx) == player, EInvalidPlayer);
         let caller_epoch = tx_context::epoch(ctx);
         // Ensure that minimum epochs have passed before user can cancel
-        assert!(game.guess_placed_epoch + EPOCHS_CANCEL_AFTER <= caller_epoch, ECanNotCancel);
-        let total_balance = balance::value(&game.stake);
-        assert!(total_balance > 0, EGameHasAlreadyBeenCanceled);
-        let coin = coin::take(&mut game.stake, total_balance, ctx);
-        transfer::transfer(coin, game.player);
+        assert!(guess_placed_epoch + EPOCHS_CANCEL_AFTER <= caller_epoch, ECanNotCancel);
+        object::delete(id);
+        let coin = coin::from_balance(stake, ctx);
+        transfer::transfer(coin, player);
     }
 
 }
