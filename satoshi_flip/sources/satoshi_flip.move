@@ -20,6 +20,8 @@
 /// This edition accepts SUI Coins of any value (as long as it is greater than the minimum required) and makes sure to return the change to the proper caller.
 /// It is recommended for any caller to use SUI Coins with exact amount
 module satoshi_flip::satoshi_flip {
+    friend satoshi_flip::single_player_satoshi;
+
     // imports
     use std::option::{Self, Option};
     use std::hash::sha3_256;
@@ -310,7 +312,7 @@ module satoshi_flip::satoshi_flip {
     }
 
     /// Helper function that returns the difference when Coins of larger balance than necessary were given
-    fun give_change(coin: Coin<SUI>, required_value: u64, ctx: &mut TxContext): Coin<SUI> {
+    public(friend) fun give_change(coin: Coin<SUI>, required_value: u64, ctx: &mut TxContext): Coin<SUI> {
         assert!(coin::value(&coin) >= required_value, ECoinBalanceNotEnough);
         if (coin::value(&coin) == required_value) {
             return coin
