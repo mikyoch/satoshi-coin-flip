@@ -171,6 +171,7 @@ module satoshi_flip::single_player_satoshi {
     public entry fun play(game: &mut Game, bls_sig: vector<u8>, house_data: &mut HouseData, ctx: &mut TxContext) {
         // Ensure tx sender is the house
         assert!(house_data.house == tx_context::sender(ctx), ECallerNotHouse);
+        assert!(balance(house_data) >= 5000, EInsufficientBalance);
 
         // Step 1: Check the bls signature, if its invalid, house loses
         let messageVector = *&object::id_bytes(game);

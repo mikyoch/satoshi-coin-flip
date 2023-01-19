@@ -166,7 +166,6 @@ module satoshi_flip::test_single_player_satoshi {
             let house_coin = test_scenario::take_from_sender<Coin<SUI>>(scenario);
             let ctx = test_scenario::ctx(scenario);
             single_player_satoshi::initialize_house_data(house_cap, house_coin, PK, ctx);
-
         };
 
         // player creates the game.
