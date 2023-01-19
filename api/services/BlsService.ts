@@ -1,25 +1,24 @@
-import { PublicKey, verify, SecretKey, Signature } from "@chainsafe/blst";
+const bls = require('@noble/bls12-381');
 
 class BlsService {
-  private SecretKey: SecretKey;
-  private PublicKey: PublicKey;
+  private SecretKey: any;
+  private PublicKey: any;
 
   constructor() {
     // @todo: keygen source should be coming from .env
-    this.SecretKey = SecretKey.fromKeygen(Buffer.alloc(32, 1));
-    this.PublicKey = this.SecretKey.toPublicKey();
+    this.SecretKey = '67d53f170b908cabb9eb326c3c337762d59289a8fec79f7bc9254b584b73265c';
+    this.PublicKey =  bls.getPublicKey(this.SecretKey);
   }
 
-  sign(msg: String): Uint8Array {
-    const buffer = Buffer.from(msg);
-    const sig = this.SecretKey.sign(buffer);
-    return sig.toBytes();
+  async sign(msg: String): Promise<Uint8Array> {
+    // const buffer = Buffer.from(msg);
+    const sig = await bls.sign(msg, this.SecretKey);
+    return sig;
   }
 
-  verify(msg: String, sig: Buffer) {
-    const msgBuffer = Buffer.from(msg);
-    const signature = Signature.fromBytes(Buffer.from(sig));
-    return verify(msgBuffer, this.PublicKey, signature);
+  async verify(msg: string, sig: Buffer) {
+    const isValid = await bls.verify(Uint8Array.from(sig), msg, this.PublicKey);
+    return isValid;
   }
 }
 

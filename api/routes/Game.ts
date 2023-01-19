@@ -77,7 +77,7 @@ router.post(
   checkSign,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const sig = services.BlsService.sign(req?.body?.gameId);
+      const sig = await services.BlsService.sign(req?.body?.gameId);
 
       res.status(200);
       res.json({
@@ -99,7 +99,7 @@ router.post(
   checkVerify,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const valid = services.BlsService.verify(req?.body?.msg, JSON.parse(req?.body?.sig));
+      const valid = await services.BlsService.verify(req?.body?.msg, JSON.parse(req?.body?.sig));
       res.status(200);
       res.json({
         valid,
