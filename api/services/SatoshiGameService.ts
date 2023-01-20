@@ -26,7 +26,12 @@ class SatoshiGameService {
     const h = new SHA3(256);
     h.update(secret);
     const hash = h.digest();
-    return { secret: secret, hash: Array.from(hash) };
+    return {
+      secret: secret,
+      hash: Array.from(hash),
+      hexSecret: (+secret).toString(16),
+      buffer: Array.from((+secret).toString(16))
+    };
   }
 
   public createGame(
@@ -37,7 +42,7 @@ class SatoshiGameService {
       try {
         // @todo: check min and max values here?
         const coinId = await this.suiService.getPlayCoin();
-        console.log('Play coin', coinId);
+        console.log("Play coin", coinId);
         const { secret, hash } = this.getNewSecretAndHash();
 
         this.suiService

@@ -14,7 +14,6 @@ module satoshi_flip::test_single_player_satoshi {
     use satoshi_flip::single_player_satoshi::{Self, Game, HouseCap, HouseData, Outcome};
     use satoshi_flip::single_player_satoshi::{ECallerNotHouse, EInvalidGuess, EInsufficientBalance, EInvalidPlayer, ECanNotCancel, EGameHasAlreadyBeenCanceled};
 
-    const EInvalidBlsSig: u64 = 7;
     const EWrongWinner: u64 = 6;
     const EWrongPlayerTotal: u64 = 5;
     const EWrongCoinChange: u64 = 4;
@@ -32,24 +31,23 @@ module satoshi_flip::test_single_player_satoshi {
     }
 
     // House's public key
-    const PK: vector<u8> = vector<u8>[
-        167, 231, 90, 249, 221,  77, 134, 138,  65, 173,
-        47,  90, 91,   2,  29, 101,  62,  49,   8,  66,
-        97, 114, 79, 180,  10, 226, 241, 177, 195,  28,
-        119, 141, 59, 148, 100,  80,  45,  89, 156, 246,
-        114,   7, 35, 236,  92, 104, 181, 157
+    const PK: vector<u8> = vector<u8> [
+        176, 136, 119,  32, 254, 33, 159, 12, 152,
+        61,  86, 243,  78, 113, 86,  27, 69, 119,
+        57, 127, 120, 211, 152, 56, 216, 84, 241,
+        154, 228, 207, 106, 204, 70, 129, 68, 245,
+        125, 177,  15, 129, 122, 98,  65, 59, 142,
+        247, 105, 190
     ];
 
-    // Signed object id 9296117f3c9e0a897686ff76df23a12f8282e8ce + random hex bytes (dec: 1975659 hex: 1e256b) guess with house's private key
-    const BLS_SIG: vector<u8> = vector<u8>[
-        180,   7, 165,  76,  75,  92, 110, 230, 140, 221, 158,  92,
-            4,  41, 160,  52,  78, 245, 172, 170, 250,  59, 159,  77,
-        232, 226, 122, 118, 189, 206,  35,  35,   8,  85, 139, 153,
-        214, 144,  22, 153, 213,  67,  16, 206,  19, 162, 156, 154,
-            4, 110, 185, 185,  34, 126, 183, 137, 116,  93,  12, 210,
-        152, 255, 127,  25,  82, 163, 152, 164, 172,  93,  21,  43,
-        177, 203, 161,  63, 210,  44,  24, 126, 182, 151, 218,  61,
-            15, 204, 229, 144, 117,  80, 149, 136,  58,   8,  72, 221
+    // Signed object id b9fe4b52405331b1833c507fb493010000f013f9 + random hex bytes (dec: 1975659 hex: 1e256b) guess with house's private key
+    const BLS_SIG: vector<u8> = vector<u8> [
+        145, 245, 65, 236, 85, 81, 134, 254, 251, 16, 170, 230, 176, 28, 205, 5, 240,
+        51, 114, 153, 143, 139, 23, 154, 59, 116, 135, 59, 152, 176, 200, 157, 29, 73,
+        220, 14, 184, 175, 21, 112, 184, 31, 142, 114, 1, 71, 136, 98, 9, 243, 181,
+        151, 8, 153, 9, 94, 34, 114, 37, 240, 194, 53, 53, 138, 145, 49, 209, 101, 5,
+        97, 6, 38, 181, 86, 21, 39, 160, 2, 65, 208, 83, 26, 196, 90, 62, 153, 30,
+        199, 168, 165, 153, 92, 246, 135, 226, 142,
     ];
 
     const INVALID_BLS_SIG: vector<u8> = vector<u8>[
@@ -97,7 +95,7 @@ module satoshi_flip::test_single_player_satoshi {
         {
             let player_coin = test_scenario::take_from_sender<Coin<SUI>>(scenario);
             let ctx = test_scenario::ctx(scenario);
-            let guess = 1;
+            let guess = 0;
             let user_randomness = x"1e256b";
             single_player_satoshi::start_game(guess, user_randomness, player_coin, ctx);
         };
@@ -173,7 +171,7 @@ module satoshi_flip::test_single_player_satoshi {
         {
             let player_coin = test_scenario::take_from_sender<Coin<SUI>>(scenario);
             let ctx = test_scenario::ctx(scenario);
-            let guess = 0;
+            let guess = 1;
             let user_randomness = x"1e256b";
             single_player_satoshi::start_game(guess, user_randomness, player_coin, ctx);
         };
@@ -319,7 +317,7 @@ module satoshi_flip::test_single_player_satoshi {
         {
             let player_coin = test_scenario::take_from_sender<Coin<SUI>>(scenario);
             let ctx = test_scenario::ctx(scenario);
-            let guess = 1;
+            let guess = 0;
             let user_randomness = x"1e256b";
             single_player_satoshi::start_game(guess, user_randomness, player_coin, ctx);
         };

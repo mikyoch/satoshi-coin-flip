@@ -169,7 +169,6 @@ module satoshi_flip::single_player_satoshi {
 
     // this is the old play + end_game function combined
     // house should play the game because player might give wrong signature.
-    // @todo: anyone can end the game, if you didnt give the right sig just abort
     public entry fun play(game: &mut Game, bls_sig: vector<u8>, house_data: &mut HouseData, ctx: &mut TxContext) {
         // Ensure tx sender is the house
         assert!(house_data.house == tx_context::sender(ctx), ECallerNotHouse);
