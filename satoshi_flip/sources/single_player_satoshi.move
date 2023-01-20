@@ -168,11 +168,9 @@ module satoshi_flip::single_player_satoshi {
     }
 
     // this is the old play + end_game function combined
-    // house should play the game because player might give wrong signature.
-    // @todo: anyone can end the game, if you didnt give the right sig just abort
+    // Anyone can end the game, if you didnt pass the right sig just abort
     public entry fun play(game: &mut Game, bls_sig: vector<u8>, house_data: &mut HouseData, ctx: &mut TxContext) {
         // Ensure tx sender is the house
-        assert!(house_data.house == tx_context::sender(ctx), ECallerNotHouse);
         assert!(balance(house_data) >= 5000, EInsufficientBalance);
 
         // Step 1: Check the bls signature, if its invalid, house loses
@@ -180,14 +178,14 @@ module satoshi_flip::single_player_satoshi {
         // let Game {id, guess_placed_epoch: _, user_randomness, stake, guess, player} = game;
         vector::append(&mut messageVector, player_randomness(game));
         let is_sig_valid = bls12381_min_pk_verify(&bls_sig, &house_data.public_key, &messageVector);
-        // assert!(is_sig_valid, EInvalidBlsSig);
+        assert!(is_sig_valid, EInvalidBlsSig);
         // Step 2: Determine winner
         let first_byte = vector::borrow(&bls_sig, 0);
         let player_won: bool = game.guess == *first_byte % 2;
 
         // Step 3: Distribute funds based on result
 
-        if(!is_sig_valid || player_won){
+        if(player_won){
             // Step 3.a: If player wins, get the stake from the house and merge it inside the games stake. Then transfer the balance as a coin to the player
             // @todo: check that there is enough balance. What if the user funds are taken but the house doesn't have enough balance? Should this check be moved somewhere else?
             let house_stake = balance::split(&mut house_data.balance, STAKE);
