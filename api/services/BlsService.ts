@@ -15,7 +15,7 @@ class BlsService {
 
   deriveBLS_SK() {
     // initial key material
-    const ikm = process.env.PRIVATE_KEY;
+    const ikm = JSON.parse(process.env.PRIVATE_KEY || "");
     const length = 32;
     const salt = "satoshi";
     const info = "bls-signature";

@@ -211,8 +211,6 @@ module satoshi_flip::single_player_satoshi {
         transfer::share_object(outcome);
     }
 
-    // @todo: support here to enable the house to end as well?
-
     public entry fun cancel_game(game: &mut Game, ctx: &mut TxContext) {
         // Only the player who created the game can cancel it
         assert!(tx_context::sender(ctx) == game.player, EInvalidPlayer);
