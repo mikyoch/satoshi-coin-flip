@@ -20,6 +20,7 @@ const envAPIScheme = {
 const envUIScheme = {
   NEXT_PUBLIC_PACKAGE: "",
   NEXT_PUBLIC_API_BASE_URL: "",
+  NEXT_PUBLIC_HOUSE_DATA: ""
 };
 
 const defaultAPIEnvValues = {

@@ -74,6 +74,16 @@ const PlayButton = ({ coinSide, gameID, callback, loading, showChoice }) => {
     });
   };
 
+  function randomBytes(length) {
+    var result = "";
+    var characters = "ABCDEFabcdef0123456789";
+    var charactersLength = characters.length;
+    for (var i = 0; i < length*2; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+  }
+
   const handleClick = async () => {
     loading(true);
     try {
@@ -88,17 +98,19 @@ const PlayButton = ({ coinSide, gameID, callback, loading, showChoice }) => {
         );
       }
 
-      const transactionResponse = await signAndExecuteTransaction({
-        kind: "moveCall",
-        data: {
-          packageObjectId: `${PACKAGE}`,
-          module: "satoshi_flip",
-          function: "play",
-          typeArguments: [],
-          arguments: [`${gameID}`, `${choice}`, `${playerCoin.coinID}`, "5000"],
-          gasBudget: 10000,
-        },
-      });
+      const user_randomness = Buffer.from(randomBytes(16), 'hex');
+
+    const transactionResponse = await signAndExecuteTransaction({
+      kind: "moveCall",
+      data: {
+        packageObjectId: `${PACKAGE}`,
+        module: "singple_player_satoshi",
+        function: "play",
+        typeArguments: [],
+        arguments: [`${choice}`, `${Uint8Array.from(user_randomness)}`, `${playerCoin.coinID}`],
+        gasBudget: 10000,
+      },
+    });
 
       const transactionStatus = transactionResponse.effects.status;
 

@@ -140,6 +140,8 @@ class SatoshiGameService {
         });
     });
   }
+
+  // end-game for single player satoshi
 }
 
 export default SatoshiGameService;

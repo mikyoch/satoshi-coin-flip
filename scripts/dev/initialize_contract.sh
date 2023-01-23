@@ -8,14 +8,20 @@ while IFS= read -r line; do
 done < ../api/.env
 
 HOUSE_CAP=$(cat house_cap.txt)
-echo 'Selecting a gas coin...'
+echo 'Selecting gas coin...'
 # Select gas coin manaually so that fund coin obj and gas obj are not the same
 GAS_COIN_ID=$(sui client gas --json | jq -r '[.[] | {id: .id.id, balance: .balance.value}] | map(select(.balance > 10000)) | min_by(.balance) | .id')
 echo "- Selected gas coin $GAS_COIN_ID"
-echo 'Selecting a fund coin...'
+echo 'Selecting fund coin...'
 FUND_COIN_ID=$(sui client gas --json | jq -r '[.[] | {id: .id.id, balance: .balance.value}] | max_by(.balance) | .id')
 echo "- Selected fund coin $FUND_COIN_ID"
 PUBLIC_KEY=$(cat pk.keystore)
 echo 'Initializing house data...'
-sui client call --package $PACKAGE --module single_player_satoshi --function initialize_house_data \
---args $HOUSE_CAP $FUND_COIN_ID $PUBLIC_KEY --gas-budget 10000 --gas $GAS_COIN_ID
+TX_EFFECTS=$(sui client call --package $PACKAGE --module single_player_satoshi --function initialize_house_data --args $HOUSE_CAP $FUND_COIN_ID $PUBLIC_KEY --gas-budget 10000 --gas $GAS_COIN_ID --json)
+HOUSE_DATA_ID=$(echo $TX_EFFECTS | jq -r '.[].created | .[0].reference.objectId | select(. != null)')
+echo $TX_EFFECTS >> 'tx.json'
+echo "Writing house data id $HOUSE_DATA_ID in ui/.env"
+uiEnv='./../ui/.env'
+NEW_VAR="NEXT_PUBLIC_HOUSE_DATA="
+NEW_VAR+=$HOUSE_DATA_ID
+sed -i "s/NEXT_PUBLIC_HOUSE_DATA=.*/$NEW_VAR/" $uiEnv

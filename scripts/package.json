@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "node ./dev/setEnv.js && ./dev/initialize_contract.sh && npm run clean",
-    "clean": "rm -rf house_cap.txt pk.keystore sui.log.*",
+    "clean": "rm -rf house_cap.txt pk.keystore sui.log.* tx.json",
     "prod": "node ./prod/setEnv.js"
   },
   "author": "",
