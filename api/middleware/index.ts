@@ -53,6 +53,18 @@ function checkEnd(req: Request, res: Response, next: NextFunction) {
   next();
 }
 
+function checkSinglePlayerEnd(req: Request, res: Response, next: NextFunction) {
+  try {
+    if (!req?.body?.gameId) throw new Error('Parameter "gameId" is required');
+    if (!req?.body?.blsSig) throw new Error('Parameter "blsSig" is required');
+  } catch (error) {
+    res.status(errorCode);
+    next(error);
+  }
+
+  next();
+}
+
 function checkSign(req: Request, res: Response, next: NextFunction) {
   checkEnd(req, res, next);
 }
@@ -69,4 +81,4 @@ function checkVerify(req: Request, res: Response, next: NextFunction) {
   next();
 }
 
-export { notFound, errorHandler, checkStart, checkEnd, checkSign, checkVerify };
+export { notFound, errorHandler, checkStart, checkEnd, checkSinglePlayerEnd, checkSign, checkVerify };

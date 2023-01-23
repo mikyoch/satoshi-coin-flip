@@ -78,7 +78,7 @@ const PlayButton = ({ coinSide, gameID, callback, loading, showChoice }) => {
     var result = "";
     var characters = "ABCDEFabcdef0123456789";
     var charactersLength = characters.length;
-    for (var i = 0; i < length*2; i++) {
+    for (var i = 0; i < length * 2; i++) {
       result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;
@@ -97,22 +97,27 @@ const PlayButton = ({ coinSide, gameID, callback, loading, showChoice }) => {
           "Looks like you are out of coins. Consider requesting some coins from the faucet and try again!"
         );
       }
-
-      const user_randomness = Buffer.from(randomBytes(16), 'hex');
-
-    const transactionResponse = await signAndExecuteTransaction({
-      kind: "moveCall",
-      data: {
-        packageObjectId: `${PACKAGE}`,
-        module: "singple_player_satoshi",
-        function: "play",
-        typeArguments: [],
-        arguments: [`${choice}`, `${Uint8Array.from(user_randomness)}`, `${playerCoin.coinID}`],
-        gasBudget: 10000,
-      },
-    });
+      const userRandomHexString = randomBytes(16);
+      const user_randomness = Buffer.from(userRandomHexString, "hex");
+      const transactionResponse = await signAndExecuteTransaction({
+        kind: "moveCall",
+        data: {
+          packageObjectId: `${PACKAGE}`,
+          module: "single_player_satoshi",
+          function: "start_game",
+          typeArguments: [],
+          arguments: [
+            `${choice}`,
+            Array.from(user_randomness),
+            `${playerCoin.coinID}`,
+          ],
+          gasBudget: 10000,
+        },
+      });
 
       const transactionStatus = transactionResponse.effects.status;
+      const gameObjId =
+        transactionResponse?.effects?.created?.[0]?.reference?.objectId;
 
       if (transactionStatus === "failure") {
         const statusMessage = transactionResponse.effects.status.error;
@@ -120,7 +125,7 @@ const PlayButton = ({ coinSide, gameID, callback, loading, showChoice }) => {
         console.log(statusMessage.status);
       } else {
         const digest = transactionResponse?.effects?.transactionDigest;
-        callback(choice, digest);
+        callback(gameObjId, userRandomHexString, choice, digest);
       }
     } catch (e) {
       notifyError("Something went wrong, please try again later");
@@ -138,8 +143,7 @@ const PlayButton = ({ coinSide, gameID, callback, loading, showChoice }) => {
         onClick={handleClick}
         id={coinSide}
         disabled={!connected}
-        className="group bg-gray-dark text-white/70 px-6 py-3 mx-2 lowercase rounded-full shadow hover:shadow-lg outline-none focus:outline-none  disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed disabled:text-white/50"
-      >
+        className="group bg-gray-dark text-white/70 px-6 py-3 mx-2 lowercase rounded-full shadow hover:shadow-lg outline-none focus:outline-none  disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed disabled:text-white/50">
         <span className="group-hover:text-white/80 flex items-center justify-center capitalize pr-1">
           <span className="flex justify-center w-6 h-6 text-sui-sky/60 group-hover:text-sui-sky/100">
             {renderButtonIcon(coinSide)}

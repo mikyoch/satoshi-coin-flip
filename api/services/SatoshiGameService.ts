@@ -30,7 +30,7 @@ class SatoshiGameService {
       secret: secret,
       hash: Array.from(hash),
       hexSecret: (+secret).toString(16),
-      buffer: Array.from((+secret).toString(16))
+      buffer: Array.from((+secret).toString(16)),
     };
   }
 
@@ -142,6 +142,59 @@ class SatoshiGameService {
   }
 
   // end-game for single player satoshi
+  public endGameSinglePlayer(
+    gameId: string,
+    blsSig: Uint8Array
+  ): Promise<{ playerWon: boolean; transactionDigest: string }> {
+    return new Promise((resolve, reject) => {
+      // @todo: add a way to check what gameIds are being called. Might be wrong ones but it could still waste resources...
+      // if (!this.gameIdSecretMap.has(gameId)) {
+      //   reject("Given gameId does not exist");
+      //   return;
+      // }
+      // const secret: string = String(this.gameIdSecretMap.get(gameId));
+
+      this.suiService
+        .executeMoveCall(
+          String(process.env.PACKAGE_ADDRESS),
+          "single_player_satoshi",
+          [],
+          "play",
+          [gameId, Array.from(blsSig), String(process.env.HOUSE_DATA)]
+        )
+        .then(async (res: any) => {
+          const effects = res?.EffectsCert
+            ? res?.EffectsCert?.effects?.effects
+            : res?.effects;
+
+          const status = effects?.status?.status;
+          const newObjEvents = effects.events.filter((el: any) => el.newObject);
+          const transactionDigest = effects?.transactionDigest;
+
+          const outcomeObjId = newObjEvents?.[0]?.newObject?.objectId;
+
+          const outcomeObj: any = await this.suiService.getObject(outcomeObjId);
+
+          if (status === "success") {
+            resolve({
+              playerWon: outcomeObj?.details?.data?.fields?.player_won,
+              transactionDigest,
+            });
+          } else {
+            reject({
+              status: "failure",
+              effects,
+            });
+          }
+        })
+        .catch((e) => {
+          reject({
+            status: "failure",
+            message: e.message || "Transaction failed",
+          });
+        });
+    });
+  }
 }
 
 export default SatoshiGameService;

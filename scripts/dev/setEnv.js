@@ -15,12 +15,12 @@ const envAPIScheme = {
   BANKER_ADDRESS: "",
   PACKAGE_ADDRESS: "",
   TRUSTED_ORIGINS: "",
+  HOUSE_DATA: ""
 };
 
 const envUIScheme = {
   NEXT_PUBLIC_PACKAGE: "",
-  NEXT_PUBLIC_API_BASE_URL: "",
-  NEXT_PUBLIC_HOUSE_DATA: ""
+  NEXT_PUBLIC_API_BASE_URL: ""
 };
 
 const defaultAPIEnvValues = {

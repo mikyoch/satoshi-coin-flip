@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import express, { Router, Request, Response, NextFunction } from "express";
-import { checkEnd, checkSign, checkStart, checkVerify } from "../middleware";
+import { checkEnd, checkSign, checkSinglePlayerEnd, checkStart, checkVerify } from "../middleware";
 import services from "../services/";
 
 const GameService = services.SatoshiGameService;
@@ -54,6 +54,34 @@ router.post(
     try {
       let { playerWon, transactionDigest } = await GameService.endGame(
         req.body.gameId
+      );
+      res.status(200);
+      res.json({
+        playerWon,
+        transactionDigest,
+      });
+    } catch (e) {
+      console.error(
+        `Bad things have happened while calling /game/end with id "${req.body.gameId}":`,
+        e
+      );
+      // Forward the error to the error handler
+      res.status(500);
+      next(e);
+    }
+  }
+);
+
+router.post(
+  "/single/end",
+  checkSinglePlayerEnd,
+  async (req: Request, res: Response, next: NextFunction) => {
+    console.log("POST /game/single/end with body:", req.body);
+
+    try {
+      let { playerWon, transactionDigest } = await GameService.endGameSinglePlayer(
+        req.body.gameId,
+        req.body.blsSig
       );
       res.status(200);
       res.json({
