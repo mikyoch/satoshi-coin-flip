@@ -9,7 +9,7 @@ import { useEffect, useState, Suspense } from "react";
 import dynamic from "next/dynamic";
 
 // API & Services
-import { blsSign, endGame, singlePlayerEnd } from "../services/SatoshiAPI";
+import { blsSign, singlePlayerEnd } from "../services/SatoshiAPI";
 import { notifyPlayResult, notifySucess } from "../services/Toasts";
 import { COIN } from "../helpers/constants";
 
@@ -17,7 +17,6 @@ import { COIN } from "../helpers/constants";
 import ExplorerLink from "./ExplorerLink";
 import Visual from "./Visual";
 import LinksContainer from "./LinksContainer";
-import NewGameButton from "./NewGameButton";
 import Spinner from "./Spinner";
 import PlayButton from "./PlayGameButton";
 // import GameStatus from "./GameStatus";
@@ -45,7 +44,8 @@ function GameScreen() {
     // ToDo: Add prompt to remind the user that a new game is ongoing!
     window.addEventListener("unload", () => {
       if (gameId !== "") {
-        endGame(gameId);
+        // can no longer end the game on unload, would have to store the blsSig
+        // singlePlayerEnd(gameId);
         setGameId("");
       }
     });

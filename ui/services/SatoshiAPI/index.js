@@ -12,27 +12,6 @@ const satoshiAPI = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
 });
 
-const createGame = (minAmount, maxAmount) => {
-  const data = qs.stringify({
-    minAmount,
-    maxAmount,
-  });
-
-  return satoshiAPI.post("/game/start", data, {
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-  });
-};
-
-const endGame = (gameId) => {
-  const data = qs.stringify({
-    gameId,
-  });
-
-  return satoshiAPI.post("/game/end", data, {
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-  });
-};
-
 const blsSign = (gameId, user_randomness) => {
   gameId = `${gameId}`.replace("0x", "");
   gameId = `${gameId}${user_randomness}`;
@@ -66,15 +45,8 @@ const singlePlayerEnd = (gameId, blsSig) => {
   });
 };
 
-const getGames = () => {
-  return satoshiAPI.get("/game/objects");
-};
-
 export {
-  createGame,
-  endGame,
   blsSign,
   registerGame,
   singlePlayerEnd,
-  getGames,
 };
