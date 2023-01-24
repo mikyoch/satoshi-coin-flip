@@ -45,6 +45,16 @@ const blsSign = (gameId, user_randomness) => {
   });
 };
 
+const registerGame = (gameId) => {
+  const data = qs.stringify({
+    gameId,
+  });
+
+  return satoshiAPI.post("/game/register", data, {
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+  });
+};
+
 const singlePlayerEnd = (gameId, blsSig) => {
   const data = qs.stringify({
     gameId,
@@ -60,4 +70,11 @@ const getGames = () => {
   return satoshiAPI.get("/game/objects");
 };
 
-export { createGame, endGame, blsSign, singlePlayerEnd, getGames };
+export {
+  createGame,
+  endGame,
+  blsSign,
+  registerGame,
+  singlePlayerEnd,
+  getGames,
+};

@@ -13,6 +13,7 @@ import { notifyError, notifyInfo } from "../services/Toasts";
 import { COIN } from "../helpers/constants";
 import HeadsSvg from "../public/svg/capy.svg";
 import TailsSvg from "../public/svg/capy-text.svg";
+import { registerGame } from "../services/SatoshiAPI";
 
 const PlayButton = ({ coinSide, gameID, callback, loading, showChoice }) => {
   // Initialize provider
@@ -125,6 +126,7 @@ const PlayButton = ({ coinSide, gameID, callback, loading, showChoice }) => {
         console.log(statusMessage.status);
       } else {
         const digest = transactionResponse?.effects?.transactionDigest;
+        await registerGame(gameObjId);
         callback(gameObjId, userRandomHexString, choice, digest);
       }
     } catch (e) {

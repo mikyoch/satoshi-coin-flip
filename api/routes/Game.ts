@@ -2,7 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import express, { Router, Request, Response, NextFunction } from "express";
-import { checkEnd, checkSign, checkSinglePlayerEnd, checkStart, checkVerify } from "../middleware";
+import {
+  checkEnd,
+  checkRegisterGame,
+  checkSign,
+  checkSinglePlayerEnd,
+  checkStart,
+  checkVerify,
+} from "../middleware";
 import services from "../services/";
 
 const GameService = services.SatoshiGameService;
@@ -72,6 +79,50 @@ router.post(
   }
 );
 
+router.get(
+  "/details",
+  async (req: Request, res: Response, next: NextFunction) => {
+    console.log("POST /game/details with body:", req.body);
+
+    try {
+      let games = GameService.getGames();
+      res.status(200);
+      res.json({
+        games,
+      });
+    } catch (e) {
+      console.error(`Bad things have happened while calling /game/details:`, e);
+      // Forward the error to the error handler
+      res.status(500);
+      next(e);
+    }
+  }
+);
+
+router.post(
+  "/register",
+  checkRegisterGame,
+  async (req: Request, res: Response, next: NextFunction) => {
+    console.log("POST /game/register with body:", req.body);
+
+    try {
+      let registered = GameService.registerGame(req.body.gameId);
+      res.status(200);
+      res.json({
+        registered,
+      });
+    } catch (e) {
+      console.error(
+        `Bad things have happened while calling /game/register with id "${req.body.gameId}":`,
+        e
+      );
+      // Forward the error to the error handler
+      res.status(500);
+      next(e);
+    }
+  }
+);
+
 router.post(
   "/single/end",
   checkSinglePlayerEnd,
@@ -79,10 +130,8 @@ router.post(
     console.log("POST /game/single/end with body:", req.body);
 
     try {
-      let { playerWon, transactionDigest } = await GameService.endGameSinglePlayer(
-        req.body.gameId,
-        req.body.blsSig
-      );
+      let { playerWon, transactionDigest } =
+        await GameService.endGameSinglePlayer(req.body.gameId, req.body.blsSig);
       res.status(200);
       res.json({
         playerWon,
@@ -90,7 +139,7 @@ router.post(
       });
     } catch (e) {
       console.error(
-        `Bad things have happened while calling /game/end with id "${req.body.gameId}":`,
+        `Bad things have happened while calling /game/single/end with id "${req.body.gameId}":`,
         e
       );
       // Forward the error to the error handler
@@ -127,7 +176,10 @@ router.post(
   checkVerify,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const valid = await services.BlsService.verify(req?.body?.msg, JSON.parse(req?.body?.sig));
+      const valid = await services.BlsService.verify(
+        req?.body?.msg,
+        JSON.parse(req?.body?.sig)
+      );
       res.status(200);
       res.json({
         valid,

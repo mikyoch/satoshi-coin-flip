@@ -7,6 +7,23 @@ import SHA3 from "sha3";
 class SatoshiGameService {
   private suiService: SuiServiceInterface;
   private gameIdSecretMap: Map<String, String> = new Map<String, String>();
+  private gameIdMap: Map<
+    String,
+    {
+      date_created: String;
+      game_ended: boolean;
+      player_won: boolean | null;
+      date_ended: String | null;
+    }
+  > = new Map<
+    String,
+    {
+      date_created: String;
+      game_ended: boolean;
+      player_won: boolean | null;
+      date_ended: String | null;
+    }
+  >();
 
   constructor() {
     this.suiService = new SuiService();
@@ -19,6 +36,14 @@ class SatoshiGameService {
     }
 
     return gameIds;
+  }
+
+  public getGames() {
+    let games: Object[] = [];
+    for (let key of this.gameIdMap.keys()) {
+      games.push({ gameId: key, details: this.gameIdMap.get(key) });
+    }
+    return games;
   }
 
   private getNewSecretAndHash() {
@@ -141,17 +166,32 @@ class SatoshiGameService {
     });
   }
 
+  public registerGame(gameId: string) {
+    try {
+      this.gameIdMap.set(gameId, {
+        date_created: new Date().toUTCString(),
+        game_ended: false,
+        player_won: null,
+        date_ended: null,
+      });
+      return true;
+    } catch (e) {
+      console.error("Encountered error while registering game", e);
+      return false;
+    }
+  }
+
   // end-game for single player satoshi
   public endGameSinglePlayer(
     gameId: string,
     blsSig: Uint8Array
   ): Promise<{ playerWon: boolean; transactionDigest: string }> {
     return new Promise((resolve, reject) => {
-      // @todo: add a way to check what gameIds are being called. Might be wrong ones but it could still waste resources...
-      // if (!this.gameIdSecretMap.has(gameId)) {
-      //   reject("Given gameId does not exist");
-      //   return;
-      // }
+      // Limiting the use of endGame call to only gameIds created within the scope of the application
+      if (!this.gameIdMap.has(gameId)) {
+        reject("Given gameId does not exist");
+        return;
+      }
       // const secret: string = String(this.gameIdSecretMap.get(gameId));
 
       this.suiService
@@ -176,6 +216,12 @@ class SatoshiGameService {
           const outcomeObj: any = await this.suiService.getObject(outcomeObjId);
 
           if (status === "success") {
+            this.gameIdMap.set(gameId, {
+              game_ended: true,
+              player_won: outcomeObj?.details?.data?.fields?.player_won,
+              date_ended: new Date().toUTCString(),
+              date_created: this.gameIdMap.get(gameId)?.date_created || "N/A",
+            });
             resolve({
               playerWon: outcomeObj?.details?.data?.fields?.player_won,
               transactionDigest,

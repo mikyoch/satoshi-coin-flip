@@ -69,6 +69,10 @@ function checkSign(req: Request, res: Response, next: NextFunction) {
   checkEnd(req, res, next);
 }
 
+function checkRegisterGame(req: Request, res: Response, next: NextFunction) {
+  checkEnd(req, res, next);
+}
+
 function checkVerify(req: Request, res: Response, next: NextFunction) {
   try {
     if (!req?.body?.msg) throw new Error('Parameter "msg" is required');
@@ -81,4 +85,13 @@ function checkVerify(req: Request, res: Response, next: NextFunction) {
   next();
 }
 
-export { notFound, errorHandler, checkStart, checkEnd, checkSinglePlayerEnd, checkSign, checkVerify };
+export {
+  notFound,
+  errorHandler,
+  checkStart,
+  checkEnd,
+  checkSinglePlayerEnd,
+  checkRegisterGame,
+  checkSign,
+  checkVerify,
+};
