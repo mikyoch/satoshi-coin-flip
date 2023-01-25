@@ -21,8 +21,7 @@ const GameDetails = ({ boxHeight }) => {
           <span className="font-medium">Sui Devnet</span>.
         </p>
         <p className="pt-2">
-          Each game generates a random secret. The secret is hashed and then commits on-chain
-          the new game smart contract along with the House&apos;s stake. A user can
+          For each game, the player generates a random secret. A user can
           then play by staking the fixed amount we&apos;ve defined - 5000 MIST - and
           selects <span className="underline underline-offset-4">Head</span> or{" "}
           <span className="underline underline-offset-4">Tails</span>. The game

@@ -2,13 +2,11 @@
 
 This folder contains scripts that utilize the SuiClient CLI and Linux Bash commands to initialize the project configuration and deploy the satoshi_coin_flip module.
 
-**Note:** Running the scripts directly from this folder is not required as they are automatically invoked when you run the API or UI.
-
 ## Disclaimer
 
 Dev and prod environments currently do not differentiate the initialization process, they rather provide different ways to do the same thing: set up the .env files.
  - `npm run dev` utilizes the Sui Client CLI to deploy the smart contract
- - `npm run prod` utilizes the JS / TS Sui SDK to deploy the smart contract
+ - ~~`npm run prod` utilizes the JS / TS Sui SDK to deploy the smart contract~~ **Outdated**
 
 These are the main differences between these 2 scripts
 
