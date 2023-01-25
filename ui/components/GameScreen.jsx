@@ -9,7 +9,7 @@ import { useEffect, useState, Suspense } from "react";
 import dynamic from "next/dynamic";
 
 // API & Services
-import { endGame } from "../services/SatoshiAPI";
+import { blsSign, singlePlayerEnd } from "../services/SatoshiAPI";
 import { notifyPlayResult, notifySucess } from "../services/Toasts";
 import { COIN } from "../helpers/constants";
 
@@ -17,7 +17,6 @@ import { COIN } from "../helpers/constants";
 import ExplorerLink from "./ExplorerLink";
 import Visual from "./Visual";
 import LinksContainer from "./LinksContainer";
-import NewGameButton from "./NewGameButton";
 import Spinner from "./Spinner";
 import PlayButton from "./PlayGameButton";
 // import GameStatus from "./GameStatus";
@@ -30,7 +29,7 @@ import TailsSvg from "../public/svg/capy-text.svg";
 
 function GameScreen() {
   // game logic
-  const [visualStatus, setVisualStatus] = useState(0);
+  const [visualStatus, setVisualStatus] = useState(1);
   const [gameId, setGameId] = useState("");
   const [history, setHistory] = useState([]);
   const [currentTxs, setCurrentTxs] = useState([]);
@@ -45,24 +44,25 @@ function GameScreen() {
     // ToDo: Add prompt to remind the user that a new game is ongoing!
     window.addEventListener("unload", () => {
       if (gameId !== "") {
-        endGame(gameId);
+        // can no longer end the game on unload, would have to store the blsSig
+        // singlePlayerEnd(gameId);
         setGameId("");
       }
     });
   });
 
   const newGameClicked = (gameId_, transactionId) => {
-    setIsLoading(false);
     setGameId(gameId_);
     setVisualStatus(2);
-    setCurrentTxs([
-      { id: transactionId, type: "transaction", text: "New Game Tx" },
-    ]);
+    // setCurrentTxs([
+    //   { id: transactionId, type: "transaction", text: "New Game Tx" },
+    // ]);
     notifySucess("Created new game!");
   };
 
-  const finish = async (choice) => {
-    const endResponse = await endGame(gameId);
+  const finish = async (choice, gameId, userRandomHexString) => {
+    const blsSig = await blsSign(gameId, userRandomHexString);
+    const endResponse = await singlePlayerEnd(gameId, blsSig?.data?.blsSig);
     const { playerWon, transactionDigest } = endResponse.data;
     const show = playerWon ? choice : (choice + 1) % 2;
     setVisualStatus(show);
@@ -88,7 +88,8 @@ function GameScreen() {
     setGameId("");
   };
 
-  const playButtonClicked = (choice, transactionId) => {
+  const playButtonClicked = (gameId, userRandomHexString, choice, transactionId) => {
+    newGameClicked(gameId, transactionId);
     setCurrentTxs((old) => [
       {
         id: transactionId,
@@ -98,7 +99,7 @@ function GameScreen() {
       },
       ...old,
     ]);
-    finish(choice);
+    finish(choice, gameId, userRandomHexString);
   };
 
   let gameDetailsHeight = "";
@@ -204,25 +205,16 @@ function GameScreen() {
               <div className="h-[50px]">
                 <Spinner />
               </div>
-            ) : gameId === "" ? (
-              <div className="h-[50px]">
-                <NewGameButton
-                  callback={newGameClicked}
-                  loading={setIsLoading}
-                />
-              </div>
-            ) : (
+            ) : gameId === "" && (
               <div id="ht-buttons" className="h-[50px]">
                 <PlayButton
                   coinSide="HEADS"
-                  gameID={gameId}
                   callback={playButtonClicked}
                   loading={setIsLoading}
                   showChoice={setShowChoice}
                 />
                 <PlayButton
                   coinSide="TAILS"
-                  gameID={gameId}
                   callback={playButtonClicked}
                   loading={setIsLoading}
                   showChoice={setShowChoice}

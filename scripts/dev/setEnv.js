@@ -6,6 +6,8 @@ const { fromB64 } = require("@mysten/bcs");
 const { Ed25519Keypair } = require("@mysten/sui.js");
 const fs = require("fs");
 const { deploy } = require("./deploy_contract");
+const hkdf = require("futoin-hkdf");
+const bls = require('@noble/bls12-381');
 
 const envAPIScheme = {
   PORT: "",
@@ -13,11 +15,12 @@ const envAPIScheme = {
   BANKER_ADDRESS: "",
   PACKAGE_ADDRESS: "",
   TRUSTED_ORIGINS: "",
+  HOUSE_DATA: ""
 };
 
 const envUIScheme = {
   NEXT_PUBLIC_PACKAGE: "",
-  NEXT_PUBLIC_API_BASE_URL: "",
+  NEXT_PUBLIC_API_BASE_URL: ""
 };
 
 const defaultAPIEnvValues = {
@@ -68,6 +71,24 @@ function writeEnv(envJson, folderName = "api") {
   fs.writeFileSync(`./../${folderName}/.env`, env);
 }
 
+function writePK(sk){
+  let finalPK = '[';
+  const pk = bls.getPublicKey(sk);
+  finalPK += pk.toString() + ']';
+  fs.writeFileSync('./pk.keystore', finalPK);
+}
+
+function deriveBLS_SK(private_key) {
+  // initial key material
+  const ikm = private_key;
+  const length = 32;
+  const salt = "satoshi";
+  const info = "bls-signature";
+  const hash = 'SHA-256';
+  const derived_sk = hkdf(ikm, length, {salt, info, hash});
+  return Uint8Array.from(derived_sk);
+}
+
 function main() {
   // get keystore base64 vaules
   const stdout = execSync("cat ~/.sui/sui_config/sui.keystore");
@@ -93,6 +114,8 @@ function main() {
   const envUIJson = getEnvJson("ui");
   envAPIJson.BANKER_ADDRESS = bankerAddress;
   envAPIJson.PRIVATE_KEY = privKeyArr;
+  const derived_bls_key = deriveBLS_SK(privKeyArr);
+  writePK(derived_bls_key);
   // write initial api and ui env (if it doesn't exist) because it is needed for the deployment
   writeEnv(envAPIJson, "api");
   envUIJson.NEXT_PUBLIC_PACKAGE = envAPIJson.PACKAGE_ADDRESS;

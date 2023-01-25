@@ -12,7 +12,12 @@ module satoshi_flip::test_satoshi_flip {
     use sui::test_scenario;
     use sui::tx_context::TxContext;
 
-    use satoshi_flip::satoshi_flip::{Self, Game};
+    use satoshi_flip::satoshi_flip::{
+            Self, Game, EZeroMinAmount, EMinAmountTooHigh,
+            ECoinBalanceNotEnough, EStakeTooHigh, EStakeTooLow,
+            EGuessNot1Or0, ENotAllowedToEndGame, EHashAndSecretDontMatch,
+            ECannotCancelBeforePlaying, EGameAlreadyEnded
+        };
 
     const EWronghouse: u64 = 0;
     const EWrongMinAmount: u64 = 1;
@@ -260,7 +265,7 @@ module satoshi_flip::test_satoshi_flip {
     // tests for start_game with wrong inputs.
     // Check that min_amount <= max_amount is enforced properly.
     #[test]
-    #[expected_failure(abort_code = 4)]
+    #[expected_failure(abort_code = EMinAmountTooHigh)]
     fun house_wrong_min_max_amount() {
         let world = @0x1EE7; // needed only for beginning the test_scenario.
         let house = @0xBAE;
@@ -288,7 +293,7 @@ module satoshi_flip::test_satoshi_flip {
 
     // Check that house provided coin of sufficient amount to cover the max_amount.
     #[test]
-    #[expected_failure(abort_code = 9)]
+    #[expected_failure(abort_code = ECoinBalanceNotEnough)]
     fun house_insufficient_balance() {
         let world = @0x1EE7; // needed only for beginning the test_scenario.
         let house = @0xBAE;
@@ -317,7 +322,7 @@ module satoshi_flip::test_satoshi_flip {
     // Test house setting min_amount = 0
 
     #[test]
-    #[expected_failure(abort_code = 10)]
+    #[expected_failure(abort_code = EZeroMinAmount)]
     fun house_sets_min_amount_0() {
         let world = @0x1EE7; // needed only for beginning the test_scenario.
         let house = @0xBAE;
@@ -354,7 +359,7 @@ module satoshi_flip::test_satoshi_flip {
         transfer::transfer(coinB, player);
     }
     #[test]
-    #[expected_failure(abort_code = 0)]
+    #[expected_failure(abort_code = EStakeTooHigh)]
     fun player_stake_exceeds_max_amount() {
         let world = @0x1EE7; // needed only for beginning the test_scenario.
         let house = @0xBAE;
@@ -404,7 +409,7 @@ module satoshi_flip::test_satoshi_flip {
         transfer::transfer(coinB, player);
     }
     #[test]
-    #[expected_failure(abort_code = 1)]
+    #[expected_failure(abort_code = EStakeTooLow)]
     fun player_stake_bellow_min_amount() {
         let world = @0x1EE7; // needed only for beginning the test_scenario.
         let house = @0xBAE;
@@ -447,7 +452,7 @@ module satoshi_flip::test_satoshi_flip {
 
     // player's guess is not 1 or 0.
     #[test]
-    #[expected_failure(abort_code = 2)]
+    #[expected_failure(abort_code = EGuessNot1Or0)]
     fun player_wrong_guess() {
         let world = @0x1EE7; // needed only for beginning the test_scenario.
         let house = @0xBAE;
@@ -490,7 +495,7 @@ module satoshi_flip::test_satoshi_flip {
 
     // test wrong address calling end_game.
     #[test]
-    #[expected_failure(abort_code = 7)]
+    #[expected_failure(abort_code = ENotAllowedToEndGame)]
     fun random_player_calls_end_game() {
         let world = @0x1EE7; // needed only for beginning the test_scenario.
         let house = @0xBAE;
@@ -544,7 +549,7 @@ module satoshi_flip::test_satoshi_flip {
 
     // test wrong secret.
     #[test]
-    #[expected_failure(abort_code = 3)]
+    #[expected_failure(abort_code = EHashAndSecretDontMatch)]
     fun end_game_wrong_secret() {
         let world = @0x1EE7; // needed only for beginning the test_scenario.
         let house = @0xBAE;
@@ -600,7 +605,7 @@ module satoshi_flip::test_satoshi_flip {
 
     // cancel_game before a player has played.
     #[test]
-    #[expected_failure(abort_code = 8)]
+    #[expected_failure(abort_code = ECannotCancelBeforePlaying)]
     fun call_cancel_game_before_play() {
         let world = @0x1EE7; // needed only for beginning the test_scenario.
         let house = @0xBAE;
@@ -639,7 +644,7 @@ module satoshi_flip::test_satoshi_flip {
 
     // house wins and player tries to cancel.
     #[test]
-    #[expected_failure(abort_code = 5)]
+    #[expected_failure(abort_code = EGameAlreadyEnded)]
     fun player_cancel_after_end() {
         let world = @0x1EE7; // needed only for beginning the test_scenario.
         let house = @0xBAE;

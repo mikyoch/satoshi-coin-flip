@@ -12,7 +12,6 @@ import {
 } from "@mysten/sui.js";
 
 interface SuiServiceInterface {
-  getPlayCoin(): Promise<string>;
   executeMoveCall(
     packageObjId: string,
     module: string,
@@ -38,7 +37,7 @@ class SuiService implements SuiServiceInterface {
     this.gasCoins = [];
     this.playCoins = [];
     this.gasCoinSelection = "";
-    this.populateGasCoins().then(() => this.populatePlayCoins());
+    this.populateGasCoins();
   }
 
   private getSigner(): RawSigner {
@@ -92,64 +91,6 @@ class SuiService implements SuiServiceInterface {
       console.log("Gas coins", this.gasCoins);
     } catch (e) {
       console.error("Populating gas coins failed: ", e);
-    }
-  }
-
-  private async createPlayCoins(
-    largeCoinId: string,
-    numOfCoins: number,
-    balancePerCoin: number = 5000,
-    gasFees: number = 10000
-  ) {
-    if (!largeCoinId) {
-      const faucetRes: any = await this.requestFromFaucet();
-      largeCoinId = faucetRes?.transferred_gas_objects?.[0]?.id;
-    }
-    console.log(
-      `Low supply on play coins, creating ${numOfCoins} from coin with id ${largeCoinId}`
-    );
-    const playCoins = await this.signer.paySui({
-      inputCoins: [largeCoinId],
-      recipients: [
-        ...Array(numOfCoins).fill(String(process.env.BANKER_ADDRESS)),
-      ],
-      amounts: [...Array(numOfCoins).fill(balancePerCoin)],
-      gasBudget: gasFees,
-    });
-    // @TODO: what happens with concurent requests? are they going to trigger the check multiple times?
-    // yes it does...
-    return playCoins;
-  }
-
-  private async populatePlayCoins(gasFees = 10000) {
-    try {
-      // check if we already have some suitable play coins
-      let playCoins = (await this.getAllCoins()).filter(
-        (coin) => coin.balance === 5000
-      );
-
-      this.playCoins = playCoins.map((coin) => coin.id);
-
-      if (playCoins.length > 0) return playCoins;
-
-      // if not create some
-      let largeCoin = await this.getLargestBankCoin();
-      let canBeCreated = Math.floor((largeCoin.balance - gasFees) / 5000);
-      console.log("Coins that can be created", canBeCreated);
-      if (canBeCreated >= 50) {
-        // creating arbitrarily 50 coins of 5000 balance each
-        await this.createPlayCoins(largeCoin.id, 50, 5000, gasFees);
-
-        playCoins = (await this.getAllCoins()).filter(
-          (coin) => coin.balance === 5000
-        );
-
-        this.playCoins = playCoins.map((coin) => coin.id);
-      }
-
-      return playCoins;
-    } catch (e) {
-      console.error("Could not populate play coins: ", e);
     }
   }
 
@@ -236,25 +177,6 @@ class SuiService implements SuiServiceInterface {
 
           resolve(largestCoin);
         });
-      } catch (e) {
-        reject(e);
-      }
-    });
-  }
-
-  public async getPlayCoin(): Promise<string> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        // Check if we have play coins available
-        console.log('Available play coins', this.playCoins.length);
-        if (this.playCoins.length === 0) {
-          // if none are found create some
-          await this.populatePlayCoins();
-        }
-        // get a play coin from the allocated play coins
-        let playCoin = this.playCoins.pop();
-
-        resolve(playCoin || "");
       } catch (e) {
         reject(e);
       }

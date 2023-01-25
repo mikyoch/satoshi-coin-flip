@@ -20,7 +20,9 @@ function errorHandler(
   res: Response,
   next: NextFunction
 ) {
-  res.status(res.statusCode || 500).send({ message: err.message || err, stack: err.stack || "N/A" });
+  res
+    .status(res.statusCode || 500)
+    .send({ message: err.message || err, stack: err.stack || "N/A" });
   console.error("Error Handler:", err);
 }
 
@@ -51,4 +53,45 @@ function checkEnd(req: Request, res: Response, next: NextFunction) {
   next();
 }
 
-export { notFound, errorHandler, checkStart, checkEnd };
+function checkSinglePlayerEnd(req: Request, res: Response, next: NextFunction) {
+  try {
+    if (!req?.body?.gameId) throw new Error('Parameter "gameId" is required');
+    if (!req?.body?.blsSig) throw new Error('Parameter "blsSig" is required');
+  } catch (error) {
+    res.status(errorCode);
+    next(error);
+  }
+
+  next();
+}
+
+function checkSign(req: Request, res: Response, next: NextFunction) {
+  checkEnd(req, res, next);
+}
+
+function checkRegisterGame(req: Request, res: Response, next: NextFunction) {
+  checkEnd(req, res, next);
+}
+
+function checkVerify(req: Request, res: Response, next: NextFunction) {
+  try {
+    if (!req?.body?.msg) throw new Error('Parameter "msg" is required');
+    if (!req?.body?.sig) throw new Error('Parameter "sig" is required');
+  } catch (error) {
+    res.status(errorCode);
+    next(error);
+  }
+
+  next();
+}
+
+export {
+  notFound,
+  errorHandler,
+  checkStart,
+  checkEnd,
+  checkSinglePlayerEnd,
+  checkRegisterGame,
+  checkSign,
+  checkVerify,
+};

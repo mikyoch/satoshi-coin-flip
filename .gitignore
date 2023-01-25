@@ -45,3 +45,6 @@ next-env.d.ts
 **/.vscode
 
 **/sui.log.*
+
+**/pk.keystore
+**/house_cap.txt
