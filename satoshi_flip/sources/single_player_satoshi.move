@@ -22,12 +22,13 @@ module satoshi_flip::single_player_satoshi {
 
     // errors
     const EInvalidBlsSig: u64 = 10;
-    const EInvalidPlayer: u64 = 11;
+    // const EInvalidPlayer: u64 = 11;
     const ECallerNotHouse: u64 = 12;
     const ECanNotCancel: u64 = 13;
     const EInvalidGuess: u64 = 14;
     const EInsufficientBalance: u64 = 15;
     const EGameHasAlreadyBeenCanceled: u64 = 16;
+    const EInsufficientHouseBalance: u64 = 17;
     // const ECoinBalanceNotEnough: u64 = 9; // reserved from satoshi_flip.move
 
     // structs
@@ -148,12 +149,18 @@ module satoshi_flip::single_player_satoshi {
         transfer::transfer(coin, house_data.house);
     }
 
-    public entry fun start_game(guess: u8, user_randomness: vector<u8>, coin: Coin<SUI>, ctx: &mut TxContext) {
+    public entry fun start_game(guess: u8, user_randomness: vector<u8>, coin: Coin<SUI>, house_data: &mut HouseData, ctx: &mut TxContext) {
+        // Ensure that guess is either 0 or 1
         assert!(guess == 1 || guess == 0, EInvalidGuess);
-        // get the user coin
+        // Ensure that the house has enough balance to play for this game
+        assert!(balance(house_data) >= STAKE, EInsufficientHouseBalance);
+        // get the user coin and convert it into a balance
         assert!(coin::value(&coin) >= STAKE, EInsufficientBalance);
         let stake_coin = satoshi_flip::give_change(coin, STAKE, ctx);
         let stake = coin::into_balance(stake_coin);
+        // get the house balance
+        let house_stake = balance::split(&mut house_data.balance, STAKE);
+        balance::join(&mut stake, house_stake);
 
         let new_game = Game {
             id: object::new(ctx),
@@ -170,9 +177,6 @@ module satoshi_flip::single_player_satoshi {
     // this is the old play + end_game function combined
     // Anyone can end the game, if you didnt pass the right sig just abort
     public entry fun play(game: &mut Game, bls_sig: vector<u8>, house_data: &mut HouseData, ctx: &mut TxContext) {
-        // Ensure tx sender is the house
-        assert!(balance(house_data) >= 5000, EInsufficientBalance);
-
         // Step 1: Check the bls signature, if its invalid, house loses
         let messageVector = *&object::id_bytes(game);
         // let Game {id, guess_placed_epoch: _, user_randomness, stake, guess, player} = game;
@@ -186,18 +190,14 @@ module satoshi_flip::single_player_satoshi {
         // Step 3: Distribute funds based on result
 
         if(player_won){
-            // Step 3.a: If player wins, get the stake from the house and merge it inside the games stake. Then transfer the balance as a coin to the player
-            // @todo: check that there is enough balance. What if the user funds are taken but the house doesn't have enough balance? Should this check be moved somewhere else?
-            let house_stake = balance::split(&mut house_data.balance, STAKE);
-            balance::join(&mut game.stake, house_stake);
-
-            let total_balance = balance::value(&game.stake);
-            let coin = coin::take(&mut game.stake, total_balance, ctx);
-            // let coin: Coin<SUI> = coin::from_balance(game.stake, ctx);
+            // Step 3.a: If player wins transfer the game balance as a coin to the player
+            let total_value =  stake(game);
+            let coin = coin::take(&mut game.stake, total_value, ctx);
             transfer::transfer(coin, game.player);
         } else {
             // Step 3.b: If house wins, then add the game stake to the house_data.house_balance
-            let coin = coin::take(&mut game.stake, STAKE, ctx);
+            let total_value =  stake(game);
+            let coin = coin::take(&mut game.stake, total_value, ctx);
             balance::join(&mut house_data.balance, coin::into_balance(coin));
         };
 
@@ -211,9 +211,7 @@ module satoshi_flip::single_player_satoshi {
         transfer::share_object(outcome);
     }
 
-    public entry fun cancel_game(game: &mut Game, ctx: &mut TxContext) {
-        // Only the player who created the game can cancel it
-        assert!(tx_context::sender(ctx) == game.player, EInvalidPlayer);
+    public entry fun dispute_and_win(game: &mut Game, ctx: &mut TxContext) {
         let caller_epoch = tx_context::epoch(ctx);
         // Ensure that minimum epochs have passed before user can cancel
         assert!(game.guess_placed_epoch + EPOCHS_CANCEL_AFTER <= caller_epoch, ECanNotCancel);

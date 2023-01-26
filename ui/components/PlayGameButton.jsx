@@ -6,7 +6,7 @@
  * Use: The button will render as heads or tails and will execute the respective moveCall
  */
 
-import { PACKAGE } from "../helpers/constants";
+import { HOUSE_DATA, PACKAGE } from "../helpers/constants";
 import { useWallet } from "@mysten/wallet-adapter-react";
 import { JsonRpcProvider, Network } from "@mysten/sui.js";
 import { notifyError, notifyInfo } from "../services/Toasts";
@@ -111,6 +111,7 @@ const PlayButton = ({ coinSide, gameID, callback, loading, showChoice }) => {
             `${choice}`,
             Array.from(user_randomness),
             `${playerCoin.coinID}`,
+            `${HOUSE_DATA}`
           ],
           gasBudget: 10000,
         },

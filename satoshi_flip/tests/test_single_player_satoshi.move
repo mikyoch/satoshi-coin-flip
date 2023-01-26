@@ -12,8 +12,10 @@ module satoshi_flip::test_single_player_satoshi {
     use sui::tx_context::TxContext;
 
     use satoshi_flip::single_player_satoshi::{Self, Game, HouseCap, HouseData, Outcome};
-    use satoshi_flip::single_player_satoshi::{ECallerNotHouse, EInvalidGuess, EInsufficientBalance, EInvalidPlayer, ECanNotCancel, EGameHasAlreadyBeenCanceled, EInvalidBlsSig};
+    use satoshi_flip::single_player_satoshi::{ECallerNotHouse, EInvalidGuess, EInsufficientBalance, ECanNotCancel, EGameHasAlreadyBeenCanceled, EInvalidBlsSig};
 
+    const EWrongPlayerBalanceAfterLoss: u64 = 8;
+    const EWrongPlayerBalanceAfterWin: u64 = 7;
     const EWrongWinner: u64 = 6;
     const EWrongPlayerTotal: u64 = 5;
     const EWrongCoinChange: u64 = 4;
@@ -94,10 +96,12 @@ module satoshi_flip::test_single_player_satoshi {
         test_scenario::next_tx(scenario, player);
         {
             let player_coin = test_scenario::take_from_sender<Coin<SUI>>(scenario);
+            let house_data = test_scenario::take_shared<HouseData>(scenario);
             let ctx = test_scenario::ctx(scenario);
             let guess = 0;
             let user_randomness = x"1e256b";
-            single_player_satoshi::start_game(guess, user_randomness, player_coin, ctx);
+            single_player_satoshi::start_game(guess, user_randomness, player_coin, &mut house_data, ctx);
+            test_scenario::return_shared(house_data);
         };
 
         // Check that player got change
@@ -123,16 +127,19 @@ module satoshi_flip::test_single_player_satoshi {
         };
 
         // check that outcome and house data values are correct
-        test_scenario::next_tx(scenario, house);
+        test_scenario::next_tx(scenario, player);
         {
             let house_data = test_scenario::take_shared<HouseData>(scenario);
+            let player_coin = test_scenario::take_from_sender<Coin<SUI>>(scenario);
             // print(&house_data);
             assert!(single_player_satoshi::balance(&house_data) == 55000, EWrongHouseBalanceAfterWin);
+            assert!(coin::value(&player_coin) == 15000, EWrongPlayerBalanceAfterLoss);
             test_scenario::return_shared(house_data);
             let outcome = test_scenario::take_shared<Outcome>(scenario);
             assert!(single_player_satoshi::player_won(&outcome) == false, EWrongWinner);
             // print(&outcome);
             test_scenario::return_shared(outcome);
+            test_scenario::return_to_sender(scenario, player_coin);
         };
 
         test_scenario::end(scenario_val);
@@ -170,10 +177,12 @@ module satoshi_flip::test_single_player_satoshi {
         test_scenario::next_tx(scenario, player);
         {
             let player_coin = test_scenario::take_from_sender<Coin<SUI>>(scenario);
+            let house_data = test_scenario::take_shared<HouseData>(scenario);
             let ctx = test_scenario::ctx(scenario);
             let guess = 1;
             let user_randomness = x"1e256b";
-            single_player_satoshi::start_game(guess, user_randomness, player_coin, ctx);
+            single_player_satoshi::start_game(guess, user_randomness, player_coin, &mut house_data, ctx);
+            test_scenario::return_shared(house_data);
         };
 
         // Check that player got change
@@ -191,7 +200,6 @@ module satoshi_flip::test_single_player_satoshi {
             let game = test_scenario::take_shared<Game>(scenario);
             let house_data = test_scenario::take_shared<HouseData>(scenario);
             // print(&house_data);
-            // print(&game);
             let ctx = test_scenario::ctx(scenario);
             
             single_player_satoshi::play(&mut game, BLS_SIG, &mut house_data, ctx);
@@ -201,16 +209,19 @@ module satoshi_flip::test_single_player_satoshi {
         };
 
         // check that outcome and house data values are correct
-        test_scenario::next_tx(scenario, house);
+        test_scenario::next_tx(scenario, player);
         {
             let house_data = test_scenario::take_shared<HouseData>(scenario);
+            let coin_winnings = test_scenario::take_from_sender<Coin<SUI>>(scenario);
             // print(&house_data);
             assert!(single_player_satoshi::balance(&house_data) == 45000, EWrongHouseBalanceAfterLoss);
-            test_scenario::return_shared(house_data);
+            assert!(coin::value(&coin_winnings) == 10000, EWrongPlayerBalanceAfterWin);
             let outcome = test_scenario::take_shared<Outcome>(scenario);
             assert!(single_player_satoshi::player_won(&outcome), EWrongWinner);
             // print(&outcome);
+            test_scenario::return_shared(house_data);
             test_scenario::return_shared(outcome);
+            test_scenario::return_to_sender(scenario, coin_winnings);
         };
 
         test_scenario::end(scenario_val);
@@ -249,10 +260,12 @@ module satoshi_flip::test_single_player_satoshi {
         test_scenario::next_tx(scenario, player);
         {
             let player_coin = test_scenario::take_from_sender<Coin<SUI>>(scenario);
+            let house_data = test_scenario::take_shared<HouseData>(scenario);
             let ctx = test_scenario::ctx(scenario);
             let guess = 0;
             let user_randomness = x"1e256b";
-            single_player_satoshi::start_game(guess, user_randomness, player_coin, ctx);
+            single_player_satoshi::start_game(guess, user_randomness, player_coin, &mut house_data, ctx);
+            test_scenario::return_shared(house_data);
         };
 
         // Check that player got change
@@ -390,10 +403,12 @@ module satoshi_flip::test_single_player_satoshi {
         test_scenario::next_tx(scenario, player);
         {
             let player_coin = test_scenario::take_from_sender<Coin<SUI>>(scenario);
+            let house_data = test_scenario::take_shared<HouseData>(scenario);
             let ctx = test_scenario::ctx(scenario);
             let guess = 0;
             let user_randomness = x"1e256b";
-            single_player_satoshi::start_game(guess, user_randomness, player_coin, ctx);
+            single_player_satoshi::start_game(guess, user_randomness, player_coin, &mut house_data, ctx);
+            test_scenario::return_shared(house_data);
         };
 
         // Check that player got change
@@ -422,7 +437,7 @@ module satoshi_flip::test_single_player_satoshi {
         {
             let game = test_scenario::take_shared<Game>(scenario);
             let ctx = test_scenario::ctx(scenario);
-            single_player_satoshi::cancel_game(&mut game, ctx);
+            single_player_satoshi::dispute_and_win(&mut game, ctx);
             test_scenario::return_shared(game);
         };
 
@@ -430,7 +445,7 @@ module satoshi_flip::test_single_player_satoshi {
         test_scenario::next_tx(scenario, player);
         {
             let player_coin = test_scenario::take_from_sender<Coin<SUI>>(scenario);
-            assert!(coin::value(&player_coin) == 5000, EWrongCoinChange);
+            assert!(coin::value(&player_coin) == 10000, EWrongCoinChange);
             test_scenario::return_to_sender(scenario, player_coin);
         };
 
@@ -471,10 +486,12 @@ module satoshi_flip::test_single_player_satoshi {
         test_scenario::next_tx(scenario, player);
         {
             let player_coin = test_scenario::take_from_sender<Coin<SUI>>(scenario);
+            let house_data = test_scenario::take_shared<HouseData>(scenario);
             let ctx = test_scenario::ctx(scenario);
             let guess = 1;
             let user_randomness = x"1e256b";
-            single_player_satoshi::start_game(guess, user_randomness, player_coin, ctx);
+            single_player_satoshi::start_game(guess, user_randomness, player_coin, &mut house_data, ctx);
+            test_scenario::return_shared(house_data);
         };
 
         // Check that player got change
@@ -539,10 +556,12 @@ module satoshi_flip::test_single_player_satoshi {
         test_scenario::next_tx(scenario, player);
         {
             let player_coin = test_scenario::take_from_sender<Coin<SUI>>(scenario);
+            let house_data = test_scenario::take_shared<HouseData>(scenario);
             let ctx = test_scenario::ctx(scenario);
             let guess = 5;
             let user_randomness = x"1e256b";
-            single_player_satoshi::start_game(guess, user_randomness, player_coin, ctx);
+            single_player_satoshi::start_game(guess, user_randomness, player_coin, &mut house_data, ctx);
+            test_scenario::return_shared(house_data);
         };
 
         test_scenario::end(scenario_val);
@@ -590,83 +609,12 @@ module satoshi_flip::test_single_player_satoshi {
         test_scenario::next_tx(scenario, player);
         {
             let player_coin = test_scenario::take_from_sender<Coin<SUI>>(scenario);
+            let house_data = test_scenario::take_shared<HouseData>(scenario);
             let ctx = test_scenario::ctx(scenario);
             let guess = 0;
             let user_randomness = x"1e256b";
-            single_player_satoshi::start_game(guess, user_randomness, player_coin, ctx);
-        };
-
-        test_scenario::end(scenario_val);
-    }
-
-    #[test]
-    #[expected_failure(abort_code = EInvalidPlayer)]
-    fun caller_not_player_on_cancel() {
-        let house = @0xCAFE;
-        let player = @0xDECAF;
-
-        let scenario_val = test_scenario::begin(house);
-        let scenario = &mut scenario_val;
-        {
-            start(test_scenario::ctx(scenario), house, player);
-        };
-
-        // Call init function, transfer HouseCap to the house
-        test_scenario::next_tx(scenario, house);
-        {
-            let ctx = test_scenario::ctx(scenario);
-            single_player_satoshi::init_for_testing(ctx);
-        };
-
-        // House initializes the contract with PK.
-        test_scenario::next_tx(scenario, house);
-        {
-            let house_cap = test_scenario::take_from_sender<HouseCap>(scenario);
-            let house_coin = test_scenario::take_from_sender<Coin<SUI>>(scenario);
-            let ctx = test_scenario::ctx(scenario);
-            single_player_satoshi::initialize_house_data(house_cap, house_coin, PK, ctx);
-        };
-
-
-        // player creates the game.
-        test_scenario::next_tx(scenario, player);
-        {
-            let player_coin = test_scenario::take_from_sender<Coin<SUI>>(scenario);
-            let ctx = test_scenario::ctx(scenario);
-            let guess = 0;
-            let user_randomness = x"1e256b";
-            single_player_satoshi::start_game(guess, user_randomness, player_coin, ctx);
-        };
-
-        // Check that player got change
-        test_scenario::next_tx(scenario, player);
-        {
-            let player_coin = test_scenario::take_from_sender<Coin<SUI>>(scenario);
-            // print(&player_coin);
-            assert!(coin::value(&player_coin) == 15000, EWrongCoinChange);
-            test_scenario::return_to_sender(scenario, player_coin);
-        };
-
-        // Simulate epoch passage
-        test_scenario::next_tx(scenario, player);
-        {
-            test_scenario::next_epoch(scenario, player);
-            test_scenario::next_epoch(scenario, player);
-            test_scenario::next_epoch(scenario, player);
-            test_scenario::next_epoch(scenario, player);
-            test_scenario::next_epoch(scenario, player);
-            test_scenario::next_epoch(scenario, player);
-            test_scenario::next_epoch(scenario, player);
-        };
-
-        // Invalid caller tries to cancel game (trying house here)
-        test_scenario::next_tx(scenario, player);
-        {
-            let game = test_scenario::take_shared<Game>(scenario);
-            test_scenario::next_tx(scenario, house);
-            let ctx = test_scenario::ctx(scenario);
-            single_player_satoshi::cancel_game(&mut game, ctx);
-            test_scenario::return_shared(game);
+            single_player_satoshi::start_game(guess, user_randomness, player_coin, &mut house_data, ctx);
+            test_scenario::return_shared(house_data);
         };
 
         test_scenario::end(scenario_val);
@@ -705,10 +653,12 @@ module satoshi_flip::test_single_player_satoshi {
         test_scenario::next_tx(scenario, player);
         {
             let player_coin = test_scenario::take_from_sender<Coin<SUI>>(scenario);
+            let house_data = test_scenario::take_shared<HouseData>(scenario);
             let ctx = test_scenario::ctx(scenario);
             let guess = 0;
             let user_randomness = x"1e256b";
-            single_player_satoshi::start_game(guess, user_randomness, player_coin, ctx);
+            single_player_satoshi::start_game(guess, user_randomness, player_coin, &mut house_data, ctx);
+            test_scenario::return_shared(house_data);
         };
 
         // Check that player got change
@@ -725,7 +675,7 @@ module satoshi_flip::test_single_player_satoshi {
         {
             let game = test_scenario::take_shared<Game>(scenario);
             let ctx = test_scenario::ctx(scenario);
-            single_player_satoshi::cancel_game(&mut game, ctx);
+            single_player_satoshi::dispute_and_win(&mut game, ctx);
             test_scenario::return_shared(game);
         };
 
@@ -765,10 +715,12 @@ module satoshi_flip::test_single_player_satoshi {
         test_scenario::next_tx(scenario, player);
         {
             let player_coin = test_scenario::take_from_sender<Coin<SUI>>(scenario);
+            let house_data = test_scenario::take_shared<HouseData>(scenario);
             let ctx = test_scenario::ctx(scenario);
             let guess = 0;
             let user_randomness = x"1e256b";
-            single_player_satoshi::start_game(guess, user_randomness, player_coin, ctx);
+            single_player_satoshi::start_game(guess, user_randomness, player_coin, &mut house_data, ctx);
+            test_scenario::return_shared(house_data);
         };
 
         // Check that player got change
@@ -797,7 +749,7 @@ module satoshi_flip::test_single_player_satoshi {
         {
             let game = test_scenario::take_shared<Game>(scenario);
             let ctx = test_scenario::ctx(scenario);
-            single_player_satoshi::cancel_game(&mut game, ctx);
+            single_player_satoshi::dispute_and_win(&mut game, ctx);
             test_scenario::return_shared(game);
         };
 
@@ -806,7 +758,7 @@ module satoshi_flip::test_single_player_satoshi {
         {
             let game = test_scenario::take_shared<Game>(scenario);
             let ctx = test_scenario::ctx(scenario);
-            single_player_satoshi::cancel_game(&mut game, ctx);
+            single_player_satoshi::dispute_and_win(&mut game, ctx);
             test_scenario::return_shared(game);
         };
 
@@ -847,10 +799,12 @@ module satoshi_flip::test_single_player_satoshi {
         test_scenario::next_tx(scenario, player);
         {
             let player_coin = test_scenario::take_from_sender<Coin<SUI>>(scenario);
+            let house_data = test_scenario::take_shared<HouseData>(scenario);
             let ctx = test_scenario::ctx(scenario);
             let guess = 0;
             let user_randomness = x"1e256b";
-            single_player_satoshi::start_game(guess, user_randomness, player_coin, ctx);
+            single_player_satoshi::start_game(guess, user_randomness, player_coin, &mut house_data, ctx);
+            test_scenario::return_shared(house_data);
         };
 
         // Check that player got change
