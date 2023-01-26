@@ -22,6 +22,10 @@ HOUSE_DATA_ID=$(echo $TX_EFFECTS | jq -r '.[].created | .[0].reference.objectId 
 echo $TX_EFFECTS >> 'tx.json'
 echo "Writing house data id $HOUSE_DATA_ID in api/.env"
 apiEnv='./../api/.env'
-NEW_VAR="HOUSE_DATA="
-NEW_VAR+=$HOUSE_DATA_ID
-sed -i "s/HOUSE_DATA=.*/$NEW_VAR/" $apiEnv
+uiEnv='./../ui/.env'
+NEW_API_VAR="HOUSE_DATA="
+NEW_API_VAR+=$HOUSE_DATA_ID
+NEW_UI_VAR="NEXT_PUBLIC_HOUSE_DATA="
+NEW_UI_VAR+=$HOUSE_DATA_ID
+sed -i "s/HOUSE_DATA=.*/$NEW_API_VAR/" $apiEnv
+sed -i "s/NEXT_PUBLIC_HOUSE_DATA=.*/$NEW_UI_VAR/" $uiEnv
