@@ -14,7 +14,7 @@ You can find the source code for the smart contract (satoshi_flip.move) that exe
 
 ## Smart Contract Flow
 
-The smart contract works for any one player. An entity called house is involved as a second party which acts as a the game's organizer. A treasury object is used to submit the house's stake and is managed by the contract creator. Upon contract deployment, the house data are initialized with the house's public key. 
+The smart contract works for any one player. An entity called house acts as the game's organizer. A treasury object is used to submit the house's stake and is managed by the contract creator. Upon contract deployment, the house data are initialized with the house's public key. 
 
 The player that starts the game picks 16 random bytes and submits them along with their choice of Tails or Heads. Additionally, at this stage the player's stake (5000 MIST) is submitted.
 
