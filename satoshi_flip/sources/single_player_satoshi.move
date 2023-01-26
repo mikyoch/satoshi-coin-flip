@@ -153,7 +153,7 @@ module satoshi_flip::single_player_satoshi {
         // Ensure that guess is either 0 or 1
         assert!(guess == 1 || guess == 0, EInvalidGuess);
         // Ensure that the house has enough balance to play for this game
-        assert!(balance(house_data) >= 5000, EInsufficientHouseBalance);
+        assert!(balance(house_data) >= STAKE, EInsufficientHouseBalance);
         // get the user coin and convert it into a balance
         assert!(coin::value(&coin) >= STAKE, EInsufficientBalance);
         let stake_coin = satoshi_flip::give_change(coin, STAKE, ctx);
