@@ -16,7 +16,7 @@ You can find the source code for the smart contract (satoshi_flip.move) that exe
 
 The smart contract works for any one player. An entity called house acts as the game's organizer. A treasury object is used to submit the house's stake and is managed by the contract creator. Upon contract deployment, the house data are initialized with the house's public key. 
 
-The player that starts the game picks 16 random bytes and submits them along with their choice of Tails or Heads. Additionally, at this stage the player's stake (5000 MIST) is submitted.
+The player that starts the game picks 16 random bytes and submits them along with their choice of Tails or Heads. Additionally, at this stage the player's & house's stake (5000 MIST) is submitted.
 
 Once the game has been created, anyone can end it by providing a valid BLS signature and the game id. The winner is determined by a bit of the bls signature. The signature is the result of signing the gameId + user's 16 random bytes with the house's private key.
 
@@ -29,7 +29,7 @@ Fairness is ensured and verifiable by:
 
 The House assumes the role of the UI. Any player can join, connect a Sui-compatible wallet (Ethos and Sui Wallet supported currently), and then start a new game by clicking **New Game**.
 
-The player picks a secret and a coin of at least 5000 MIST. The UI then asks the player to choose **Tails** or **Heads** (0 or 1 respectively), to guess the predetermined bit. It then locks 5000 MIST of the player's balance from their wallet. 
+The player picks a secret and a coin of at least 5000 MIST. The UI then asks the player to choose **Tails** or **Heads** (0 or 1 respectively), to guess the predetermined bit. It then locks 5000 MIST of the player's balance and another 5000 MIST from the house's treasury.
 
 To end the game, the House reveals the secret and then transfers 10000 MIST to the winner.
 
