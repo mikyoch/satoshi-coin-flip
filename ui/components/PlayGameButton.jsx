@@ -14,6 +14,7 @@ import { COIN } from "../helpers/constants";
 import HeadsSvg from "../public/svg/capy.svg";
 import TailsSvg from "../public/svg/capy-text.svg";
 import { registerGame } from "../services/SatoshiAPI";
+import { bytesToHex, randomBytes } from "@noble/hashes/utils";
 
 const PlayButton = ({ coinSide, gameID, callback, loading, showChoice }) => {
   // Initialize provider
@@ -75,16 +76,6 @@ const PlayButton = ({ coinSide, gameID, callback, loading, showChoice }) => {
     });
   };
 
-  function randomBytes(length) {
-    var result = "";
-    var characters = "ABCDEFabcdef0123456789";
-    var charactersLength = characters.length;
-    for (var i = 0; i < length * 2; i++) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
-  }
-
   const handleClick = async () => {
     loading(true);
     try {
@@ -98,8 +89,8 @@ const PlayButton = ({ coinSide, gameID, callback, loading, showChoice }) => {
           "Looks like you are out of coins. Consider requesting some coins from the faucet and try again!"
         );
       }
-      const userRandomHexString = randomBytes(16);
-      const user_randomness = Buffer.from(userRandomHexString, "hex");
+      const user_randomness = randomBytes(16);
+      const userRandomHexString = bytesToHex(user_randomness);
       const transactionResponse = await signAndExecuteTransaction({
         kind: "moveCall",
         data: {
@@ -111,7 +102,7 @@ const PlayButton = ({ coinSide, gameID, callback, loading, showChoice }) => {
             `${choice}`,
             Array.from(user_randomness),
             `${playerCoin.coinID}`,
-            `${HOUSE_DATA}`
+            `${HOUSE_DATA}`,
           ],
           gasBudget: 10000,
         },
