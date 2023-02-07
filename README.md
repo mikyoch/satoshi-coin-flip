@@ -14,25 +14,28 @@ You can find the source code for the smart contract (satoshi_flip.move) that exe
 
 ## Smart Contract Flow
 
-The smart contract works for any two players. The player that starts the game takes the role of the House. The House picks a random secret and commits on chain the hash of the secret. The House is responsible for picking a properly random secret.
+The smart contract works for any one player. An entity called house acts as the game's organizer. A treasury object is used to submit the house's stake and is managed by the contract creator. Upon contract deployment, the house data are initialized with the house's public key. 
 
-The other player guesses the outcome on a predetermined bit of this secret, either 0 or 1 (Tails or Heads). The House then reveals the secret and the smart contract determines the winner.
+The player that starts the game picks 16 random bytes and submits them along with their choice of Tails or Heads. Additionally, at this stage the player's & house's stake (5000 MIST) is submitted.
+
+Once the game has been created, anyone can end it by providing a valid BLS signature and the game id. The winner is determined by a bit of the bls signature. The signature is the result of signing the gameId + user's 16 random bytes with the house's private key.
 
 Fairness is ensured and verifiable by:
- 1. Hashing the secret and verifying that it matches the initial hash the House submitted (this is also verified by the contract).
- 1. Time-locking the game so that the House is obliged to reveal the secret after X number of epochs (X=7 in our example).
+ 1. Player can not guess the house's private key
+ 1. House can not guess the user's random input
+ 1. Time-locking the game so that it is obliged to end after X number of epochs (X=7 in our example).
 
 ## UI Flow
 
 The House assumes the role of the UI. Any player can join, connect a Sui-compatible wallet (Ethos and Sui Wallet supported currently), and then start a new game by clicking **New Game**.
 
-The House picks the secret and commits the hash and a coin of at least 5000 MIST. The House then asks the player to choose **Tails** or **Heads** (0 or 1 respectively), to guess the predetermined bit. When the player chooses, it locks 5000 MIST of the player's balance in their wallet. 
+The player picks a secret and a coin of at least 5000 MIST. The UI then asks the player to choose **Tails** or **Heads** (0 or 1 respectively), to guess the predetermined bit. It then locks 5000 MIST of the player's balance and another 5000 MIST from the house's treasury.
 
 To end the game, the House reveals the secret and then transfers 10000 MIST to the winner.
 
-The smart contract allows for a variable amount of MIST, up to an amount determined by the House. This example locked the amount at 5000 MIST.
+This example has locked the stake amount at 5000 MIST.
 
-The sample UI demonstrates our fairness claim: The human player can check the objects and transactions created on the chain at any point to verify that the hashes match and the outcome is correct and fair.
+The sample UI demonstrates our fairness claim: The human player can check the objects and transactions created on the chain at any point to verify that the signatures match and the outcome is correct and fair.
 
 ## Server
 
@@ -53,7 +56,7 @@ Follow these steps to try out the code yourself:
  1. Clone the repository locally
  1. Navigate to the `/scripts` folder and run `npm install`
  1. Next, populate the `api/.env` and `ui/.env` files. There are two ways to set the required .env files:
-    1. **Automatic** - *(Recommended)* Simply run either the API or the UI to execute the `setEnv.js` script (located in the [scripts folder](scripts/dev)), which creates the .env files.
+    1. **Automatic** - *(Recommended)* Run `npm run dev` to execute the initialization scripts (located in the [scripts folder](scripts/dev)), which create the .env files.
     1. **Manual** - Expand the *Configure .env files manually* section to see details.
 
 <details>
@@ -66,9 +69,10 @@ TRUSTED_ORIGINS=["http://localhost:3000"]
 BANKER_ADDRESS=<Your Sui address. If you leave this empty, the setEnv.js script executes when you run the API or start the UI>
 PACKAGE_ADDRESS=<the address of the satoshi_flip package on the Sui network you use or leave empty, the setEnv.js script runs on api and ui launch>
 PRIVATE_KEY=<the private key coresponding to the active address in a [byte array] or leave empty since the setEnv.js script runs on api and ui launch>
+HOUSE_DATA=<house data object id that is created upon contract initialization>
 ```
 
-If you did not provide values for `BANKER_ADDRESS` or `PACKAGE_ADDRESS`, navigate to `/scripts` folder and run `npm run dev` to add the values automatically. The script sets the first `ED25519` address you own as the active-address, and publishes the contract on the active network (which must be Devnet for this example). It also sets the `PRIVATE_KEY`.
+The script sets the first `ED25519` address you own as the active-address, and publishes the contract on the active network (which must be Devnet for this example). It also initializes the smart contract
 
 ### Smart contract (custom set up)
 
@@ -77,7 +81,9 @@ You can deploy the smart contract yourself. If you skipped using the setEnv.js s
 sui publish --gas-budget 5000
 ``` 
 
-Get the package ID returned, and include it in the `api/.env` and `ui/.env` files. Check the templates for the appropriate variable naming.
+Get the package ID returned, and include it in the `api/.env` and `ui/.env` files. Store the HouseCap object id. Check the templates for the appropriate variable naming.
+
+Then call the initialize_house_data method to initialize the house's public key and the balance of the treasury. Include the house_data object in the apis .env file.
 
 </details><br/>
 
