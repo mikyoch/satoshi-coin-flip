@@ -73,7 +73,7 @@ class SatoshiGameService {
         .then(async (res: any) => {
           const effects = res?.EffectsCert
             ? res?.EffectsCert?.effects?.effects
-            : res?.effects;
+            : res?.effects?.effects;
 
           const status = effects?.status?.status;
           const newObjEvents = effects.events.filter((el: any) => el.newObject);
