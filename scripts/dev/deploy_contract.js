@@ -22,22 +22,33 @@ function setAddressAsCurrent(address) {
   }
 }
 
-function writeHouseCap(cap_id){
-  fs.writeFileSync('./house_cap.txt', cap_id.toString());
+function writeHouseCap(cap_id) {
+  fs.writeFileSync("./house_cap.txt", cap_id.toString());
 }
 
 function publish(address) {
-  const result = execSync(
-    "sui client publish --json --gas-budget 10000 ../satoshi_flip/"
-  ).toString();
-  const resultJson = JSON.parse(result);
-  const packageObject = resultJson?.effects?.created.find((val) => val?.owner == "Immutable");
-  const houseCapObject = resultJson?.effects?.created.find((val) => val?.owner?.AddressOwner == address);
-  if (packageObject.owner === "Immutable" && houseCapObject?.owner?.AddressOwner === address) {
-    writeHouseCap(houseCapObject.reference.objectId);
-    return packageObject.reference.objectId;
-  } else {
-    throw "Error!! Invalid artifacts produced from compilation!";
+  try {
+    const result = execSync(
+      "sui client publish --json --gas-budget 10000 ../satoshi_flip/"
+    ).toString();
+    const resultJson = JSON.parse(result);
+    const packageObject = resultJson?.effects?.created.find(
+      (val) => val?.owner == "Immutable"
+    );
+    const houseCapObject = resultJson?.effects?.created.find(
+      (val) => val?.owner?.AddressOwner == address
+    );
+    if (
+      packageObject.owner === "Immutable" &&
+      houseCapObject?.owner?.AddressOwner === address
+    ) {
+      writeHouseCap(houseCapObject.reference.objectId);
+      return packageObject.reference.objectId;
+    } else {
+      throw "Error!! Invalid artifacts produced from compilation!";
+    }
+  } catch (e) {
+    console.error("Error during publishing", e);
   }
 }
 
