@@ -12,7 +12,7 @@
     "prod": "next build && next export && cp -r ./out/* $npm_config_gh_pages_path && echo \"Output successfully copied to $npm_config_gh_pages_path\""
   },
   "dependencies": {
-    "@mysten/sui.js": "^0.28.0",
+    "@mysten/sui.js": "^0.29.1",
     "@mysten/wallet-adapter-all-wallets": "^0.3.10",
     "@mysten/wallet-adapter-react": "^8.0.1",
     "@noble/hashes": "^1.1.5",

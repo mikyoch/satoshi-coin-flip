@@ -107,7 +107,7 @@ function main() {
   }
 
   const privKeyArr = edKeypair;
-  const keypair = Ed25519Keypair.fromSeed(Uint8Array.from(privKeyArr));
+  const keypair = Ed25519Keypair.fromSecretKey(Uint8Array.from(privKeyArr));
 
   const bankerAddress = `0x${keypair.getPublicKey().toSuiAddress()}`;
 

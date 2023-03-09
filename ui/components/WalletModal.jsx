@@ -12,7 +12,7 @@ import { useWallet } from "@mysten/wallet-adapter-react";
 import ExplorerLink from "./ExplorerLink";
 import SuiSvg from "../public/svg/sui.svg";
 import { notifyInfo } from "../services/Toasts";
-import { JsonRpcProvider, Network, MIST_PER_SUI } from "@mysten/sui.js";
+import { JsonRpcProvider, Connection, MIST_PER_SUI } from "@mysten/sui.js";
 import Social from "./Social";
 import ExternalLink from "../public/svg/arrow-up-right.svg";
 
@@ -28,13 +28,13 @@ const WalletModal = () => {
   const getBalance = async (account) => {
     if (!account) return;
     try {
-      let provider = new JsonRpcProvider(Network.DEVNET);
-      let coinObjs = await provider.getCoinBalancesOwnedByAddress(account);
-      let balance = coinObjs
-        .map((coinObj) => coinObj.details.data.fields.balance)
-        .reduce((curCoin, nextCoin) => Number(curCoin) + Number(nextCoin));
+      const connectionOptions = new Connection({
+        fullnode: "https://fullnode.devnet.sui.io",
+      });
+      let provider = new JsonRpcProvider(connectionOptions);
+      let balance = await provider.getBalance(account);
 
-      setAccountBalance(balance / Number(MIST_PER_SUI));
+      setAccountBalance(balance.totalBalance / Number(MIST_PER_SUI));
     } catch (error) {
       console.error("Could not set balance");
     }

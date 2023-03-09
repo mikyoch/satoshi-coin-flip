@@ -12,7 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@mysten/sui.js": "^0.27.0",
+    "@mysten/sui.js": "^0.29.1",
     "@noble/bls12-381": "^1.4.0",
     "futoin-hkdf": "^1.5.1"
   }

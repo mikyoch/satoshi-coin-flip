@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import {
+  Connection,
   Ed25519Keypair,
   GetObjectDataResponse,
   JsonRpcProvider,
-  Network,
   RawSigner,
   SuiExecuteTransactionResponse,
   SuiJsonValue,
@@ -32,7 +32,10 @@ class SuiService implements SuiServiceInterface {
 
   constructor() {
     // @todo: parameterized initialization here?
-    this.provider = new JsonRpcProvider(Network.DEVNET);
+    const connectionOptions: Connection = new Connection({
+      fullnode: "https://fullnode.devnet.sui.io",
+    });
+    this.provider = new JsonRpcProvider(connectionOptions);
     this.signer = this.getSigner();
     this.gasCoins = [];
     this.playCoins = [];
@@ -43,7 +46,7 @@ class SuiService implements SuiServiceInterface {
   private getSigner(): RawSigner {
     let privKeyArray: number[] = JSON.parse(String(process.env.PRIVATE_KEY));
 
-    const keypair = Ed25519Keypair.fromSeed(Uint8Array.from(privKeyArray));
+    const keypair = Ed25519Keypair.fromSecretKey(Uint8Array.from(privKeyArray));
     const signer = new RawSigner(keypair, this.provider);
     return signer;
   }

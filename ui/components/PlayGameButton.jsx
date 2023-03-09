@@ -8,7 +8,7 @@
 
 import { HOUSE_DATA, PACKAGE } from "../helpers/constants";
 import { useWallet } from "@mysten/wallet-adapter-react";
-import { JsonRpcProvider, Network } from "@mysten/sui.js";
+import { Connection, JsonRpcProvider } from "@mysten/sui.js";
 import { notifyError, notifyInfo } from "../services/Toasts";
 import { COIN } from "../helpers/constants";
 import HeadsSvg from "../public/svg/capy.svg";
@@ -18,7 +18,10 @@ import { bytesToHex, randomBytes } from "@noble/hashes/utils";
 
 const PlayButton = ({ coinSide, gameID, callback, loading, showChoice }) => {
   // Initialize provider
-  const provider = new JsonRpcProvider(Network.DEVNET);
+  const connectionOptions = new Connection({
+    fullnode: "https://fullnode.devnet.sui.io",
+  });
+  const provider = new JsonRpcProvider(connectionOptions);
   const { connected, getAccounts, signAndExecuteTransaction } = useWallet();
 
   // Get all coin objects for the current player
